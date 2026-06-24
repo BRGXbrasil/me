@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consulta IA | Sala D'Oro</title>
+  <style>
+    :root{
+      --bg:#f3f5f8; --text:#0f172a; --muted:#64748b; --line:rgba(15,23,42,.08);
+      --card:#fff; --shadow:0 16px 40px rgba(15,23,42,.08); --accent:#0f172a; --good:#22c55e; --warn:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--text);background:linear-gradient(145deg,#e9edf3 0%,var(--bg) 60%,#fff 100%);}
+    .shell{max-width:1200px;margin:0 auto;padding:22px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:28px;box-shadow:var(--shadow)}
+    .top{padding:22px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center}
+    .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.03em}
+    .g{width:30px;height:30px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:900;background:linear-gradient(135deg,#4285f4,#34a853 35%,#fbbc05 65%,#ea4335)}
+    .sub{color:var(--muted);font-size:.88rem}
+    .body{padding:22px}
+    .search{display:grid;grid-template-columns:1fr auto;gap:12px}
+    input,button,textarea{font:inherit}
+    input{
+      width:100%;padding:16px 18px;border-radius:18px;border:1px solid rgba(148,163,184,.24);background:#fff;outline:none;
+      box-shadow:0 8px 20px rgba(15,23,42,.04);
+    }
+    button{
+      border:0;border-radius:18px;padding:16px 18px;font-weight:800;color:#fff;background:linear-gradient(135deg,#0f172a,#334155);cursor:pointer;
+    }
+    .grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:16px}
+    .panel{padding:18px;border-radius:22px;border:1px solid var(--line);background:#fff}
+    .panel h2{margin:0 0 10px;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .answer{font-size:1rem;line-height:1.6}
+    .source-list{display:grid;gap:10px}
+    .source{padding:12px 14px;border-radius:16px;background:#f8fafc;border:1px solid rgba(148,163,184,.16)}
+    .source strong{display:block;margin-bottom:4px}
+    .meta{color:var(--muted);font-size:.86rem;line-height:1.35}
+    @media (max-width: 860px){.search,.grid{grid-template-columns:1fr}.body{padding:16px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="card">
+      <div class="top">
+        <div class="brand"><span class="g">G</span>Consulta IA</div>
+        <div class="sub">Sala D'Oro | POPs e cronogramas como fonte</div>
+      </div>
+      <div class="body">
+        <div class="search">
+          <input id="question" type="search" placeholder="Pergunte sobre rotina, POP, ativação, follow-up, pendência..." />
+          <button id="ask">Responder</button>
+        </div>
+        <div class="grid">
+          <div class="panel">
+            <h2>Resposta</h2>
+            <div id="answer" class="answer">Digite uma pergunta para consultar a base operacional.</div>
+          </div>
+          <div class="panel">
+            <h2>Fontes</h2>
+            <div id="sources" class="source-list"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:16px;">
+          <h2>Link direto</h2>
+          <div class="meta">Abra esta página separada para consultar os POPs sem misturar com a operação do dia.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const sources = [
+      { title: "Abertura do salão", text: "Conferir computadores, telefones, WhatsApp e sistema.", group: "POP Recepção" },
+      { title: "Cadastro de cliente", text: "Nome, telefone, aniversário e origem.", group: "POP Recepção" },
+      { title: "Agendamento", text: "Validar profissional, horário e encaixe.", group: "POP Recepção" },
+      { title: "Lista da vez", text: "Consultas de fila e prioridade de atendimento.", group: "POP Recepção" },
+      { title: "Cobrança e fechamento", text: "Validar serviço, cobrar e encerrar a visita.", group: "POP Recepção" },
+      { title: "Pós-atendimento", text: "Retomar cliente e puxar avaliação.", group: "Cronograma Recepção" },
+      { title: "Follow-up de clientes", text: "D0, D1, D3, D5 e D7 para conversão.", group: "Matriz de Ativações" },
+      { title: "Faltantes e canceladas", text: "Recuperar clientes que saíram da agenda.", group: "Matriz de Ativações" },
+      { title: "Clientes inativas 6 meses", text: "Reativação de alto valor sem retorno.", group: "Matriz de Ativações" }
+    ];
+    const q = (id) => document.getElementById(id);
+    function render(term){
+      const query = term.trim().toLowerCase();
+      const hits = query
+        ? sources.filter((item) => [item.title, item.text, item.group].join(" ").toLowerCase().includes(query))
+        : sources.slice(0, 6);
+      q("answer").textContent = query
+        ? (hits.length
+          ? `Encontrei ${hits.length} referência(s). Use o item mais próximo do termo pesquisado e siga a evidência obrigatória antes de concluir.`
+          : "Sem correspondência direta. Tente um termo mais próximo do nome do POP, tarefa ou ativação.")
+        : "Digite uma pergunta para consultar a base operacional.";
+      q("sources").innerHTML = hits.map((item) => `
+        <div class="source">
+          <strong>${item.title}</strong>
+          <div class="meta">${item.group}</div>
+          <div class="meta" style="margin-top:4px;">${item.text}</div>
+        </div>
+      `).join("") || `<div class="meta">Sem fontes.</div>`;
+    }
+    q("ask").addEventListener("click", () => render(q("question").value));
+    q("question").addEventListener("keydown", (e) => { if(e.key === "Enter"){ e.preventDefault(); render(q("question").value); } });
+    render("");
+  </script>
+</body>
+</html>

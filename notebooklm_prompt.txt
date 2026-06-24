@@ -1,0 +1,60 @@
+Voce e um especialista em operacao, gestao, auditoria e treinamento para negocios de atendimento premium.
+
+Use apenas os documentos enviados como fonte.
+
+Objetivo:
+Criar um manual de uso completo para um sistema operacional de atendimento, relacionamento, controle de insumos, gestao, auditoria e diretoria.
+
+Regras:
+Nao citar nome de empresa.
+Nao citar nome de metodo.
+Nao usar lead.
+Usar cliente.
+Nao usar follow up.
+Usar Sequencia de Conversao.
+Pos Atendimento se refere a clientes novas.
+Plano de Recorrencia substitui ativacoes de recorrencia.
+Plano de Indicacao substitui campanhas de indicacao.
+Manter linguagem simples, profissional, objetiva e de alto padrao.
+Nao usar travessao.
+
+Entregaveis:
+Manual de uso por arquivo.
+Manual de uso por funcao.
+Checklist diario da equipe.
+Checklist semanal da lideranca.
+Checklist mensal da diretoria.
+Guia de leitura dos paineis.
+Guia de preenchimento correto.
+Lista de campos editaveis e campos protegidos.
+POPs faltantes por funcao ou tarefa.
+Roteiro de treinamento para implantacao.
+
+Areas:
+Recepcao Relacionamento.
+Recepcao Acolhimento.
+Controle de Insumos.
+Gestao Operacional.
+Auditoria.
+Diretoria.
+
+Para cada arquivo, explicar:
+Finalidade.
+Quem usa.
+Quando usar.
+O que preencher.
+O que nao alterar.
+Como interpretar.
+Quais erros evitar.
+Como o dado alimenta gestao, auditoria e diretoria.
+
+Para os POPs, usar estrutura:
+Objetivo.
+Frequencia.
+Responsavel.
+Passo a passo.
+Pontos criticos.
+Registro obrigatorio.
+Indicador relacionado.
+
+Criar POPs apenas quando a funcao ou tarefa ainda nao estiver descrita nos documentos.

@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relacionamento | Sala D'Oro</title>
+  <style>
+    :root{
+      --bg:#eef1f5;
+      --bg-2:#f7f8fb;
+      --panel:rgba(255,255,255,.78);
+      --panel-2:rgba(255,255,255,.9);
+      --line:rgba(15,23,42,.08);
+      --text:#0f172a;
+      --muted:#667085;
+      --accent:#0f172a;
+      --accent-2:#64748b;
+      --accent-3:#22c55e;
+      --danger:#ef4444;
+      --warn:#f59e0b;
+      --shadow:0 18px 40px rgba(15,23,42,.08);
+      --radius:28px;
+      --radius-sm:18px;
+      font-synthesis-weight:none;
+    }
+    *{box-sizing:border-box}
+    html,body{min-height:100%}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255,255,255,.9), transparent 18%),
+        radial-gradient(circle at 80% 10%, rgba(100,116,139,.10), transparent 20%),
+        linear-gradient(145deg, #e9edf3 0%, var(--bg) 42%, var(--bg-2) 100%);
+    }
+    body::before{
+      content:"";
+      position:fixed;inset:0;
+      background-image:linear-gradient(rgba(15,23,42,.02) 1px, transparent 1px),linear-gradient(90deg, rgba(15,23,42,.02) 1px, transparent 1px);
+      background-size:72px 72px;
+      mask-image:linear-gradient(to bottom, rgba(0,0,0,.45), transparent 88%);
+      pointer-events:none;
+    }
+    .shell{max-width:1360px;margin:0 auto;padding:22px}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.72));
+      border:1px solid var(--line);
+      backdrop-filter: blur(22px);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    .hero{
+      display:grid;
+      grid-template-columns:1.25fr .75fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+    .hero-main,.hero-side,.panel{padding:24px}
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:.75rem;
+      letter-spacing:.14em;
+      text-transform:uppercase;
+      color:var(--accent);
+      background:rgba(15,23,42,.04);
+      border:1px solid rgba(15,23,42,.08);
+    }
+    .eyebrow::before{
+      content:"";
+      width:8px;height:8px;border-radius:50%;
+      background:linear-gradient(135deg, var(--accent), var(--accent-2));
+      box-shadow:0 0 14px rgba(15,23,42,.18);
+    }
+    h1{
+      margin:14px 0 10px;
+      font-size:clamp(2.4rem, 4.8vw, 5rem);
+      line-height:.92;
+      letter-spacing:-.05em;
+    }
+    .lede{
+      max-width:62ch;
+      margin:0;
+      color:var(--muted);
+      font-size:1rem;
+      line-height:1.55;
+    }
+    .meta-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.76);
+      border:1px solid var(--line);
+      color:var(--text);
+      font-size:.84rem;
+      letter-spacing:.02em;
+    }
+    .chip.active-filter{
+      background:#ffffff;
+      border-color:rgba(15,23,42,.18);
+      box-shadow:0 8px 18px rgba(15,23,42,.06);
+    }
+    .dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-3))}
+    .hero-side{
+      display:grid;
+      gap:12px;
+      align-content:start;
+    }
+    .mini{
+      padding:16px 17px;
+      border-radius:20px;
+      background:rgba(255,255,255,.84);
+      border:1px solid var(--line);
+    }
+    .mini-title{
+      margin:0 0 6px;
+      font-size:.82rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--muted);
+    }
+    .mini-text{margin:0;color:var(--text);line-height:1.35;font-size:.95rem;letter-spacing:-.01em}
+    .login{
+      display:grid;
+      grid-template-columns:.95fr 1.05fr;
+      gap:18px;
+      margin-bottom:16px;
+    }
+    .panel h2{
+      margin:0 0 12px;
+      font-size:.84rem;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--accent);
+    }
+    .muted{color:var(--muted)}
+    label{
+      display:block;
+      margin:0 0 7px;
+      color:var(--muted);
+      font-size:.82rem;
+      letter-spacing:.01em;
+    }
+    input,select,textarea{
+      width:100%;
+      padding:14px 15px;
+      border-radius:18px;
+      border:1px solid rgba(15,23,42,.08);
+      background:rgba(255,255,255,.88);
+      color:var(--text);
+      font:inherit;
+      outline:none;
+      transition:.18s ease;
+    }
+    textarea{min-height:102px;resize:vertical}
+    input:focus,select:focus,textarea:focus{
+      border-color:rgba(15,23,42,.18);
+      box-shadow:0 0 0 4px rgba(15,23,42,.06);
+      transform:translateY(-1px);
+    }
+    .field-grid{display:grid;gap:12px}
+    .search-bar{
+      display:grid;
+      gap:10px;
+      margin:18px 0 6px;
+    }
+    .search-bar input{
+      padding:16px 18px;
+      border-radius:20px;
+      font-size:1rem;
+    }
+    .search-results{
+      display:grid;
+      gap:10px;
+    }
+    .search-hit{
+      padding:14px 15px;
+      border-radius:18px;
+      background:rgba(255,255,255,.85);
+      border:1px solid var(--line);
+      display:grid;
+      gap:6px;
+    }
+    .search-hit .top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .search-hit .meta{color:var(--muted);font-size:.86rem;line-height:1.4}
+    .google-subpage{
+      display:grid;
+      gap:18px;
+    }
+    .google-frame{
+      background:#fff;
+      border:1px solid rgba(148,163,184,.22);
+      border-radius:28px;
+      box-shadow:0 18px 50px rgba(15,23,42,.08);
+      overflow:hidden;
+    }
+    .google-topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:18px 22px;
+      border-bottom:1px solid rgba(148,163,184,.16);
+      background:linear-gradient(180deg,#fff,#f8fafc);
+    }
+    .google-brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:800;
+      letter-spacing:-.03em;
+    }
+    .google-brand .g{
+      display:inline-flex;
+      width:30px;height:30px;border-radius:10px;
+      align-items:center;justify-content:center;
+      color:#fff;
+      font-weight:900;
+      background:linear-gradient(135deg,#4285f4,#34a853 35%,#fbbc05 65%,#ea4335);
+    }
+    .google-subtitle{color:var(--muted);font-size:.88rem}
+    .query-shell{padding:22px}
+    .query-box{
+      display:grid;
+      gap:12px;
+      padding:18px;
+      border-radius:24px;
+      background:#f8fafc;
+      border:1px solid rgba(148,163,184,.18);
+    }
+    .query-row{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:12px;
+      align-items:center;
+    }
+    .query-row input{
+      border-radius:18px;
+      background:#fff;
+      border:1px solid rgba(148,163,184,.22);
+      box-shadow:0 8px 22px rgba(15,23,42,.05);
+    }
+    .answer-grid{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:16px;
+    }
+    .answer-card{
+      padding:18px;
+      border-radius:22px;
+      background:#fff;
+      border:1px solid rgba(148,163,184,.18);
+    }
+    .answer-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:10px;
+    }
+    .answer-title strong{font-size:1rem;letter-spacing:-.03em}
+    .source-list{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    .source-item{
+      padding:12px 14px;
+      border-radius:16px;
+      background:#f8fafc;
+      border:1px solid rgba(148,163,184,.14);
+    }
+    .source-item .meta{color:var(--muted);font-size:.85rem;line-height:1.35}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+    .btn{
+      border:0;
+      border-radius:18px;
+      padding:14px 16px;
+      font:inherit;
+      font-weight:750;
+      color:#ffffff;
+      cursor:pointer;
+      background:linear-gradient(135deg,#0f172a,#334155);
+      box-shadow:0 14px 28px rgba(15,23,42,.16);
+      transition:transform .18s ease, filter .18s ease, box-shadow .18s ease;
+    }
+    .btn:hover{transform:translateY(-1px);filter:saturate(1.08)}
+    .btn:active{transform:translateY(0)}
+    .btn.secondary{
+      color:var(--text);
+      background:rgba(255,255,255,.74);
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:14px;
+    }
+    .tabs{display:flex;flex-wrap:wrap;gap:10px}
+    .tab{
+      padding:11px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.72);
+      color:var(--text);
+      border:1px solid var(--line);
+      cursor:pointer;
+      transition:.18s ease;
+      font-weight:650;
+      letter-spacing:.01em;
+    }
+    .tab.active{
+      background:#ffffff;
+      border-color:rgba(15,23,42,.12);
+      box-shadow:0 8px 18px rgba(15,23,42,.06);
+    }
+    .kpis{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:12px;
+      margin-bottom:18px;
+    }
+    .kpi{
+      padding:17px;
+      border-radius:20px;
+      background:rgba(255,255,255,.86);
+      border:1px solid var(--line);
+    }
+    .kpi .l{color:var(--muted);font-size:.84rem}
+    .kpi .v{margin-top:6px;font-size:1.72rem;font-weight:850;letter-spacing:-.05em}
+    .grid{display:grid;grid-template-columns:1.08fr .92fr;gap:18px}
+    .section{padding:22px}
+    .section h2{margin:0 0 14px;font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+    .task{
+      display:grid;
+      grid-template-columns:1fr auto auto;
+      gap:12px;
+      align-items:center;
+      padding:15px;
+      border-radius:20px;
+      background:rgba(255,255,255,.85);
+      border:1px solid var(--line);
+      margin-bottom:10px;
+    }
+    .task h4{margin:0 0 4px;font-size:1rem;letter-spacing:-.03em}
+    .task p{margin:0;color:var(--muted);font-size:.88rem;line-height:1.4}
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:96px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:.72rem;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.09em;
+    }
+    .pill.good{background:rgba(34,197,94,.12);color:var(--accent-3)}
+    .pill.warn{background:rgba(245,158,11,.12);color:var(--warn)}
+    .pill.danger{background:rgba(239,68,68,.12);color:var(--danger)}
+    .calendar{
+      display:grid;
+      grid-template-columns:repeat(7,minmax(0,1fr));
+      gap:10px;
+    }
+    .day{
+      padding:14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.84);
+      border:1px solid var(--line);
+      min-height:138px;
+    }
+    .day.active{
+      background:#ffffff;
+      border-color:rgba(15,23,42,.12);
+    }
+    .day .name{font-weight:800;margin-bottom:8px}
+    .day .small{color:var(--muted);font-size:.86rem;line-height:1.45}
+    .list{display:grid;gap:10px}
+    .log{
+      padding:14px;
+      border-radius:18px;
+      background:rgba(255,255,255,.86);
+      border:1px solid var(--line);
+    }
+    .log .top{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:6px}
+    .log .meta{font-size:.84rem;color:var(--muted);line-height:1.45}
+    .hidden{display:none !important}
+    .footer-note{margin-top:12px;color:var(--muted);font-size:.8rem}
+    .hero-main{min-height:220px}
+    .hero-side{min-height:220px}
+    .section, .panel, .hero-main, .hero-side{position:relative;overflow:hidden}
+    .section::after, .panel::after, .hero-main::after, .hero-side::after{
+      content:"";
+      position:absolute;inset:auto -20% -45% auto;
+      width:180px;height:180px;border-radius:50%;
+      background:radial-gradient(circle, rgba(15,23,42,.06), transparent 68%);
+      pointer-events:none;
+    }
+    @media (max-width: 1040px){
+      .hero,.login,.grid{grid-template-columns:1fr}
+      .kpis,.calendar,.row3{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width: 760px){
+      .shell{padding:12px}
+      .hero-main,.hero-side,.panel,.section{padding:18px}
+      .toolbar{align-items:stretch}
+      .tabs{width:100%}
+      .tab{flex:1 1 calc(50% - 10px);text-align:center}
+      .kpis,.row,.row3,.calendar{grid-template-columns:1fr}
+      .task{grid-template-columns:1fr}
+      h1{font-size:2.15rem}
+      .chip{width:100%;justify-content:center}
+      .btn{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <div class="card hero-main">
+        <div class="eyebrow">Relacionamento</div>
+        <h1>Registro operacional.</h1>
+      <div class="kpis" style="margin-top:18px;margin-bottom:0;">
+        <div class="kpi"><div class="l">Hoje</div><div class="v" id="heroSummaryToday">0</div></div>
+        <div class="kpi"><div class="l">Prioridade</div><div class="v" id="heroSummaryPriority">0</div></div>
+        <div class="kpi"><div class="l">Evidência</div><div class="v" id="heroSummaryEvidence">0</div></div>
+        <div class="kpi"><div class="l">Áreas</div><div class="v" id="heroSummaryArea">0</div></div>
+      </div>
+      </div>
+      <div class="card hero-side">
+        <div class="mini">
+          <p class="mini-title">Hoje</p>
+          <p class="mini-text" id="heroDay">-</p>
+        </div>
+        <div class="mini">
+          <p class="mini-title">Pendentes</p>
+          <p class="mini-text" id="heroPending">0</p>
+        </div>
+        <div class="mini">
+          <p class="mini-title">Concluídas</p>
+          <p class="mini-text" id="heroDone">0</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="loginView" class="login">
+      <div class="card panel">
+        <h2>Entrar</h2>
+        <div class="field-grid">
+          <div>
+            <label for="userName">Nome</label>
+            <input id="userName" type="text" placeholder="Seu nome" />
+          </div>
+          <div>
+            <label for="password">Senha</label>
+            <input id="password" type="password" placeholder="Acesso" />
+          </div>
+          <button class="btn" id="enterBtn">Abrir painel</button>
+        </div>
+      </div>
+      <div class="card panel">
+        <h2>Hoje</h2>
+        <div class="kpis" style="margin-bottom:0;">
+          <div class="kpi"><div class="l">Tarefas</div><div class="v" id="kpiToday">0</div></div>
+          <div class="kpi"><div class="l">Ok</div><div class="v" id="kpiDone">0</div></div>
+          <div class="kpi"><div class="l">Pendente</div><div class="v" id="kpiOpen">0</div></div>
+          <div class="kpi"><div class="l">Taxa</div><div class="v" id="kpiRate">0%</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="appView" class="hidden">
+      <div class="toolbar">
+        <div class="tabs">
+          <button class="tab active" data-tab="today">Hoje</button>
+          <button class="tab" data-tab="week">Semana</button>
+          <button class="tab" data-tab="library">Biblioteca</button>
+          <button class="tab" data-tab="askai">Consulta IA</button>
+          <button class="tab" data-tab="logs">Registros</button>
+          <button class="tab" data-tab="settings">Ajustes</button>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <a class="chip" href="./consulta-ia.html" target="_blank" rel="noopener">Abrir consulta IA</a>
+          <div class="chip">Usuária: <strong id="currentUser"></strong></div>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="l">Tarefas de hoje</div><div class="v" id="kpiTodayMain">0</div></div>
+        <div class="kpi"><div class="l">Concluídas</div><div class="v" id="kpiDoneMain">0</div></div>
+        <div class="kpi"><div class="l">Pendentes</div><div class="v" id="kpiOpenMain">0</div></div>
+        <div class="kpi"><div class="l">Taxa de execução</div><div class="v" id="kpiRateMain">0%</div></div>
+      </div>
+
+      <div id="tab-today" class="grid">
+        <div class="card section">
+          <h2 id="todayTitle">Rotina de hoje</h2>
+          <div id="todayTasks"></div>
+        </div>
+        <div class="card section">
+          <h2>Registro rápido</h2>
+          <div class="field-grid">
+            <div class="row">
+              <div>
+                <label for="taskSelect">Tarefa</label>
+                <select id="taskSelect"></select>
+              </div>
+              <div>
+                <label for="statusSelect">Status</label>
+                <select id="statusSelect">
+                  <option value="done">Concluída</option>
+                  <option value="partial">Parcial</option>
+                  <option value="blocked">Bloqueada</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="artifact">Evidência</label>
+                <input id="artifact" placeholder="print, link, foto, doc" />
+              </div>
+              <div>
+                <label for="dueDate">Prazo</label>
+                <input id="dueDate" type="date" />
+              </div>
+            </div>
+            <div>
+              <label for="notes">Observação</label>
+              <textarea id="notes" placeholder="Breve nota do que foi feito"></textarea>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+              <button class="btn" id="saveExecution">Salvar</button>
+              <button class="btn secondary" id="resetForm">Limpar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-week" class="hidden" style="margin-top:18px;">
+        <div class="card section">
+          <h2>Semana</h2>
+          <div class="calendar" id="weekCalendar"></div>
+        </div>
+      </div>
+
+      <div id="tab-library" class="hidden" style="margin-top:18px;">
+        <div class="card section" style="margin-bottom:18px;">
+          <h2>Consulta POP</h2>
+          <div class="search-bar" style="margin:0;">
+            <input id="operationalSearch" type="search" placeholder="Pesquisar POP, tarefa, ativação, follow-up, pendência..." />
+            <div id="searchResults" class="search-results"></div>
+          </div>
+        </div>
+        <div class="kpis" style="margin-bottom:18px;">
+          <div class="kpi"><div class="l">Rotina</div><div class="v" id="libraryDailyCount">0</div></div>
+          <div class="kpi"><div class="l">Ativações</div><div class="v" id="libraryActivationCount">0</div></div>
+          <div class="kpi"><div class="l">Follow-ups</div><div class="v" id="libraryFollowupCount">0</div></div>
+          <div class="kpi"><div class="l">Controles</div><div class="v" id="libraryIssueCount">0</div></div>
+        </div>
+        <div class="grid">
+          <div class="card section">
+            <h2>Rotina diária</h2>
+            <div id="dailyLibrary" class="list"></div>
+          </div>
+          <div class="card section">
+            <h2>Ativações e controles</h2>
+            <div id="activationLibrary" class="list"></div>
+          </div>
+        </div>
+        <div class="grid" style="margin-top:18px;">
+          <div class="card section">
+            <h2>Follow-ups e pós-atendimento</h2>
+            <div id="followupLibrary" class="list"></div>
+          </div>
+          <div class="card section">
+            <h2>Pendências e ocorrências</h2>
+            <div id="issueLibrary" class="list"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-askai" class="hidden" style="margin-top:18px;">
+        <div class="google-subpage">
+          <div class="google-frame">
+            <div class="google-topbar">
+              <div class="google-brand"><span class="g">G</span>Consulta IA</div>
+              <div class="google-subtitle">Sala D'Oro | base POP e cronograma</div>
+            </div>
+            <div class="query-shell">
+              <div class="query-box">
+                <div class="query-row">
+                  <input id="aiQuestion" type="search" placeholder="Pergunte algo sobre POPs, rotina, ativações, pendências..." />
+                  <button class="btn" id="askAiBtn">Responder</button>
+                </div>
+                <div class="muted" style="font-size:.86rem;">Use os POPs e cronogramas do Drive como referência interna.</div>
+              </div>
+              <div class="answer-grid" style="margin-top:16px;">
+                <div class="answer-card">
+                  <div class="answer-title">
+                    <strong>Resposta</strong>
+                    <span class="pill good">IA</span>
+                  </div>
+                  <div id="aiAnswer" class="meta" style="line-height:1.6;">Digite uma pergunta para consultar a base operacional.</div>
+                </div>
+                <div class="answer-card">
+                  <div class="answer-title">
+                    <strong>Fontes relacionadas</strong>
+                    <span class="pill warn">POPs</span>
+                  </div>
+                  <div id="aiSources" class="source-list"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-logs" class="hidden" style="margin-top:18px;">
+        <div class="card section">
+          <h2>Registros</h2>
+          <div id="executionList" class="list"></div>
+        </div>
+      </div>
+
+      <div id="tab-settings" class="hidden" style="margin-top:18px;">
+        <div class="card section">
+          <h2>Ajustes</h2>
+          <div class="row3">
+            <div>
+              <label for="newPassword">Nova senha</label>
+              <input id="newPassword" type="text" placeholder="Trocar acesso" />
+            </div>
+            <div>
+              <label for="workMode">Modo</label>
+              <select id="workMode">
+                <option value="acolhimento">Acolhimento</option>
+                <option value="relacionamento" selected>Relacionamento</option>
+                <option value="comercial">Comercial</option>
+              </select>
+            </div>
+            <div>
+              <label>&nbsp;</label>
+              <button class="btn" id="saveSettings">Salvar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const storageKey = "relacionamento_app_state_v2";
+    const authKey = "relacionamento_app_auth_v2";
+    const apiBase = "/.netlify/functions/relacionamento-data";
+
+    const weeklyPlan = {
+      monday: {
+        title: "Segunda-feira | rotina e priorização",
+        tasks: [
+          { id: "monday_agenda", title: "Conferir agenda do dia", detail: "Checar encaixes, lacunas e horários críticos." },
+          { id: "monday_absence", title: "Atualizar ausências", detail: "Registrar faltas e impacto na operação." },
+          { id: "monday_faltantes", title: "Revisar faltantes e canceladas", detail: "Separar clientes que precisam de retomada." },
+        ],
+      },
+      tuesday: {
+        title: "Terça-feira | contato e ativação",
+        tasks: [
+          { id: "tuesday_followup", title: "Retomar conversas em aberto", detail: "Puxar leads e clientes sem resposta." },
+          { id: "tuesday_service", title: "Ativação por serviço recorrente", detail: "Clientes na janela de retorno." },
+          { id: "tuesday_whatsapp", title: "Responder WhatsApp pendente", detail: "Manter canais vivos e sem atraso." },
+        ],
+      },
+      wednesday: {
+        title: "Quarta-feira | controle e organização",
+        tasks: [
+          { id: "wednesday_vitrine", title: "Limpeza das vitrines", detail: "Organização visual e padrão de salão." },
+          { id: "wednesday_inventory", title: "Inventário de revenda", detail: "Contagem e ajuste de estoque." },
+          { id: "wednesday_occurrences", title: "Atualizar ocorrências", detail: "Pendências, desvios e validações." },
+        ],
+      },
+      thursday: {
+        title: "Quinta-feira | fechamento de fila",
+        tasks: [
+          { id: "thursday_faltantes", title: "Ativar faltantes e canceladas", detail: "Reagendar e recuperar agenda." },
+          { id: "thursday_noshow", title: "Atualizar não atendidas", detail: "Registrar e definir próxima ação." },
+          { id: "thursday_active", title: "Atualizar ativações", detail: "Fechar o que gerou agendamento." },
+        ],
+      },
+      friday: {
+        title: "Sexta-feira | confirmação e corte",
+        tasks: [
+          { id: "friday_confirmation", title: "Confirmação de agenda", detail: "Garantir presença do dia seguinte." },
+          { id: "friday_results", title: "Atualizar resultado das ativações", detail: "Medir resposta e agendamentos." },
+          { id: "friday_occurrences", title: "Fechar ocorrências", detail: "Organizar o que ficou aberto." },
+        ],
+      },
+      saturday: {
+        title: "Sábado | operação viva",
+        tasks: [
+          { id: "saturday_list", title: "Conferir vez", detail: "Prioridade do dia e ordem da fila." },
+          { id: "saturday_post", title: "Pós-atendimento", detail: "Registrar experiência e retorno." },
+          { id: "saturday_noatt", title: "Atualizar não atendida", detail: "Marcar recuperação imediata." },
+        ],
+      },
+      sunday: {
+        title: "Domingo | preparação",
+        tasks: [
+          { id: "sunday_preview", title: "Prévia de segunda", detail: "Deixar prioridades e brechas prontas." },
+          { id: "sunday_stock", title: "Revisão de controle", detail: "Checar se algo ficou pendente." },
+        ],
+      },
+    };
+
+    const library = {
+      daily: [
+        { title: "Abertura do salão", detail: "Computadores, telefones, sistema e meios de pagamento prontos.", day: "monday", priority: "Alta", evidence: "Checklist" },
+        { title: "Conferir agenda do dia", detail: "Horários, profissionais e encaixes sensíveis.", day: "monday", priority: "Alta", evidence: "Print/validação" },
+        { title: "Atualizar ausências", detail: "Registrar faltas e impactos do dia.", day: "tuesday", priority: "Alta", evidence: "Registro" },
+        { title: "Retomar conversas em aberto", detail: "Clientes sem resposta e leads em andamento.", day: "tuesday", priority: "Alta", evidence: "Contato" },
+        { title: "Pós-atendimento", detail: "Medir experiência e puxar retorno.", day: "saturday", priority: "Média", evidence: "Mensagem" },
+        { title: "Confirmação de agenda", detail: "Checar presença e reduzir no-show.", day: "friday", priority: "Alta", evidence: "Resposta" },
+      ],
+      activations: [
+        { title: "Aniversariantes", detail: "Clientes do próximo mês com mensagem especial.", day: "monday", priority: "Média", evidence: "Lista" },
+        { title: "Follow-up de clientes", detail: "D0, D1, D3, D5 e D7 para conversão.", day: "tuesday", priority: "Alta", evidence: "Etapa" },
+        { title: "Faltantes e canceladas", detail: "Recuperar clientes que saíram da agenda.", day: "thursday", priority: "Alta", evidence: "Reagendamento" },
+        { title: "Clientes inativas 6 meses", detail: "Reativação de alto valor sem retorno.", day: "wednesday", priority: "Alta", evidence: "Contato" },
+        { title: "Ativação por serviço", detail: "Cobrir janela de retorno vencida.", day: "thursday", priority: "Média", evidence: "Mensagem" },
+      ],
+      followups: [
+        { title: "Cliente em espera", detail: "Controlar tempo, avisar e oferecer alternativa.", day: "saturday", priority: "Alta", evidence: "Tempo" },
+        { title: "Lista da vez", detail: "Fluxo da fila e validação de encaixe.", day: "saturday", priority: "Alta", evidence: "Fila" },
+        { title: "Atendimento telefonico e WhatsApp", detail: "Condução, cadastro e fechamento do contato.", day: "monday", priority: "Alta", evidence: "Print" },
+        { title: "Primeiro contato", detail: "Recepção inicial, orientação e acolhimento.", day: "monday", priority: "Média", evidence: "Registro" },
+      ],
+      issues: [
+        { title: "Pendências abertas", detail: "WhatsApp bloqueado, confirmações e atrasos.", day: "friday", priority: "Alta", evidence: "Validação" },
+        { title: "Ocorrências", detail: "Reclamações, pagamentos, médicos e desligamentos.", day: "all", priority: "Alta", evidence: "Registro" },
+        { title: "Tratamento preventivo", detail: "Checklist e validação de gerência.", day: "wednesday", priority: "Média", evidence: "Checklist" },
+        { title: "Controle diário", detail: "Abertura, atualização e fechamento de rotina.", day: "monday", priority: "Alta", evidence: "Check" },
+      ],
+    };
+    let libraryDayFilter = "all";
+    let operationalSearchQuery = "";
+    let aiQuestionQuery = "";
+    const operationalCatalog = [
+      ...library.daily.map((item) => ({ ...item, group: "Rotina", source: "POP/rotina diária" })),
+      ...library.activations.map((item) => ({ ...item, group: "Ativação", source: "Matriz de ativações" })),
+      ...library.followups.map((item) => ({ ...item, group: "Follow-up", source: "Cronograma recepção" })),
+      ...library.issues.map((item) => ({ ...item, group: "Controle", source: "Pendências e ocorrências" })),
+      { title: "Abertura do salão", detail: "Conferir computadores, telefones, WhatsApp e sistema.", group: "POP", source: "POP Recepção" },
+      { title: "Cadastro de cliente", detail: "Nome, telefone, aniversário e origem.", group: "POP", source: "POP Recepção" },
+      { title: "Agendamento", detail: "Validar profissional, horário e encaixe.", group: "POP", source: "POP Recepção" },
+      { title: "Lista da vez", detail: "Consultas de fila e prioridade de atendimento.", group: "POP", source: "POP Recepção" },
+      { title: "Cobrança e fechamento", detail: "Validar serviço, cobrar e encerrar a visita.", group: "POP", source: "POP Recepção" },
+      { title: "Pós-atendimento", detail: "Retomar cliente e puxar avaliação.", group: "POP", source: "Cronograma recepção" },
+    ];
+
+    const q = (id) => document.getElementById(id);
+    const tabs = [...document.querySelectorAll(".tab")];
+    const loginView = q("loginView");
+    const appView = q("appView");
+    let visibleTab = "today";
+    const state = loadState();
+
+    function loadState(){
+      try{
+        const stored = JSON.parse(localStorage.getItem(storageKey));
+        if(stored && typeof stored === "object"){
+          if(stored.password === "relacionamento2026") stored.password = "1234";
+          return stored;
+        }
+        return { password: "1234", workMode: "relacionamento", executions: [], userName: "" };
+      }catch{
+        return { password: "1234", workMode: "relacionamento", executions: [], userName: "" };
+      }
+    }
+    function saveState(){ localStorage.setItem(storageKey, JSON.stringify(state)); }
+    function isAuthed(){ return sessionStorage.getItem(authKey) === "1"; }
+    function todayKey(){ return ["sunday","monday","tuesday","wednesday","thursday","friday","saturday"][new Date().getDay()]; }
+    function niceDay(key){ return { sunday:"Domingo", monday:"Segunda", tuesday:"Terça", wednesday:"Quarta", thursday:"Quinta", friday:"Sexta", saturday:"Sábado" }[key]; }
+    function esc(s){ return String(s).replace(/[&<>"']/g, (m) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m])); }
+
+    async function syncFromApi(){
+      try{
+        const r = await fetch(apiBase);
+        if(!r.ok) return;
+        const data = await r.json();
+        if(data && typeof data === "object"){
+          if(Array.isArray(data.executions)) state.executions = data.executions;
+          if(data.userName) state.userName = data.userName;
+          saveState();
+        }
+      }catch{}
+    }
+
+    function renderKpis(tasks, done){
+      const open = Math.max(tasks.length - done, 0);
+      const rate = tasks.length ? Math.round((done / tasks.length) * 100) : 0;
+      q("kpiToday").textContent = tasks.length;
+      q("kpiDone").textContent = done;
+      q("kpiOpen").textContent = open;
+      q("kpiRate").textContent = `${rate}%`;
+      q("kpiTodayMain").textContent = tasks.length;
+      q("kpiDoneMain").textContent = done;
+      q("kpiOpenMain").textContent = open;
+      q("kpiRateMain").textContent = `${rate}%`;
+    }
+
+    function render(){
+      const d = todayKey();
+      const day = weeklyPlan[d];
+      const tasks = day.tasks;
+      const todayExecs = state.executions.filter((e) => e.dayKey === d);
+      const done = todayExecs.filter((e) => e.status === "done").length;
+      const open = Math.max(tasks.length - done, 0);
+
+      q("todayTitle").textContent = day.title;
+      q("heroDay").textContent = day.title;
+      q("heroPending").textContent = String(open);
+      q("heroDone").textContent = String(done);
+      q("currentUser").textContent = state.userName || "Equipe";
+      q("workMode").value = state.workMode;
+      q("newPassword").value = "";
+      renderKpis(tasks, done);
+
+      q("todayTasks").innerHTML = tasks.map((t) => {
+        const record = todayExecs.find((e) => e.taskId === t.id);
+        const pill = !record
+          ? `<span class="pill warn">Pendente</span>`
+          : record.status === "done"
+            ? `<span class="pill good">Concluída</span>`
+            : record.status === "partial"
+              ? `<span class="pill warn">Parcial</span>`
+              : `<span class="pill danger">Bloqueada</span>`;
+        return `<div class="task"><div><h4>${esc(t.title)}</h4><p>${esc(t.detail)}</p></div><div>${pill}</div><button class="btn secondary" data-pick="${t.id}">Preencher</button></div>`;
+      }).join("");
+
+      q("taskSelect").innerHTML = tasks.map((t) => `<option value="${t.id}">${esc(t.title)}</option>`).join("");
+      if(tasks[0]) q("taskSelect").value = tasks[0].id;
+      q("dueDate").value = new Date().toISOString().slice(0,10);
+
+      q("executionList").innerHTML = [...state.executions].sort((a,b) => b.ts - a.ts).map((e) => `
+        <div class="log">
+          <div class="top">
+            <strong>${esc(e.taskTitle)}</strong>
+            <span class="pill ${e.status === "done" ? "good" : e.status === "partial" ? "warn" : "danger"}">${esc(e.status)}</span>
+          </div>
+          <div class="meta">${niceDay(e.dayKey)} | ${esc(e.userName || "Equipe")} | ${esc(e.date || "")}</div>
+          <div class="meta" style="margin-top:6px;">${esc(e.notes || "Sem observação")}</div>
+          <div class="meta">Evidência: ${esc(e.artifact || "-")}</div>
+        </div>
+      `).join("") || `<div class="muted">Sem registros.</div>`;
+
+      q("weekCalendar").innerHTML = Object.entries(weeklyPlan).map(([key, value]) => `
+        <div class="day ${key === d ? "active" : ""}">
+          <div class="name">${niceDay(key)}</div>
+          <div class="small">${esc(value.title)}</div>
+          <div class="small" style="margin-top:8px;">${value.tasks.length} itens</div>
+        </div>
+      `).join("");
+
+      const matchesFilter = (item) => libraryDayFilter === "all" || item.day === libraryDayFilter || item.day === "all";
+      const dailyItems = library.daily.filter(matchesFilter);
+      const activationItems = library.activations.filter(matchesFilter);
+      const followupItems = library.followups.filter(matchesFilter);
+      const issueItems = library.issues.filter(matchesFilter);
+
+      q("heroSummaryToday").textContent = String(tasks.length);
+      q("heroSummaryPriority").textContent = String([...dailyItems, ...activationItems, ...followupItems, ...issueItems].filter((item) => item.priority === "Alta").length);
+      q("heroSummaryEvidence").textContent = String([...dailyItems, ...activationItems, ...followupItems, ...issueItems].filter((item) => item.evidence).length);
+      q("heroSummaryArea").textContent = "4";
+
+      q("libraryDailyCount").textContent = String(dailyItems.length);
+      q("libraryActivationCount").textContent = String(activationItems.length);
+      q("libraryFollowupCount").textContent = String(followupItems.length);
+      q("libraryIssueCount").textContent = String(issueItems.length);
+
+      q("dailyLibrary").innerHTML = dailyItems.map((item) => `
+        <div class="log">
+          <div class="top"><strong>${esc(item.title)}</strong><span class="pill good">${esc(item.priority)}</span></div>
+          <div class="meta">${esc(item.detail)}</div>
+          <div class="meta" style="margin-top:6px;">Evidência: ${esc(item.evidence)}</div>
+          <div class="meta" style="margin-top:6px;">Dia: ${esc(item.day)}</div>
+          <div style="margin-top:10px;"><button class="btn secondary" data-pick="${item.title}">Usar</button></div>
+        </div>
+      `).join("");
+      q("activationLibrary").innerHTML = activationItems.map((item) => `
+        <div class="log">
+          <div class="top"><strong>${esc(item.title)}</strong><span class="pill warn">${esc(item.priority)}</span></div>
+          <div class="meta">${esc(item.detail)}</div>
+          <div class="meta" style="margin-top:6px;">Evidência: ${esc(item.evidence)}</div>
+          <div class="meta" style="margin-top:6px;">Dia: ${esc(item.day)}</div>
+          <div style="margin-top:10px;"><button class="btn secondary" data-pick="${item.title}">Usar</button></div>
+        </div>
+      `).join("");
+      q("followupLibrary").innerHTML = followupItems.map((item) => `
+        <div class="log">
+          <div class="top"><strong>${esc(item.title)}</strong><span class="pill good">${esc(item.priority)}</span></div>
+          <div class="meta">${esc(item.detail)}</div>
+          <div class="meta" style="margin-top:6px;">Evidência: ${esc(item.evidence)}</div>
+          <div class="meta" style="margin-top:6px;">Dia: ${esc(item.day)}</div>
+          <div style="margin-top:10px;"><button class="btn secondary" data-pick="${item.title}">Usar</button></div>
+        </div>
+      `).join("");
+      q("issueLibrary").innerHTML = issueItems.map((item) => `
+        <div class="log">
+          <div class="top"><strong>${esc(item.title)}</strong><span class="pill danger">${esc(item.priority)}</span></div>
+          <div class="meta">${esc(item.detail)}</div>
+          <div class="meta" style="margin-top:6px;">Evidência: ${esc(item.evidence)}</div>
+          <div class="meta" style="margin-top:6px;">Dia: ${esc(item.day)}</div>
+          <div style="margin-top:10px;"><button class="btn secondary" data-pick="${item.title}">Usar</button></div>
+        </div>
+      `).join("");
+
+      const query = operationalSearchQuery.trim().toLowerCase();
+      const hits = query
+        ? operationalCatalog.filter((item) => [item.title, item.detail, item.group, item.source, item.day || ""].join(" ").toLowerCase().includes(query))
+        : operationalCatalog.slice(0, 8);
+      q("searchResults").innerHTML = hits.map((item) => `
+        <div class="search-hit">
+          <div class="top">
+            <strong>${esc(item.title)}</strong>
+            <span class="pill ${item.group === "Controle" ? "danger" : item.group === "Ativação" ? "warn" : "good"}">${esc(item.group)}</span>
+          </div>
+          <div class="meta">${esc(item.detail)}</div>
+          <div class="meta">${esc(item.source)}</div>
+          <div style="margin-top:2px;"><button class="btn secondary" data-pick="${item.title}">Usar</button></div>
+        </div>
+      `).join("") || `<div class="muted">Nenhum resultado encontrado.</div>`;
+
+      const aiHits = aiQuestionQuery.trim().toLowerCase();
+      const aiMatched = aiHits
+        ? operationalCatalog.filter((item) => [item.title, item.detail, item.group, item.source, item.day || ""].join(" ").toLowerCase().includes(aiHits)).slice(0, 5)
+        : [];
+      q("aiAnswer").textContent = aiHits
+        ? (aiMatched.length
+            ? `Encontrei ${aiMatched.length} referência(s) na base operacional. A melhor leitura é seguir a tarefa com o mesmo nome mais próximo do que você perguntou e validar a evidência obrigatória antes de concluir.`
+            : "Não achei correspondência direta na base. Tente usar um termo mais próximo de POP, tarefa, ativação, follow-up ou pendência.")
+        : "Digite uma pergunta para consultar a base operacional.";
+      q("aiSources").innerHTML = aiMatched.map((item) => `
+        <div class="source-item">
+          <strong>${esc(item.title)}</strong>
+          <div class="meta">${esc(item.source)} | ${esc(item.group)}</div>
+          <div class="meta" style="margin-top:4px;">${esc(item.detail)}</div>
+        </div>
+      `).join("") || `<div class="source-item"><div class="meta">Sem fontes ainda.</div></div>`;
+
+      tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === visibleTab));
+      ["today","week","logs","settings"].forEach((name) => q(`tab-${name}`).classList.toggle("hidden", visibleTab !== name));
+    }
+
+    function showApp(){ loginView.classList.add("hidden"); appView.classList.remove("hidden"); render(); syncFromApi(); }
+    function showLogin(){ loginView.classList.remove("hidden"); appView.classList.add("hidden"); }
+
+    q("enterBtn").addEventListener("click", () => {
+      const pass = q("password").value.trim();
+      const name = q("userName").value.trim() || "Equipe";
+      if(pass === state.password){
+        state.userName = name;
+        saveState();
+        sessionStorage.setItem(authKey, "1");
+        showApp();
+      }else{
+        alert("Senha incorreta.");
+      }
+    });
+
+    q("saveExecution").addEventListener("click", async () => {
+      const d = todayKey();
+      const taskId = q("taskSelect").value;
+      const task = weeklyPlan[d].tasks.find((t) => t.id === taskId);
+      if(!task) return;
+      const payload = {
+        id: crypto.randomUUID(),
+        ts: Date.now(),
+        dayKey: d,
+        taskId,
+        taskTitle: task.title,
+        status: q("statusSelect").value,
+        artifact: q("artifact").value.trim(),
+        date: q("dueDate").value,
+        notes: q("notes").value.trim(),
+        userName: state.userName
+      };
+      state.executions.push(payload);
+      saveState();
+      render();
+      fetch(apiBase, {
+        method: "POST",
+        headers: {"content-type":"application/json"},
+        body: JSON.stringify({ type: "execution", payload })
+      }).catch(() => {});
+    });
+
+    q("resetForm").addEventListener("click", () => {
+      q("artifact").value = "";
+      q("notes").value = "";
+      q("statusSelect").value = "done";
+    });
+
+    q("saveSettings").addEventListener("click", async () => {
+      const candidate = q("newPassword").value.trim();
+      if(candidate) state.password = candidate;
+      state.workMode = q("workMode").value;
+      saveState();
+      alert("Ajustes salvos.");
+      fetch(apiBase, {
+        method: "POST",
+        headers: {"content-type":"application/json"},
+        body: JSON.stringify({ type: "settings", payload: { password: state.password, workMode: state.workMode, userName: state.userName } })
+      }).catch(() => {});
+    });
+
+    document.addEventListener("click", (event) => {
+      const filterChip = event.target.closest("[data-day-filter]");
+      if(filterChip){
+        libraryDayFilter = filterChip.dataset.dayFilter;
+        render();
+        return;
+      }
+      const pick = event.target.closest("[data-pick]");
+      if(!pick) return;
+      const found = [...q("taskSelect").options].find((opt) => opt.textContent === pick.dataset.pick);
+      if(found) q("taskSelect").value = found.value;
+      q("artifact").value = pick.dataset.pick;
+      visibleTab = "today";
+      render();
+      q("notes").focus();
+    });
+
+    tabs.forEach((tab) => tab.addEventListener("click", () => {
+      visibleTab = tab.dataset.tab;
+      render();
+    }));
+
+    const searchInput = q("operationalSearch");
+    searchInput.addEventListener("input", () => {
+      operationalSearchQuery = searchInput.value;
+      render();
+    });
+
+    q("askAiBtn").addEventListener("click", () => {
+      aiQuestionQuery = q("aiQuestion").value;
+      render();
+      visibleTab = "askai";
+      tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === visibleTab));
+      ["today","week","library","askai","logs","settings"].forEach((name) => q(`tab-${name}`).classList.toggle("hidden", visibleTab !== name));
+    });
+    q("aiQuestion").addEventListener("keydown", (event) => {
+      if(event.key === "Enter"){
+        event.preventDefault();
+        q("askAiBtn").click();
+      }
+    });
+
+    if(isAuthed()) showApp(); else showLogin();
+  </script>
+</body>
+</html>
