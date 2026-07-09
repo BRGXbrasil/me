@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Borgex OS</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Montserrat:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0a;
+      --bg2: #111111;
+      --bg3: #1a1a1a;
+      --bg4: #222222;
+      --gold: #c9a84c;
+      --gold2: #e8c97a;
+      --gold3: #a07830;
+      --teal: #4db8a8;
+      --teal2: #2d8a7d;
+      --text: #e8e0d0;
+      --text2: #a09880;
+      --text3: #605848;
+      --border: #2a2a2a;
+      --border2: #3a3218;
+      --red: #c04040;
+      --green: #4a9060;
+    }
+
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; }
+    #root { height: 100%; display: flex; flex-direction: column; }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--bg2); }
+    ::-webkit-scrollbar-thumb { background: var(--gold3); border-radius: 2px; }
+
+    /* HEADER */
+    .header {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border2);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+    .header-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--gold);
+      letter-spacing: 2px;
+    }
+    .header-date {
+      font-size: 11px;
+      color: var(--text2);
+      font-weight: 300;
+      letter-spacing: 1px;
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* TABS */
+    .tabs {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      overflow-x: auto;
+      flex-shrink: 0;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      padding: 10px 18px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text3);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .tab:hover { color: var(--text2); }
+    .tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+    /* CONTENT */
+    .content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 300;
+      color: var(--gold);
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+    .section-sub {
+      font-size: 11px;
+      color: var(--text3);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    /* CARD */
+    .card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 18px;
+      margin-bottom: 12px;
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .card-body { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+    /* GRID */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+    /* HABIT ITEM */
+    .habit-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .habit-item:last-child { border-bottom: none; }
+    .habit-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--gold3); flex-shrink: 0;
+    }
+    .habit-dot.done { background: var(--green); }
+    .habit-dot.consolidado { background: var(--teal2); }
+    .habit-streak {
+      margin-left: auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text3);
+    }
+
+    /* CHECKBOX */
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .check-item:last-child { border-bottom: none; }
+    .check-box {
+      width: 16px; height: 16px;
+      border: 1px solid var(--border2);
+      border-radius: 3px;
+      background: var(--bg3);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 10px; color: var(--gold);
+    }
+    .check-box.checked { background: var(--gold3); border-color: var(--gold); }
+    .check-label { font-size: 13px; color: var(--text); }
+    .check-label.done { text-decoration: line-through; color: var(--text3); }
+
+    /* KPI SLIDER */
+    .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .kpi-item { background: var(--bg3); border-radius: 4px; padding: 12px; }
+    .kpi-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+    .kpi-value { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--gold); margin-bottom: 6px; }
+    .kpi-bar { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .kpi-fill { height: 100%; background: var(--gold); transition: width 0.3s; }
+    input[type="range"] {
+      width: 100%; margin-top: 6px;
+      accent-color: var(--gold);
+    }
+
+    /* FASE BADGE */
+    .fase-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+    .fase-1 { background: #1a1510; border: 1px solid #604020; color: #c08040; }
+    .fase-2 { background: #101a15; border: 1px solid #204030; color: #40a070; }
+    .fase-3 { background: #101520; border: 1px solid #203050; color: #4080c0; }
+    .fase-4 { background: #1a1020; border: 1px solid #402060; color: #9040c0; }
+
+    /* ORACLE */
+    .oracle-box {
+      background: linear-gradient(135deg, #0f0e0c 0%, #1a1710 100%);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .oracle-channel {
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold3);
+      margin-bottom: 8px;
+    }
+    .oracle-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--gold2);
+      margin-bottom: 12px;
+    }
+    .oracle-text { font-size: 13px; color: var(--text2); line-height: 1.8; }
+
+    /* BTN */
+    .btn {
+      padding: 10px 20px;
+      border-radius: 4px;
+      border: 1px solid var(--gold3);
+      background: transparent;
+      color: var(--gold);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: var(--gold3); color: var(--bg); }
+    .btn-primary { background: var(--gold3); color: var(--bg); }
+    .btn-primary:hover { background: var(--gold); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* TEXTAREA */
+    textarea, input[type="text"] {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      padding: 10px 12px;
+      resize: vertical;
+      outline: none;
+    }
+    textarea:focus, input[type="text"]:focus { border-color: var(--gold3); }
+
+    /* PILAR */
+    .pilar-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .pilar-item:last-child { border-bottom: none; }
+    .pilar-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      color: var(--gold3);
+      line-height: 1;
+      flex-shrink: 0;
+      width: 32px;
+    }
+    .pilar-info { flex: 1; }
+    .pilar-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .pilar-desc { font-size: 12px; color: var(--text3); }
+
+    /* PROGRESS BAR */
+    .progress-wrap { margin-bottom: 16px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 6px; }
+    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold3), var(--gold)); transition: width 0.5s; border-radius: 2px; }
+
+    /* BLOCO HORA */
+    .bloco {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .bloco:last-child { border-bottom: none; }
+    .bloco.current { background: #1a1808; margin: 0 -18px; padding: 12px 18px; border-left: 2px solid var(--gold); }
+    .bloco-hora { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text3); width: 48px; flex-shrink: 0; padding-top: 2px; }
+    .bloco-nome { font-size: 13px; color: var(--text); font-weight: 500; margin-bottom: 2px; }
+    .bloco-desc { font-size: 11px; color: var(--text3); }
+
+    /* DIVIDER */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+
+    /* TAG */
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .tag-gold { background: #2a2010; border: 1px solid var(--gold3); color: var(--gold); }
+    .tag-teal { background: #0d2020; border: 1px solid var(--teal2); color: var(--teal); }
+    .tag-red  { background: #200d0d; border: 1px solid #602020; color: var(--red); }
+
+    /* SPINNER */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid var(--border2);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .pulse { animation: pulse 2s ease-in-out infinite; }
+
+    /* AGENT CARD */
+    .agent-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .agent-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .agent-icon { font-size: 20px; }
+    .agent-name { font-size: 13px; font-weight: 600; color: var(--gold); }
+    .agent-role { font-size: 10px; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; }
+    .agent-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+// ── DADOS ──────────────────────────────────────────────────────────────────
+
+const DIAS = ['SEG','TER','QUA','QUI','SEX','SAB','DOM'];
+
+const ROTINA = [
+  { hora: '07:00', nome: 'Manhã', desc: 'Limão, remédio, pele, protetor, branqueadora' },
+  { hora: '07:30', nome: 'Abertura do dia', desc: 'Oracle + intenção + revisão BORGEX' },
+  { hora: '08:00', nome: 'Exercício / Postura', desc: 'Treino, alongamento ou caminhada' },
+  { hora: '09:00', nome: 'Café', desc: 'Whey protein, refeição limpa' },
+  { hora: '10:00', nome: 'Bloco de trabalho 1', desc: 'Tarefas de alta energia / Sala D\'Oro' },
+  { hora: '12:30', nome: 'Almoço', desc: 'Pausa real — sem tela quando possível' },
+  { hora: '14:00', nome: 'Bloco de trabalho 2', desc: 'Reuniões, calls, gestão operacional' },
+  { hora: '17:00', nome: 'Transição', desc: 'Check listas, e-mails, pendências' },
+  { hora: '18:30', nome: 'ProPositiva / Estudo', desc: 'Leitura, escrita, desenvolvimento' },
+  { hora: '20:00', nome: 'Jantar', desc: 'Refeição leve' },
+  { hora: '21:00', nome: 'Descompressão', desc: 'Sem decisões pesadas — série, música, relaxe' },
+  { hora: '22:30', nome: 'Fechamento', desc: 'Diário Oracle noturno + check hábitos' },
+];
+
+const HABITOS = {
+  consolidado: ['Limão', 'Remédio', 'Branqueadora', 'Protetor', 'Pele'],
+  avancado: ['Fio dental'],
+  progresso: ['Treino/Alongamento/Postura', 'Whey', 'Meditação', 'Estudo'],
+  baixa: ['Escrita', 'Leitura', 'Sol'],
+  semanal: ['Máscara facial'],
+};
+
+const FASES_RESET = [
+  { num: 1, nome: 'Reset', dias: '1–21', cor: 'fase-1', desc: 'Eliminar tudo que intoxica: ruídos, vícios digitais, hábitos caóticos.' },
+  { num: 2, nome: 'Evolução', dias: '22–45', cor: 'fase-2', desc: 'Instalar novos padrões de energia, cognição e comportamento.' },
+  { num: 3, nome: 'Alta Performance', dias: '46–75', cor: 'fase-3', desc: 'Consolidar os ganhos em rotina sustentável e produção real.' },
+  { num: 4, nome: 'Maestria', dias: '76–90', cor: 'fase-4', desc: 'Integrar. Operar com autonomia, clareza e consistência.' },
+];
+
+const KPIS = ['Energia','Sono','Clareza','Humor','Irritabilidade','Presença','Disciplina','Foco','Recuperação'];
+
+const PILARES = [
+  { num: '1', nome: 'Diagnóstico', desc: 'O que tem, o que falta, onde perde dinheiro / tempo / cliente' },
+  { num: '2', nome: 'Organização', desc: 'Drive, documentos, rotina, setores, responsáveis' },
+  { num: '3', nome: 'Operação', desc: 'POPs, cronogramas, ocorrências, auditoria, padrão' },
+  { num: '4', nome: 'Atendimento e Comercial', desc: 'Recepção, WhatsApp, CRM, ativações, retenção' },
+  { num: '5', nome: 'Performance', desc: 'Indicadores, profissionais, metas, relatórios, plano de ação' },
+  { num: '6', nome: 'Liderança', desc: 'Reuniões, feedbacks, cultura, responsáveis, correção de rota' },
+  { num: '7', nome: 'Produto', desc: 'Nome, público, oferta, formato, preço, entrega, prova' },
+];
+
+const PRINCIPIOS = [
+  { nome: 'Lei de Parkinson', desc: 'O trabalho se expande até ocupar o tempo disponível. Reduza o tempo e aumente o resultado.' },
+  { nome: 'Flow State', desc: 'Produção de pico acontece no equilíbrio entre desafio e capacidade. Blocos de 90 minutos sem interrupção.' },
+  { nome: 'P.A.R.A.', desc: 'Projetos / Áreas / Recursos / Arquivo. Toda informação cabe em uma dessas categorias.' },
+  { nome: 'Matriz de Eisenhower', desc: 'Urgente + Importante: executa. Importante: agenda. Urgente: delega. Nenhum dos dois: elimina.' },
+  { nome: 'Anti-Visão', desc: 'Defina com clareza quem você não quer ser e como não quer viver. Clareza negativa direciona melhor.' },
+  { nome: 'Liderança Propositiva', desc: '"Lidero para organizar, não carregar." Organizar, nomear problemas, sustentar limites sem sobrecarga emocional.' },
+];
+
+const AGENTES = [
+  { icon: '⬡', nome: 'Chico', role: 'Coordenador Geral', desc: 'Orquestra os demais agentes. Ativado quando o domínio é ambíguo ou o tema cruza múltiplas frentes.' },
+  { icon: '◈', nome: 'Barchetta', role: 'Estratégia Comercial', desc: 'Gestão comercial para serviços de beleza. Precificação, performance, CMV, retenção, KPIs.' },
+  { icon: '◎', nome: 'Chez', role: 'Trajetória', desc: 'Visão de longo prazo, carreira, posicionamento e decisões estratégicas de vida.' },
+  { icon: '✦', nome: 'Check', role: 'Execução', desc: 'Foco, listas, produtividade, blocos de trabalho, priorização diária.' },
+  { icon: '◇', nome: 'Chaves', role: 'Ativos e Compliance', desc: 'Documentos, contratos, patrimônio, proteção legal, organização de ativos.' },
+  { icon: '✧', nome: 'Michelangelo', role: 'Design e Marca', desc: 'Identidade visual, materiais, estética, apresentação e comunicação visual.' },
+  { icon: '⊕', nome: 'Dr. Charles', role: 'Autoconhecimento', desc: 'Psicologia, padrões comportamentais, emoções, relações e desenvolvimento pessoal.' },
+  { icon: '☽', nome: 'Mestre Chalita', role: 'Oracle / Arquétipos', desc: 'Sistema holístico divinatório com 5 canais: Astrologia, Numerologia, Kabbalah, The Pattern, Tiferet.' },
+  { icon: '∞', nome: 'Archimedes', role: 'Pesquisa', desc: 'Busca, análise, comparativos, dados de mercado, tendências e informação técnica.' },
+  { icon: '♪', nome: 'Chai', role: 'Curadoria Cultural', desc: 'Música, cinema, arte, referências culturais e curadoria estética.' },
+];
+
+// ── UTILS ───────────────────────────────────────────────────────────────────
+
+function getToday() {
+  const d = new Date();
+  const dias = ['DOM','SEG','TER','QUA','QUI','SEX','SAB'];
+  return dias[d.getDay()];
+}
+
+function getDiaNome() {
+  return new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+}
+
+function getHora() {
+  return new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function getBlocoAtual() {
+  const agora = new Date();
+  const min = agora.getHours() * 60 + agora.getMinutes();
+  let atual = -1;
+  for (let i = 0; i < ROTINA.length; i++) {
+    const [h, m] = ROTINA[i].hora.split(':').map(Number);
+    if (min >= h * 60 + m) atual = i;
+  }
+  return atual;
+}
+
+function ls(key, def) {
+  try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : def; }
+  catch { return def; }
+}
+function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch {} }
+
+// ── TABS ────────────────────────────────────────────────────────────────────
+
+const TABS = [
+  { id: 'hoje', label: '◎ Hoje' },
+  { id: 'borgex', label: '◈ BORGEX' },
+  { id: 'reset', label: '🔄 Reset' },
+  { id: 'oracle', label: '✦ Oracle' },
+  { id: 'propositiva', label: '◇ ProPositiva' },
+  { id: 'principios', label: '✧ Princípios' },
+  { id: 'ia', label: '⬡ IA' },
+];
+
+// ── ABA HOJE ────────────────────────────────────────────────────────────────
+
+function TabHoje() {
+  const today = getToday();
+  const dateKey = new Date().toISOString().slice(0, 10);
+  const [checks, setChecks] = useState(() => ls(`hoje-${dateKey}`, {}));
+  const [hora, setHora] = useState(getHora);
+  const [blocoAt, setBlocoAt] = useState(getBlocoAtual);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setHora(getHora());
+      setBlocoAt(getBlocoAtual());
+    }, 60000);
+    return () => clearInterval(t);
+  }, []);
+
+  const toggle = (i) => {
+    const next = { ...checks, [i]: !checks[i] };
+    setChecks(next);
+    lsSet(`hoje-${dateKey}`, next);
+  };
+
+  const done = Object.values(checks).filter(Boolean).length;
+  const total = ROTINA.length;
+  const pct = Math.round((done / total) * 100);
+
+  return (
+    <div>
+      <div className="section-title">{today}</div>
+      <div className="section-sub">{getDiaNome()} · {hora}</div>
+
+      <div className="progress-wrap">
+        <div className="progress-label">
+          <span>Progresso do dia</span>
+          <span style={{ color: pct === 100 ? 'var(--green)' : 'var(--gold)' }}>{pct}%</span>
+        </div>
+        <div className="progress-bar">
+          <div className="progress-fill" style={{ width: `${pct}%` }} />
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-title">Blocos do Dia</div>
+        {ROTINA.map((b, i) => (
+          <div key={i} className={`bloco ${i === blocoAt ? 'current' : ''}`} onClick={() => toggle(i)} style={{ cursor: 'pointer' }}>
+            <div className="bloco-hora">{b.hora}</div>
+            <div style={{ flex: 1 }}>
+              <div className="bloco-nome" style={{ textDecoration: checks[i] ? 'line-through' : 'none', color: checks[i] ? 'var(--text3)' : 'var(--text)' }}>{b.nome}</div>
+              <div className="bloco-desc">{b.desc}</div>
+            </div>
+            {checks[i] && <div style={{ color: 'var(--green)', fontSize: 14 }}>✓</div>}
+            {i === blocoAt && !checks[i] && <div className="pulse" style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--gold)', flexShrink: 0, alignSelf: 'center' }} />}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── ABA BORGEX ──────────────────────────────────────────────────────────────
+
+function TabBorgex() {
+  const dateKey = new Date().toISOString().slice(0, 10);
+  const [done, setDone] = useState(() => ls(`borgex-${dateKey}`, {}));
+
+  const toggle = (cat, i) => {
+    const key = `${cat}-${i}`;
+    const next = { ...done, [key]: !done[key] };
+    setDone(next);
+    lsSet(`borgex-${dateKey}`, next);
+  };
+
+  const Tier = ({ cat, label, color, items }) => (
+    <div className="card" style={{ borderColor: color + '30' }}>
+      <div className="card-title" style={{ color }}>{label}</div>
+      {items.map((h, i) => {
+        const key = `${cat}-${i}`;
+        const isDone = done[key];
+        return (
+          <div key={i} className="habit-item" onClick={() => toggle(cat, i)} style={{ cursor: 'pointer' }}>
+            <div className={`habit-dot${isDone ? ' done' : ''}`} style={{ background: isDone ? color : undefined }} />
+            <span style={{ textDecoration: isDone ? 'line-through' : 'none', color: isDone ? 'var(--text3)' : 'var(--text)', fontSize: 13 }}>{h}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  return (
+    <div>
+      <div className="section-title">BORGEX</div>
+      <div className="section-sub">Sistema de hábitos · Ciclo semanal</div>
+      <Tier cat="cons" label="Consolidado — Automático" color="var(--teal)" items={HABITOS.consolidado} />
+      <Tier cat="avanc" label="Consolidação Avançada" color="var(--gold)" items={HABITOS.avancado} />
+      <Tier cat="prog" label="Em Progresso" color="#c08040" items={HABITOS.progresso} />
+      <Tier cat="baixa" label="Frequência Baixa" color="var(--text3)" items={HABITOS.baixa} />
+      <Tier cat="sem" label="Semanal" color="#7060a0" items={HABITOS.semanal} />
+    </div>
+  );
+}
+
+// ── ABA RESET ───────────────────────────────────────────────────────────────
+
+function TabReset() {
+  const [fase, setFase] = useState(() => ls('reset-fase', 1));
+  const [dia, setDia] = useState(() => ls('reset-dia', 1));
+  const [kpis, setKpis] = useState(() => ls('reset-kpis', {}));
+
+  const setKpi = (k, v) => {
+    const next = { ...kpis, [k]: v };
+    setKpis(next);
+    lsSet('reset-kpis', next);
+  };
+
+  const setFaseE = (f) => { setFase(f); lsSet('reset-fase', f); };
+  const setDiaE = (d) => { setDia(d); lsSet('reset-dia', d); };
+
+  const pct = Math.round((dia / 90) * 100);
+
+  return (
+    <div>
+      <div className="section-title">Reset 90 Dias</div>
+      <div className="section-sub">Implementação nas rotinas Borgex</div>
+
+      <div className="card">
+        <div className="card-title">Progresso Geral</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 12 }}>
+          <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 40, color: 'var(--gold)' }}>{dia}</div>
+          <div>
+            <div style={{ fontSize: 12, color: 'var(--text2)' }}>de 90 dias</div>
+            <div style={{ fontSize: 11, color: 'var(--text3)' }}>Fase {fase} — {FASES_RESET[fase - 1].nome}</div>
+          </div>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+            <button className="btn" onClick={() => setDiaE(Math.max(1, dia - 1))}>−</button>
+            <button className="btn btn-primary" onClick={() => setDiaE(Math.min(90, dia + 1))}>+1 dia</button>
+          </div>
+        </div>
+        <div className="progress-bar" style={{ height: 6, marginBottom: 4 }}>
+          <div className="progress-fill" style={{ width: `${pct}%` }} />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text3)', textAlign: 'right' }}>{pct}% completo</div>
+      </div>
+
+      <div className="card">
+        <div className="card-title">Fases</div>
+        {FASES_RESET.map((f) => (
+          <div key={f.num} onClick={() => setFaseE(f.num)} style={{ display: 'flex', gap: 12, padding: '10px 0', borderBottom: '1px solid var(--border)', cursor: 'pointer', alignItems: 'flex-start' }}>
+            <div className={`fase-badge ${f.cor}`} style={{ flexShrink: 0, opacity: fase === f.num ? 1 : 0.4 }}>
+              {fase === f.num ? '◉' : '○'} {f.nome}
+            </div>
+            <div>
+              <div style={{ fontSize: 10, color: 'var(--text3)', marginBottom: 4 }}>Dias {f.dias}</div>
+              <div style={{ fontSize: 12, color: fase === f.num ? 'var(--text2)' : 'var(--text3)' }}>{f.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="card">
+        <div className="card-title">KPIs Diários — Hoje</div>
+        <div className="kpi-grid">
+          {KPIS.map((k) => {
+            const val = kpis[k] || 5;
+            return (
+              <div key={k} className="kpi-item">
+                <div className="kpi-label">{k}</div>
+                <div className="kpi-value">{val}</div>
+                <div className="kpi-bar"><div className="kpi-fill" style={{ width: `${val * 10}%` }} /></div>
+                <input type="range" min="1" max="10" value={val} onChange={(e) => setKpi(k, Number(e.target.value))} />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── ABA ORACLE ──────────────────────────────────────────────────────────────
+
+function TabOracle() {
+  const dateKey = new Date().toISOString().slice(0, 10);
+  const [intencao, setIntencao] = useState(() => ls(`oracle-int-${dateKey}`, ''));
+  const [diario, setDiario] = useState(() => ls(`oracle-diario-${dateKey}`, ''));
+  const [leitura, setLeitura] = useState(() => ls(`oracle-leitura-${dateKey}`, null));
+  const [loading, setLoading] = useState(false);
+  const [apiKey, setApiKey] = useState(() => ls('oracle-apikey', ''));
+  const [showKey, setShowKey] = useState(false);
+
+  const salvarInt = (v) => { setIntencao(v); lsSet(`oracle-int-${dateKey}`, v); };
+  const salvarDiario = (v) => { setDiario(v); lsSet(`oracle-diario-${dateKey}`, v); };
+
+  const gerar = async () => {
+    if (!apiKey) { setShowKey(true); return; }
+    setLoading(true);
+    try {
+      const prompt = `Você é Mestre Chalita, um oráculo holístico com 5 canais de peso igual: Astrologia, Numerologia, Kabbalah, The Pattern e Tiferet.
+
+Dados do consultante — Diego:
+- Nascimento: 30/03/1989, 8h05, Rio Bonito, RJ
+- Sol em Áries, Ascendente em Touro, Lua em Câncer
+- Caminho de Vida 33/6
+- Sefirot natal: Tiferet (equilíbrio, integração, coração)
+- Data de hoje: ${dateKey}
+${intencao ? `- Intenção do dia: "${intencao}"` : '- Sem intenção específica — gere uma previsão padrão'}
+
+Gere uma leitura diária no seguinte formato JSON (sem markdown, sem backticks, apenas JSON puro):
+{
+  "clima": "Frase sobre o clima coletivo do dia (1-2 linhas)",
+  "canais": [
+    { "canal": "Astrologia", "titulo": "Título emocional (5-8 palavras)", "texto": "Texto da leitura (2-3 linhas, sem nomear signos ou planetas)" },
+    { "canal": "Numerologia", "titulo": "Título emocional", "texto": "Texto da leitura" },
+    { "canal": "Kabbalah", "titulo": "Título emocional", "texto": "Texto da leitura" },
+    { "canal": "The Pattern", "titulo": "Título emocional", "texto": "Texto da leitura" },
+    { "canal": "Tiferet", "titulo": "Título emocional", "texto": "Texto da leitura" }
+  ],
+  "espelho": "Frase final de síntese — Diego se reconhece nela (1-2 linhas)"
+}
+
+Regras absolutas:
+- Tom inspirado em The Pattern: direto, pessoal, sem autoajuda vazia
+- Sem travessão (—) em nenhum ponto
+- Sem jargão técnico astrológico (sem nomes de signos, planetas, casas)
+- Fala de Diego como pessoa, não como profissional ou gestor
+- Linguagem PT-BR`;
+
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1500,
+          messages: [{ role: 'user', content: prompt }],
+        }),
+      });
+
+      const data = await res.json();
+      const text = data.content?.[0]?.text || '';
+      const clean = text.replace(/```json|```/g, '').trim();
+      const parsed = JSON.parse(clean);
+      setLeitura(parsed);
+      lsSet(`oracle-leitura-${dateKey}`, parsed);
+    } catch (e) {
+      console.error(e);
+      alert('Erro ao gerar leitura. Verifique a API key ou tente novamente.');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div>
+      <div className="section-title">Oracle</div>
+      <div className="section-sub">Mestre Chalita · 5 Canais</div>
+
+      {showKey && (
+        <div className="card" style={{ borderColor: 'var(--gold3)' }}>
+          <div className="card-title">Chave Anthropic API</div>
+          <input
+            type="text"
+            placeholder="sk-ant-..."
+            value={apiKey}
+            onChange={(e) => { setApiKey(e.target.value); lsSet('oracle-apikey', e.target.value); }}
+            style={{ marginBottom: 10 }}
+          />
+          <button className="btn btn-primary" onClick={() => setShowKey(false)}>Salvar</button>
+        </div>
+      )}
+
+      <div className="card">
+        <div className="card-title">Intenção do Dia</div>
+        <textarea
+          rows={2}
+          placeholder="O que você traz para o Oracle hoje? (opcional)"
+          value={intencao}
+          onChange={(e) => salvarInt(e.target.value)}
+          style={{ marginBottom: 12 }}
+        />
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <button className="btn btn-primary" onClick={gerar} disabled={loading}>
+            {loading ? <><span className="spinner" style={{ marginRight: 6 }} />Gerando...</> : '✦ Gerar Leitura'}
+          </button>
+          {!apiKey && <button className="btn" onClick={() => setShowKey(true)}>Configurar API Key</button>}
+        </div>
+      </div>
+
+      {leitura && (
+        <>
+          {leitura.clima && (
+            <div style={{ padding: '12px 18px', background: '#0f0e0c', borderLeft: '2px solid var(--gold3)', marginBottom: 16, borderRadius: '0 4px 4px 0' }}>
+              <div style={{ fontSize: 10, color: 'var(--text3)', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 6 }}>Clima do Dia</div>
+              <div style={{ fontSize: 13, color: 'var(--text2)', lineHeight: 1.7 }}>{leitura.clima}</div>
+            </div>
+          )}
+
+          {leitura.canais?.map((c, i) => (
+            <div key={i} className="oracle-box">
+              <div className="oracle-channel">{c.canal}</div>
+              <div className="oracle-title">{c.titulo}</div>
+              <div className="oracle-text">{c.texto}</div>
+            </div>
+          ))}
+
+          {leitura.espelho && (
+            <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'Cormorant Garamond, serif', fontSize: 18, fontWeight: 300, color: 'var(--gold2)', fontStyle: 'italic', lineHeight: 1.6 }}>
+              "{leitura.espelho}"
+            </div>
+          )}
+        </>
+      )}
+
+      <hr className="divider" />
+      <div className="card">
+        <div className="card-title">Diário Noturno</div>
+        <textarea
+          rows={4}
+          placeholder="Como foi o dia? O que se confirmou ou surpreendeu..."
+          value={diario}
+          onChange={(e) => salvarDiario(e.target.value)}
+        />
+        <div style={{ fontSize: 11, color: 'var(--text3)', marginTop: 6 }}>Salvo automaticamente</div>
+      </div>
+    </div>
+  );
+}
+
+// ── ABA PROPOSITIVA ─────────────────────────────────────────────────────────
+
+function TabPropositiva() {
+  return (
+    <div>
+      <div className="section-title">ProPositiva</div>
+      <div className="section-sub">Sistema Operacional + Produto Vendável</div>
+
+      <div className="card">
+        <div className="card-title">7 Pilares</div>
+        {PILARES.map((p) => (
+          <div key={p.num} className="pilar-item">
+            <div className="pilar-num">{p.num}</div>
+            <div className="pilar-info">
+              <div className="pilar-name">{p.nome}</div>
+              <div className="pilar-desc">{p.desc}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="card">
+        <div className="card-title">Timeline 2026</div>
+        {[
+          { mes: 'Junho', cor: 'var(--gold)', itens: ['Mapear estrutura dos 7 pilares', 'Documentar casos Sala D\'Oro', 'Definir formato de entrega'] },
+          { mes: 'Julho', cor: 'var(--teal)', itens: ['Criar primeira oferta', 'Testar piloto com 1 cliente', 'Transformar documentos em método'] },
+          { mes: 'Agosto+', cor: 'var(--text3)', itens: ['Escalar', 'Plataforma / assinatura', 'Comunidade'] },
+        ].map((m) => (
+          <div key={m.mes} style={{ marginBottom: 16 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: m.cor, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 8 }}>{m.mes}</div>
+            {m.itens.map((it, i) => (
+              <div key={i} style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 13, color: 'var(--text2)', marginBottom: 4 }}>
+                <span style={{ color: m.cor, flexShrink: 0 }}>◦</span>{it}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      <div className="card">
+        <div className="card-title">Formatos Possíveis</div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+          {['Template', 'Manual', 'Mentoria', 'Implantação', 'Curso', 'Assinatura', 'Plataforma'].map((f) => (
+            <span key={f} className="tag tag-gold">{f}</span>
+          ))}
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-title">Regra de Ouro</div>
+        <div style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 18, fontWeight: 300, color: 'var(--gold2)', fontStyle: 'italic', lineHeight: 1.6 }}>
+          "Tudo que vira produto entra no ProPositiva."
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── ABA PRINCÍPIOS ──────────────────────────────────────────────────────────
+
+function TabPrincipios() {
+  const [open, setOpen] = useState(null);
+
+  return (
+    <div>
+      <div className="section-title">Princípios</div>
+      <div className="section-sub">Frameworks Operacionais</div>
+
+      {PRINCIPIOS.map((p, i) => (
+        <div key={i} className="card" style={{ cursor: 'pointer' }} onClick={() => setOpen(open === i ? null : i)}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div className="card-title" style={{ margin: 0 }}>{p.nome}</div>
+            <span style={{ color: 'var(--text3)', fontSize: 12 }}>{open === i ? '▲' : '▼'}</span>
+          </div>
+          {open === i && <div className="card-body" style={{ marginTop: 12 }}>{p.desc}</div>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── ABA IA ──────────────────────────────────────────────────────────────────
+
+function TabIA() {
+  return (
+    <div>
+      <div className="section-title">Time de IA</div>
+      <div className="section-sub">10 Agentes · Sistema Borgex</div>
+
+      <div className="card" style={{ marginBottom: 20 }}>
+        <div className="card-title">Regra de Operação</div>
+        <div className="card-body">Cada resposta identifica o agente principal. Agentes complementares são ativados quando o tema cruza domínios. Padrão: Chico quando o domínio é ambíguo.</div>
+      </div>
+
+      {AGENTES.map((a, i) => (
+        <div key={i} className="agent-card">
+          <div className="agent-header">
+            <span className="agent-icon">{a.icon}</span>
+            <div>
+              <div className="agent-name">{a.nome}</div>
+              <div className="agent-role">{a.role}</div>
+            </div>
+          </div>
+          <div className="agent-desc">{a.desc}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── APP PRINCIPAL ────────────────────────────────────────────────────────────
+
+function App() {
+  const [tab, setTab] = useState('hoje');
+
+  const renderTab = () => {
+    switch (tab) {
+      case 'hoje': return <TabHoje />;
+      case 'borgex': return <TabBorgex />;
+      case 'reset': return <TabReset />;
+      case 'oracle': return <TabOracle />;
+      case 'propositiva': return <TabPropositiva />;
+      case 'principios': return <TabPrincipios />;
+      case 'ia': return <TabIA />;
+      default: return null;
+    }
+  };
+
+  return (
+    <>
+      <div className="header">
+        <div className="header-logo">BORGEX OS</div>
+        <div className="header-date">{new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })}</div>
+      </div>
+      <div className="tabs">
+        {TABS.map((t) => (
+          <button key={t.id} className={`tab ${tab === t.id ? 'active' : ''}`} onClick={() => setTab(t.id)}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+      <div className="content">
+        {renderTab()}
+      </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
