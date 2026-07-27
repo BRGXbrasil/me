@@ -60,9 +60,14 @@ a{color:inherit;text-decoration:none}
 .card-link{display:block}
 
 .mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.mod-tile{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:4px}
+.mod-tile{border:1px solid transparent;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:4px;background:var(--track)}
 .mod-tile.wide{grid-column:1 / -1;flex-direction:row;align-items:center;gap:10px}
 .mod-tile.wide .mod-name{margin-right:auto}
+.mod-tile.money{background:color-mix(in srgb, var(--cat-corpo) 20%, var(--card))}
+.mod-tile.money .mod-glyph{color:var(--cat-corpo)}
+.mod-tile.reset{background:color-mix(in srgb, var(--cat-regen) 24%, var(--card))}
+.mod-tile.reset .mod-glyph{color:var(--cat-regen)}
+.mod-tile.goal{background:color-mix(in srgb, var(--accent) 16%, var(--card))}
 .mod-glyph{font-size:15px;color:var(--accent);font-family:Georgia,serif}
 .mod-name{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-soft)}
 .mod-value{font-size:13px;font-weight:600}
@@ -132,9 +137,9 @@ a{color:inherit;text-decoration:none}
 
 <main>
 
-  <section class="screen active" data-screen="hoje">
+  <section class="screen active" data-screen="dashboard">
     <div class="screen-head">
-      <div><p class="screen-kicker">home</p><h1>Qual é a melhor decisão agora?</h1></div>
+      <div><p class="screen-kicker">dashboard</p><h1>Qual é a melhor decisão agora?</h1></div>
       <div class="ring" style="--pct:67"><span>67</span></div>
     </div>
 
@@ -144,9 +149,9 @@ a{color:inherit;text-decoration:none}
     </a>
 
     <div class="mod-grid">
-      <a class="mod-tile card-link" href="standalone/BRGX Caixa.html"><span class="mod-glyph">$</span><span class="mod-name">Caixa</span><span class="mod-value">R$ 0,00</span></a>
-      <div class="mod-tile"><span class="mod-glyph">◐</span><span class="mod-name">Reset Mental</span><span class="mod-value">Sem detox ativo</span></div>
-      <a class="mod-tile wide card-link" href="standalone/BRGX Metas.html"><span class="mod-glyph">◎</span><span class="mod-name">Meta prioritária</span><span class="mod-value">Expansão — nova unidade · 30%</span></a>
+      <a class="mod-tile money card-link" href="standalone/BRGX Caixa.html"><span class="mod-glyph">$</span><span class="mod-name">Caixa</span><span class="mod-value">R$ 0,00</span></a>
+      <div class="mod-tile reset"><span class="mod-glyph">◐</span><span class="mod-name">Reset Mental</span><span class="mod-value">Sem detox ativo</span></div>
+      <a class="mod-tile goal wide card-link" href="standalone/BRGX Metas.html"><span class="mod-glyph">◎</span><span class="mod-name">Meta prioritária</span><span class="mod-value">Expansão — nova unidade · 30%</span></a>
     </div>
 
     <p class="section-label">Hábitos · 0/9</p>
@@ -226,7 +231,7 @@ a{color:inherit;text-decoration:none}
 </main>
 
 <nav class="tabbar" id="tabbar">
-  <button class="tab active" data-tab="hoje"><span class="tglyph">◉</span><span>Hoje</span></button>
+  <button class="tab active" data-tab="dashboard"><span class="tglyph">◉</span><span>Dashboard</span></button>
   <a class="tab" href="standalone/BRGX Habitos.html"><span class="tglyph">✓</span><span>Hábitos</span></a>
   <a class="tab" href="standalone/BRGX Metas.html"><span class="tglyph">◎</span><span>Metas</span></a>
   <a class="tab" href="standalone/BRGX Oracle.html"><span class="tglyph">✦</span><span>Oráculo</span></a>
@@ -262,7 +267,7 @@ a{color:inherit;text-decoration:none}
     btn.addEventListener('click', function(){
       tabs.forEach(function(t){ if(t.dataset.tab) t.classList.toggle('active', t===btn); });
       screens.forEach(function(s){
-        var show = (btn.dataset.tab==='hoje' && s.dataset.screen==='hoje') || (btn.dataset.tab==='mais' && s.id==='sheet-mais');
+        var show = (btn.dataset.tab==='dashboard' && s.dataset.screen==='dashboard') || (btn.dataset.tab==='mais' && s.id==='sheet-mais');
         s.classList.toggle('active', show);
         s.classList.toggle('open', show);
       });
