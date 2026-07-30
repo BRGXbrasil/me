@@ -19,6 +19,17 @@
   </noscript>
 </head>
 <body>
+<script>
+(function(){
+  if (localStorage.getItem('brgx-metas-goals') === null) {
+    localStorage.setItem('brgx-metas-goals', "[{\"id\": \"g1\", \"t\": \"Planejar leitura anual\", \"prazo\": \"2026-12-31\", \"pct\": 0, \"nota\": \"Meta 15 livros at\u00e9 31/12/2026\"}]");
+  }
+  if (localStorage.getItem('brgx-metas-checks') === null) {
+    localStorage.setItem('brgx-metas-checks', "[{\"id\": \"c1\", \"t\": \"Livro atual: vermelho (Jung) \u2014 continuar leitura\", \"done\": false}, {\"id\": \"c2\", \"t\": \"Cotar depila\u00e7\u00e3o a laser da barba\", \"done\": false}, {\"id\": \"c3\", \"t\": \"Cotar peeling e microagulhamento (ambos procedimentos)\", \"done\": false}, {\"id\": \"c4\", \"t\": \"Cotar capa de chuva no Mercado Livre \u2014 pesquisar e comprar\", \"done\": false}, {\"id\": \"c5\", \"t\": \"Tosa 75 \u2014 pagamento/registro\", \"done\": false}, {\"id\": \"c6\", \"t\": \"G2 \u2014 comprar perfume\", \"done\": false}]");
+  }
+})();
+</script>
+
   <div id="__bundler_thumbnail">
   <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
     <rect width="1200" height="800" fill="#f6f2e9"></rect>
