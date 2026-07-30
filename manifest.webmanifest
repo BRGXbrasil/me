@@ -1,10 +1,11 @@
 {
   "name": "BRGX",
   "short_name": "BRGX",
-  "start_url": "/",
+  "start_url": ".",
+  "scope": ".",
   "display": "standalone",
-  "background_color": "#07070A",
-  "theme_color": "#07070A",
+  "background_color": "#efece5",
+  "theme_color": "#efece5",
   "icons": [
     {
       "src": "icon-192.png",
