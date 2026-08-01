@@ -1,7 +1,7 @@
 {
-  "name": "brgx-self",
+  "name": "brgxbrasil-me",
   "private": true,
   "dependencies": {
-    "@netlify/blobs": "^8.1.0"
+    "@githubpage/blobs": "^8.1.0"
   }
 }
