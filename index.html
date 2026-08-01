@@ -61,6 +61,9 @@ a{color:inherit;text-decoration:none;cursor:pointer}
 .reset-card{display:flex;gap:12px;align-items:flex-start;background:var(--track);border:1px dashed var(--ink-soft);border-radius:16px;padding:14px;opacity:.85} .reset-title{margin:0 0 3px;font-size:13px;font-weight:700} .reset-sub{margin:0;font-size:11.5px;line-height:1.45;color:var(--ink-soft)}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:9;display:flex;justify-content:space-around;align-items:center;padding:8px 6px calc(6px + env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--line);} .tab{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;font-family:inherit;color:var(--ink-soft);font-size:9.5px;font-weight:600;padding:4px 6px;cursor:pointer;flex:1;max-width:90px} .tglyph{font-size:19px;font-family:Newsreader,serif;line-height:1} .tab.active{color:var(--accent)}
 
+.habit-group{display:flex;flex-direction:column;gap:8px;margin-top:10px}.habit-group:first-child{margin-top:0}.section-label{margin:0;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft)}
+.info-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}.info-item{padding:10px 12px;border-radius:12px;background:var(--track);border:1px solid var(--line);font-size:12.5px;line-height:1.45;color:var(--ink)}
+.mod-grid3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
 .oracle-result { margin-top: 15px; font-style: italic; color: var(--ink); font-family: Newsreader, serif; font-size: 15px; line-height: 1.5; padding: 15px; background: var(--track); border-radius: 12px; text-align: center;}
 </style>
 </head>
@@ -121,6 +124,7 @@ a{color:inherit;text-decoration:none;cursor:pointer}
         <div class="mod3 nav-btn" data-target="habitos"><span class="mod3-badge">✓</span><span class="mod3-name">Hábitos</span></div>
         <div class="mod3 nav-btn" data-target="metas"><span class="mod3-badge">◎</span><span class="mod3-name">Metas</span></div>
         <div class="mod3 nav-btn" data-target="oracle"><span class="mod3-badge">✦</span><span class="mod3-name">Oráculo</span></div>
+        <div class="mod3 nav-btn" data-target="recamier"><span class="mod3-badge">♦</span><span class="mod3-name">Recamier</span></div>
       </div>
     </div>
   </section>
@@ -160,7 +164,33 @@ a{color:inherit;text-decoration:none;cursor:pointer}
   <!-- === TELA: METAS === -->
   <section class="screen" data-screen="metas">
     <div class="greet"><p class="eyebrow">Planejamento</p><h1>Metas</h1></div>
-    <div class="card"><p class="insight-text">Conexão com o Firebase RTDB estabelecida.</p></div>
+    <div class="card">
+      <p class="insight-tag">Prioridades da semana</p>
+      <p class="insight-text">O plano agora combina foco, recuperação e execução em bloco.</p>
+      <div class="info-list">
+        <div class="info-item"><strong>Meta 1:</strong> fechar as 3 prioridades maiores até sexta.</div>
+        <div class="info-item"><strong>Meta 2:</strong> manter a rotina de sono e movimento sem perder o ritmo.</div>
+        <div class="info-item"><strong>Meta 3:</strong> revisar o orçamento e o estado emocional no fim de semana.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- === TELA: RECAMIER === -->
+  <section class="screen" data-screen="recamier">
+    <div class="greet"><p class="eyebrow">Acolhimento e presença</p><h1>Recamier</h1></div>
+    <div class="card">
+      <p class="insight-tag">Fluxo de cuidado</p>
+      <p class="insight-text">Este módulo reúne o ritual de acolhimento, a sequência de presença e o próximo ponto de atenção.</p>
+      <div class="info-list">
+        <div class="info-item">Respirar fundo, reduzir ruído mental e escolher uma ação simples antes de seguir.</div>
+        <div class="info-item">Anotar o que precisa ser resolvido hoje e o que pode esperar até amanhã.</div>
+        <div class="info-item">Fechar o dia com um gesto de cuidado físico, emocional e operacional.</div>
+      </div>
+      <div class="btn-row">
+        <a class="mini-btn solid" href="standalone/BRGX Recamier.html" target="_blank" rel="noopener">Abrir Recamier</a>
+        <a class="mini-btn" href="standalone/BRGX Hub.html" target="_blank" rel="noopener">Abrir Hub</a>
+      </div>
+    </div>
   </section>
 
   <!-- === ABA: MAIS === -->
@@ -170,6 +200,21 @@ a{color:inherit;text-decoration:none;cursor:pointer}
       <div class="row">
         <span class="row-glyph">⚙</span>
         <div class="row-body"><span class="row-title">Tema</span><span class="row-sub">Light e Acqua — alterne no topo</span></div>
+      </div>
+      <div class="row">
+        <span class="row-glyph">◉</span>
+        <div class="row-body"><span class="row-title">Caixa</span><span class="row-sub">Painel financeiro e fluxo do dia</span></div>
+        <a class="mini-btn" href="standalone/BRGX Caixa.html" target="_blank" rel="noopener">Abrir</a>
+      </div>
+      <div class="row">
+        <span class="row-glyph">✦</span>
+        <div class="row-body"><span class="row-title">Oráculo</span><span class="row-sub">Leituras diárias por canal</span></div>
+        <a class="mini-btn" href="standalone/BRGX Oracle.html" target="_blank" rel="noopener">Abrir</a>
+      </div>
+      <div class="row">
+        <span class="row-glyph">♦</span>
+        <div class="row-body"><span class="row-title">Recamier</span><span class="row-sub">Ritual de acolhimento e presença</span></div>
+        <a class="mini-btn" href="standalone/BRGX Recamier.html" target="_blank" rel="noopener">Abrir</a>
       </div>
     </div>
   </section>
@@ -181,36 +226,60 @@ a{color:inherit;text-decoration:none;cursor:pointer}
   <button class="tab" data-tab="habitos"><span class="tglyph">✓</span><span>Hábitos</span></button>
   <button class="tab" data-tab="metas"><span class="tglyph">◎</span><span>Metas</span></button>
   <button class="tab" data-tab="oracle"><span class="tglyph">✦</span><span>Oráculo</span></button>
+  <button class="tab" data-tab="recamier"><span class="tglyph">♦</span><span>Recamier</span></button>
   <button class="tab" data-tab="mais"><span class="tglyph" style="font-size:15px">•••</span><span>Mais</span></button>
 </nav>
 
-<!-- LÓGICA DE FUNCIONAMENTO (FIREBASE REALTIME DATABASE) -->
+<!-- LÓGICA DE FUNCIONAMENTO (FIREBASE REALTIME DATABASE + FALLBACK LOCAL) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // === 1. FIREBASE CONFIG ===
-  // Importante: Você ainda precisa inserir sua apiKey gerada lá no painel do Firebase.
   const firebaseConfig = {
-    apiKey: "COLE_SUA_API_KEY_AQUI", 
+    apiKey: "COLE_SUA_API_KEY_AQUI",
     databaseURL: "https://brgx-brasil-default-rtdb.firebaseio.com/",
     projectId: "brgx-brasil"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+  let db = null;
+  let firebaseReady = false;
+  try {
+    const app = initializeApp(firebaseConfig);
+    db = getDatabase(app);
+    firebaseReady = Boolean(firebaseConfig.apiKey && firebaseConfig.apiKey !== 'COLE_SUA_API_KEY_AQUI');
+  } catch (error) {
+    console.warn('Firebase indisponível, usando armazenamento local.', error);
+  }
 
-  // === 2. INTERFACE BÁSICA (Data, Tema, Tabs) ===
   const DIAS = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
   const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
   const dataAtual = new Date();
-  
-  // Data Header
-  const dateStr = `${DIAS[dataAtual.getDay()]}, ${dataAtual.getDate()} de ${MESES[dataAtual.getMonth()]}`;
-  document.getElementById('dateLine').textContent = dateStr;
-  document.getElementById('dateEyebrow').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+  const strDataHoje = `${dataAtual.getFullYear()}-${dataAtual.getMonth() + 1}-${dataAtual.getDate()}`;
 
-  // Semana do Ano (ISO 8601 - Correção Matemática)
+  const storageKeys = {
+    theme: 'brgx-self-theme',
+    habits: 'brgx-self-habits-v2',
+    oracle: 'brgx-self-oracle-v2'
+  };
+
+  function readStorageJson(key, fallback) {
+    try {
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (error) {
+      console.warn('Falha ao ler storage', key, error);
+      return fallback;
+    }
+  }
+
+  function writeStorageJson(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.warn('Falha ao salvar storage', key, error);
+    }
+  }
+
   function getWeekNumber(d) {
     const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     const dayNum = date.getUTCDay() || 7;
@@ -218,15 +287,32 @@ a{color:inherit;text-decoration:none;cursor:pointer}
     const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
     return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
   }
+
+  function getHabitsState() {
+    const storage = readStorageJson(storageKeys.habits, {});
+    return storage[strDataHoje] || {};
+  }
+
+  function saveHabitsState(state) {
+    const storage = readStorageJson(storageKeys.habits, {});
+    storage[strDataHoje] = state;
+    writeStorageJson(storageKeys.habits, storage);
+    if (firebaseReady && db) {
+      set(ref(db, `habitos/${strDataHoje}`), state).catch(() => {});
+    }
+  }
+
+  const dateStr = `${DIAS[dataAtual.getDay()]}, ${dataAtual.getDate()} de ${MESES[dataAtual.getMonth()]}`;
+  document.getElementById('dateLine').textContent = dateStr;
+  document.getElementById('dateEyebrow').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
   document.getElementById('week-display').textContent = `Semana ${getWeekNumber(dataAtual)}`;
 
-  // Tema
   const root = document.documentElement;
-  const savedTheme = localStorage.getItem('brgx-self-theme');
-  if(savedTheme === 'acqua'){
-    root.setAttribute('data-brgx-theme','acqua');
-    document.querySelectorAll('.t-opt').forEach(b => { 
-      b.classList.toggle('active', b.dataset.theme === 'acqua'); 
+  const savedTheme = localStorage.getItem(storageKeys.theme);
+  if (savedTheme === 'acqua') {
+    root.setAttribute('data-brgx-theme', 'acqua');
+    document.querySelectorAll('.t-opt').forEach(b => {
+      b.classList.toggle('active', b.dataset.theme === 'acqua');
     });
   }
   document.querySelectorAll('.t-opt').forEach(btn => {
@@ -234,14 +320,13 @@ a{color:inherit;text-decoration:none;cursor:pointer}
       document.querySelectorAll('.t-opt').forEach(o => o.classList.remove('active'));
       btn.classList.add('active');
       root.setAttribute('data-brgx-theme', btn.dataset.theme);
-      localStorage.setItem('brgx-self-theme', btn.dataset.theme);
+      localStorage.setItem(storageKeys.theme, btn.dataset.theme);
     });
   });
 
-  // Navegação
   function openScreen(targetScreen) {
-    document.querySelectorAll('#tabbar .tab').forEach(t => { 
-      t.classList.toggle('active', t.dataset.tab === targetScreen); 
+    document.querySelectorAll('#tabbar .tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.tab === targetScreen);
     });
     document.querySelectorAll('main .screen').forEach(s => {
       const show = s.dataset.screen === targetScreen;
@@ -256,102 +341,137 @@ a{color:inherit;text-decoration:none;cursor:pointer}
     btn.addEventListener('click', () => openScreen(btn.dataset.target));
   });
 
-  // === 3. ORÁCULO COM SEED MATEMÁTICA ===
-  // Garante eliminação de repetições e fixa o resultado por dia e canal
-  function pseudoRandomBySeed(seed) {
-    let x = Math.sin(seed++) * 10000;
-    return x - Math.floor(x);
+  const ORACLE_DECKS = {
+    IChing: [
+      'Ação necessária. O momento pede movimento claro e focado.',
+      'Pausa e reflexão. Aguarde a poeira baixar antes de decidir.',
+      'Fluidez. Aceite o curso natural dos eventos hoje.',
+      'Estrutura. Organize as bases antes de expandir.',
+      'Desapego. Solte o que não serve mais para abrir espaço.',
+      'Conexão. A resposta está em reforçar o que já faz sentido.'
+    ],
+    Tarot: [
+      'Mudança em andamento. Você não precisa controlar tudo, só escolher o próximo passo.',
+      'Cuidado com excesso de pressão. Uma pausa simples já reequilibra.',
+      'Uma oportunidade aparece onde menos se espera. Fique atento.',
+      'A verdade do momento é simples: clareza é melhor do que ansiedade.',
+      'Hoje pede presença e menos análise. Siga o que faz sentido no corpo.'
+    ],
+    Runas: [
+      'Força. A energia disponível é suficiente para avançar com firmeza.',
+      'Sabedoria. O melhor caminho é o mais honesto e menos impulsivo.',
+      'Mudança. Não force, apenas acompanhe a direção que já está se abrindo.',
+      'Proteção. Cuidado com dispersão e com o que consome sua atenção.',
+      'Renovação. O descanso também faz parte da estratégia.'
+    ]
+  };
+
+  function hashString(value) {
+    let hash = 0;
+    for (let i = 0; i < value.length; i += 1) {
+      hash = (hash << 5) - hash + value.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash);
   }
 
   function gerarOraculo(canal) {
     const out = document.getElementById('oracle-output');
     out.style.display = 'block';
-    
-    // Calcula a Seed Diária: Ex: 20260801 + (1, 2 ou 3 dependendo do canal)
-    const seedData = (dataAtual.getFullYear() * 10000) + ((dataAtual.getMonth() + 1) * 100) + dataAtual.getDate();
-    const canaisValor = { 'IChing': 1, 'Tarot': 2, 'Runas': 3 };
-    const seedFinal = seedData + canaisValor[canal];
-    
-    // Resultados simulados (Você pode substituir pelos arrays reais das 64 opções do I Ching, etc)
-    const respostas = [
-      "Ação necessária. O momento exige movimento claro e focado.",
-      "Pausa e reflexão. Aguarde a poeira baixar antes de decidir.",
-      "Fluidez. Aceite o curso natural dos eventos hoje.",
-      "Estrutura. Organize as bases antes de expandir.",
-      "Desapego. Solte o que não serve mais para abrir espaço."
-    ];
-    
-    const index = Math.floor(pseudoRandomBySeed(seedFinal) * respostas.length);
-    out.textContent = `[ ${canal} ] — ${respostas[index]}`;
+    const storage = readStorageJson(storageKeys.oracle, {});
+    const key = `${dataAtual.getFullYear()}-${dataAtual.getMonth() + 1}-${dataAtual.getDate()}:${canal}`;
+    if (storage[key]) {
+      out.textContent = `[ ${canal} ] — ${storage[key]}`;
+      return;
+    }
+    const pool = ORACLE_DECKS[canal] || ORACLE_DECKS.IChing;
+    const index = hashString(key) % pool.length;
+    const message = pool[index];
+    storage[key] = message;
+    writeStorageJson(storageKeys.oracle, storage);
+    out.textContent = `[ ${canal} ] — ${message}`;
   }
 
   document.getElementById('btn-iching').addEventListener('click', () => gerarOraculo('IChing'));
   document.getElementById('btn-tarot').addEventListener('click', () => gerarOraculo('Tarot'));
   document.getElementById('btn-runas').addEventListener('click', () => gerarOraculo('Runas'));
 
-  // === 4. SINCRONIZAÇÃO DE HÁBITOS (RTDB) ===
   const habitosBase = [
-    { id: 'h1', nome: 'Água com limão' },
-    { id: 'h2', nome: 'Suplemento diário' },
-    { id: 'h3', nome: 'Treino / alongamento' },
-    { id: 'h4', nome: 'Meditação' },
-    { id: 'h5', nome: 'Estudo' },
-    { id: 'h6', nome: 'Escrita' },
-    { id: 'h7', nome: 'Leitura' },
-    { id: 'h8', nome: 'Exposição solar' },
-    { id: 'h9', nome: 'Máscara facial' }
+    { id: 'h1', nome: 'Água com limão', group: 'daily' },
+    { id: 'h2', nome: 'Suplemento diário', group: 'daily' },
+    { id: 'h3', nome: 'Treino / alongamento', group: 'daily' },
+    { id: 'h4', nome: 'Meditação', group: 'daily' },
+    { id: 'h5', nome: 'Estudo', group: 'daily' },
+    { id: 'h6', nome: 'Escrita', group: 'daily' },
+    { id: 'h7', nome: 'Leitura', group: 'daily' },
+    { id: 'h8', nome: 'Exposição solar', group: 'daily' },
+    { id: 'h9', nome: 'Máscara facial', group: 'daily' },
+    { id: 'h10', nome: 'Organização da semana', group: 'weekly', label: 'Semana', hint: 'Segunda' },
+    { id: 'h11', nome: 'Planejamento do fim de semana', group: 'weekly', label: 'Semana', hint: 'Sexta' },
+    { id: 'h12', nome: 'Review semanal', group: 'weekly', label: 'Semana', hint: 'Domingo' },
+    { id: 'h13', nome: 'Descanso ativo', group: 'weekend', label: 'Fim de semana', hint: 'Sábado' },
+    { id: 'h14', nome: 'Ritual de sábado', group: 'weekend', label: 'Fim de semana', hint: 'Sábado' },
+    { id: 'h15', nome: 'Ritual de domingo', group: 'weekend', label: 'Fim de semana', hint: 'Domingo' }
   ];
 
-  const strDataHoje = `${dataAtual.getFullYear()}-${dataAtual.getMonth() + 1}-${dataAtual.getDate()}`;
-  const habitosRef = ref(db, `habitos/${strDataHoje}`);
+  function getVisibleHabits() {
+    const day = dataAtual.getDay();
+    return habitosBase.filter(habito => {
+      if (habito.group === 'daily') return true;
+      if (habito.group === 'weekly') return [1, 5, 0].includes(day);
+      if (habito.group === 'weekend') return [6, 0].includes(day);
+      return false;
+    });
+  }
 
-  // Escuta os dados em tempo real
-  onValue(habitosRef, (snapshot) => {
-    const dados = snapshot.val() || {};
-    let concluidos = 0;
-    
+  function renderHabits() {
+    const dados = getHabitsState();
+    const visibleHabits = getVisibleHabits();
+    const groups = [
+      { title: 'Hoje', items: visibleHabits.filter(h => h.group === 'daily') },
+      { title: 'Semana', items: visibleHabits.filter(h => h.group === 'weekly') },
+      { title: 'Fim de semana', items: visibleHabits.filter(h => h.group === 'weekend') }
+    ].filter(group => group.items.length);
+
     const containerDash = document.getElementById('habitos-dash-container');
     const containerFull = document.getElementById('habitos-full-container');
     containerDash.innerHTML = '';
     containerFull.innerHTML = '';
 
-    habitosBase.forEach(habito => {
-      const isDone = !!dados[habito.id];
-      if (isDone) concluidos++;
-
-      const html = `<span class="chip ${isDone ? 'done' : ''}" data-id="${habito.id}">
-                      <span class="dot"></span><span class="name">${habito.nome}</span>
-                    </span>`;
-      
-      containerDash.insertAdjacentHTML('beforeend', html);
-      containerFull.insertAdjacentHTML('beforeend', html);
+    groups.forEach(group => {
+      const groupHtml = `<div class="habit-group"><p class="section-label">${group.title}</p><div class="habit-chips">${group.items.map(habito => {
+        const isDone = !!dados[habito.id];
+        return `<span class="chip ${isDone ? 'done' : ''}" data-id="${habito.id}"><span class="dot"></span><span class="name">${habito.nome}</span></span>`;
+      }).join('')}</div></div>`;
+      containerDash.insertAdjacentHTML('beforeend', groupHtml);
+      containerFull.insertAdjacentHTML('beforeend', groupHtml);
     });
 
-    // Atualiza Textos
-    document.getElementById('habitos-label-dash').textContent = `Hábitos · ${concluidos}/${habitosBase.length}`;
-    
-    // Atualiza o Herói (Dashboard Score)
-    const pct = Math.round((concluidos / habitosBase.length) * 100) || 0;
+    const concluidos = visibleHabits.filter(habito => !!dados[habito.id]).length;
+    const pct = Math.round((concluidos / visibleHabits.length) * 100) || 0;
+
+    document.getElementById('habitos-label-dash').textContent = `Hábitos · ${concluidos}/${visibleHabits.length}`;
     document.getElementById('score-display').textContent = `${pct}%`;
     document.getElementById('score-circle').style.strokeDashoffset = 263.9 - (263.9 * pct) / 100;
-    
-    let msg = "Tudo parado. Hora de começar.";
-    if (pct > 30) msg = "No caminho, falta empurrar.";
-    if (pct > 70) msg = "Ótimo ritmo, quase lá.";
-    if (pct === 100) msg = "Dia dominado. Excelente!";
+
+    let msg = 'Tudo parado. Hora de começar.';
+    if (pct > 30) msg = 'No caminho, falta empurrar.';
+    if (pct > 70) msg = 'Ótimo ritmo, quase lá.';
+    if (pct === 100) msg = 'Dia dominado. Excelente!';
     document.getElementById('score-text').textContent = msg;
 
-    // Adiciona interatividade para marcar/desmarcar ao tocar (salvando na nuvem)
     document.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', (e) => {
-        const hId = e.currentTarget.dataset.id;
-        const novoStatus = !dados[hId]; // inverte o status atual
-        
-        // Envia direto pro Firebase (que acionará o onValue automaticamente em todas as telas conectadas)
-        set(ref(db, `habitos/${strDataHoje}/${hId}`), novoStatus);
+      chip.addEventListener('click', () => {
+        const hId = chip.dataset.id;
+        const state = getHabitsState();
+        state[hId] = !state[hId];
+        saveHabitsState(state);
+        renderHabits();
       });
     });
-  });
+  }
+
+  renderHabits();
 
 </script>
 </body>
