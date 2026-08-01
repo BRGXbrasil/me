@@ -359,10 +359,35 @@
         };
 
         // Estado do aplicativo
-        let transacoes = JSON.parse(localStorage.getItem('brgx_caixa_data')) || [];
+        let transacoes = [];
+
+        async function delayNetwork() {
+            return new Promise(resolve => setTimeout(resolve, 30));
+        }
+
+        async function fetchStorageData(key, fallback) {
+            try {
+                await delayNetwork();
+                const raw = localStorage.getItem(key);
+                return raw ? JSON.parse(raw) : fallback;
+            } catch (error) {
+                console.warn('Falha ao carregar dados do caixa', error);
+                return fallback;
+            }
+        }
+
+        async function saveStorageData(key, value) {
+            try {
+                await delayNetwork();
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (error) {
+                console.warn('Falha ao salvar dados do caixa', error);
+            }
+        }
 
         // Inicialização
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            transacoes = await fetchStorageData('brgx_caixa_data', []);
             atualizarCategorias();
             renderizarInterface();
         });
@@ -391,7 +416,7 @@
             return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
         }
 
-        function adicionarLancamento(e) {
+        async function adicionarLancamento(e) {
             e.preventDefault();
 
             const tipo = document.getElementById('input-tipo').value;
@@ -418,7 +443,7 @@
             };
 
             transacoes.push(novaTransacao);
-            salvarDados();
+            await salvarDados();
             renderizarInterface();
             
             // Limpar formulário (mantendo o tipo)
@@ -427,26 +452,26 @@
             document.getElementById('input-descricao').focus();
         }
 
-        function removerLancamento(id) {
+        async function removerLancamento(id) {
             if(confirm('Tem certeza que deseja apagar este lançamento?')) {
                 transacoes = transacoes.filter(t => t.id !== id);
-                salvarDados();
+                await salvarDados();
                 renderizarInterface();
             }
         }
 
-        function limparDados() {
+        async function limparDados() {
             if(confirm('ATENÇÃO: Isso vai apagar TODOS os dados do caixa. Deseja continuar?')) {
                 transacoes = [];
-                salvarDados();
+                await salvarDados();
                 renderizarInterface();
                 // Desmarca os checkboxes das atividades
                 document.querySelectorAll('.activity-list input[type="checkbox"]').forEach(cb => cb.checked = false);
             }
         }
 
-        function salvarDados() {
-            localStorage.setItem('brgx_caixa_data', JSON.stringify(transacoes));
+        async function salvarDados() {
+            await saveStorageData('brgx_caixa_data', transacoes);
         }
 
         function renderizarInterface() {

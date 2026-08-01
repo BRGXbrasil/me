@@ -294,19 +294,47 @@ a{color:inherit;text-decoration:none}
   document.getElementById('dateEyebrow').textContent = dateStr.charAt(0).toUpperCase()+dateStr.slice(1);
 
   var root=document.documentElement;
-  var saved=localStorage.getItem('brgx-self-theme');
-  if(saved==='acqua'){
-    root.setAttribute('data-brgx-theme','acqua');
-    document.querySelectorAll('.t-opt').forEach(function(b){ b.classList.toggle('active', b.dataset.theme==='acqua'); b.setAttribute('aria-selected', b.dataset.theme==='acqua'?'true':'false'); });
+
+  async function delayNetwork() {
+    return new Promise(resolve => setTimeout(resolve, 30));
   }
-  document.querySelectorAll('.t-opt').forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.querySelectorAll('.t-opt').forEach(function(o){ o.classList.remove('active'); o.setAttribute('aria-selected','false'); });
-      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
-      root.setAttribute('data-brgx-theme', btn.dataset.theme);
-      localStorage.setItem('brgx-self-theme', btn.dataset.theme);
+
+  async function readStorageItem(key, fallback) {
+    try {
+      await delayNetwork();
+      var raw = localStorage.getItem(key);
+      return raw === null ? fallback : raw;
+    } catch (error) {
+      console.warn('Falha ao ler tema', error);
+      return fallback;
+    }
+  }
+
+  async function writeStorageItem(key, value) {
+    try {
+      await delayNetwork();
+      localStorage.setItem(key, value);
+    } catch (error) {
+      console.warn('Falha ao salvar tema', error);
+    }
+  }
+
+  (async function(){
+    var saved=await readStorageItem('brgx-self-theme', 'light');
+    if(saved==='acqua'){
+      root.setAttribute('data-brgx-theme','acqua');
+      document.querySelectorAll('.t-opt').forEach(function(b){ b.classList.toggle('active', b.dataset.theme==='acqua'); b.setAttribute('aria-selected', b.dataset.theme==='acqua'?'true':'false'); });
+    }
+
+    document.querySelectorAll('.t-opt').forEach(function(btn){
+      btn.addEventListener('click', async function(){
+        document.querySelectorAll('.t-opt').forEach(function(o){ o.classList.remove('active'); o.setAttribute('aria-selected','false'); });
+        btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+        root.setAttribute('data-brgx-theme', btn.dataset.theme);
+        await writeStorageItem('brgx-self-theme', btn.dataset.theme);
+      });
     });
-  });
+  })();
 
   var tabs=document.querySelectorAll('#tabbar .tab');
   var screens=document.querySelectorAll('main .screen, main .sheet');
