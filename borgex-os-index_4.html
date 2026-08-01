@@ -406,24 +406,12 @@ const FASES_RESET = [
 
 const KPIS = ['Energia','Sono','Clareza','Humor','Irritabilidade','Presença','Disciplina','Foco','Recuperação'];
 
-const PILARES = [
-  { num: '1', nome: 'Diagnóstico', desc: 'O que tem, o que falta, onde perde dinheiro / tempo / cliente' },
-  { num: '2', nome: 'Organização', desc: 'Drive, documentos, rotina, setores, responsáveis' },
-  { num: '3', nome: 'Operação', desc: 'POPs, cronogramas, ocorrências, auditoria, padrão' },
-  { num: '4', nome: 'Atendimento e Comercial', desc: 'Recepção, WhatsApp, CRM, ativações, retenção' },
-  { num: '5', nome: 'Performance', desc: 'Indicadores, profissionais, metas, relatórios, plano de ação' },
-  { num: '6', nome: 'Liderança', desc: 'Reuniões, feedbacks, cultura, responsáveis, correção de rota' },
-  { num: '7', nome: 'Produto', desc: 'Nome, público, oferta, formato, preço, entrega, prova' },
-];
-
 const PRINCIPIOS = [
   { nome: 'Lei de Parkinson', desc: 'O trabalho se expande até ocupar o tempo disponível. Reduza o tempo e aumente o resultado.' },
   { nome: 'Flow State', desc: 'Produção de pico acontece no equilíbrio entre desafio e capacidade. Blocos de 90 minutos sem interrupção.' },
   { nome: 'P.A.R.A.', desc: 'Projetos / Áreas / Recursos / Arquivo. Toda informação cabe em uma dessas categorias.' },
   { nome: 'Matriz de Eisenhower', desc: 'Urgente + Importante: executa. Importante: agenda. Urgente: delega. Nenhum dos dois: elimina.' },
   { nome: 'Anti-Visão', desc: 'Defina com clareza quem você não quer ser e como não quer viver. Clareza negativa direciona melhor.' },
-  { nome: 'Liderança Propositiva', desc: '"Lidero para organizar, não carregar." Organizar, nomear problemas, sustentar limites sem sobrecarga emocional.' },
-];
 
 const AGENTES = [
   { icon: '⬡', nome: 'Chico', role: 'Coordenador Geral', desc: 'Orquestra os demais agentes. Ativado quando o domínio é ambíguo ou o tema cruza múltiplas frentes.' },
@@ -478,9 +466,6 @@ const TABS = [
   { id: 'borgex', label: '◈ BORGEX' },
   { id: 'reset', label: '🔄 Reset' },
   { id: 'oracle', label: '✦ Oracle' },
-  { id: 'propositiva', label: '◇ ProPositiva' },
-  { id: 'principios', label: '✧ Princípios' },
-  { id: 'ia', label: '⬡ IA' },
 ];
 
 // ── ABA HOJE ────────────────────────────────────────────────────────────────
@@ -576,8 +561,6 @@ function TabBorgex() {
     <div>
       <div className="section-title">BORGEX</div>
       <div className="section-sub">Sistema de hábitos · Ciclo semanal</div>
-      <Tier cat="cons" label="Consolidado — Automático" color="var(--teal)" items={HABITOS.consolidado} />
-      <Tier cat="avanc" label="Consolidação Avançada" color="var(--gold)" items={HABITOS.avancado} />
       <Tier cat="prog" label="Em Progresso" color="#c08040" items={HABITOS.progresso} />
       <Tier cat="baixa" label="Frequência Baixa" color="var(--text3)" items={HABITOS.baixa} />
       <Tier cat="sem" label="Semanal" color="#7060a0" items={HABITOS.semanal} />
@@ -684,9 +667,9 @@ function TabOracle() {
 
 Dados do consultante — Diego:
 - Nascimento: 30/03/1989, 8h05, Rio Bonito, RJ
-- Sol em Áries, Ascendente em Touro, Lua em Câncer
+- Sol em Áries, Ascendente em Touro, Lua em Capricornio
 - Caminho de Vida 33/6
-- Sefirot natal: Tiferet (equilíbrio, integração, coração)
+- Sefirot emanação natal: Tiferet (equilíbrio, integração, coração)
 - Data de hoje: ${dateKey}
 ${intencao ? `- Intenção do dia: "${intencao}"` : '- Sem intenção específica — gere uma previsão padrão'}
 
@@ -739,7 +722,7 @@ Regras absolutas:
 
   return (
     <div>
-      <div className="section-title">Oracle</div>
+      <div className="section-title">Oracúlo</div>
       <div className="section-sub">Mestre Chalita · 5 Canais</div>
 
       {showKey && (
