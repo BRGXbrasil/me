@@ -1,478 +1,587 @@
-<!doctype html>
-<html lang="pt-BR" data-brgx-theme="light">
+<!DOCTYPE html>
+<html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#efece5" />
-<link rel="manifest" href="manifest.webmanifest" />
-<link rel="apple-touch-icon" href="icon-192.png" />
-<title>BRGX - App Unificado</title>
-<style>
-/* CSS ORIGINAL MANTIDO */
-:root{
-  --bg:#efece5; --ink:#1c1a16; --ink-soft:#8a8471; --line:rgba(28,26,22,0.08);
-  --accent:#9c3b3b; --accent2:#c9793f; --gold:#c9a24c; --card:#ffffff; --track:#e6e1d1;
-  --good:#4f7a5c; --good-soft:rgba(79,122,92,0.12); --danger:#a6503f; --danger-soft:rgba(166,80,63,0.1);
-  --accent-soft:rgba(156,59,59,0.1); --hero-dark:#241b1b;
-}
-html[data-brgx-theme="acqua"]{
-  --bg:#eaf6f7; --ink:#1c383c; --ink-soft:#5f868c; --line:rgba(28,56,60,0.1);
-  --accent:#1f8fb8; --accent2:#3fa0c9; --gold:#4cb0a3; --card:#ffffff; --track:#dcf0f2;
-  --good:#4f9a86; --good-soft:rgba(79,154,134,0.14); --danger:#5f9db0; --danger-soft:rgba(95,157,176,0.12);
-  --accent-soft:rgba(31,143,184,0.1); --hero-dark:#123236;
-}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0}
-body{
-  background:var(--bg); color:var(--ink); min-height:100vh;
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
-  -webkit-font-smoothing:antialiased; padding-bottom:calc(78px + env(safe-area-inset-bottom));
-}
-.serif{font-family:Newsreader,Georgia,"Iowan Old Style",serif}
-header.top{
-  position:sticky;top:0;z-index:5;background:var(--bg);
-  padding:calc(14px + env(safe-area-inset-top)) 18px 10px;
-  display:flex;align-items:center;justify-content:space-between;
-  border-bottom:1px solid var(--line);
-}
-.brand{font-family:Newsreader,Georgia,serif;font-size:19px;font-weight:700;letter-spacing:.01em}
-.brand small{display:block;font-family:Inter,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
-.theme-toggle{display:flex;gap:4px;background:var(--track);border-radius:20px;padding:3px}
-.theme-toggle button{font-family:inherit;font-size:10.5px;font-weight:700;border:none;background:none;color:var(--ink-soft);border-radius:16px;padding:6px 10px;cursor:pointer}
-.theme-toggle button.active{background:var(--card);color:var(--ink)}
-main{max-width:520px;margin:0 auto;padding:18px 18px 34px;display:flex;flex-direction:column;gap:14px}
-.screen{display:none;flex-direction:column;gap:14px}
-.screen.active{display:flex}
-a{color:inherit;text-decoration:none;cursor:pointer}
-.greet{padding:0 2px} .greet .eyebrow{font:700 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 6px} .greet h1{margin:0;font:600 23px/1.25 Newsreader,Georgia,serif;color:var(--ink);letter-spacing:-.01em}
-.hero{background:linear-gradient(150deg,var(--hero-dark) 0%,var(--accent) 100%);border-radius:24px;padding:22px 20px;box-shadow:0 18px 40px rgba(28,26,22,.22);display:flex;align-items:center;gap:16px}
-.hero-ring{position:relative;width:92px;height:92px;flex:0 0 auto} .hero-ring svg{width:100%;height:100%;transform:rotate(-90deg)} .hero-ring strong{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff}
-.hero-copy{flex:1} .hero-label{font:700 10px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);margin:0 0 6px} .hero-text{font:600 15px/1.35 Newsreader,Georgia,serif;color:#fff;margin:0}
-.pa-card{background:var(--ink);border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:12px} .pa-badge{width:34px;height:34px;border-radius:999px;background:var(--gold);color:var(--ink);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800} .pa-label{font:700 10px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin:0 0 4px} .pa-text{font:italic 500 14.5px/1.4 Newsreader,Georgia,serif;color:#fff;margin:0}
-.tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;box-shadow:0 2px 10px rgba(28,26,22,.04)} .tile-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px} .tile-label{font:700 10px/1 Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 8px} .tile-label.accent{color:var(--accent)} .tile-label.muted{color:var(--ink-soft)} .tile-value{font:700 19px/1.15 Newsreader,Georgia,serif;margin:0} .tile-value.good{color:var(--good)} .tile-value.plain{font:600 13px/1.4 Inter,sans-serif;color:var(--ink)} .tile-text{font:600 14.5px/1.4 Inter,sans-serif;color:var(--ink);margin:0 0 10px}
-.bar-row{display:flex;align-items:center;gap:10px} .bar{flex:1;height:7px;background:var(--line);border-radius:999px;overflow:hidden} .bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--gold))} .bar-pct{font:700 12.5px/1 Inter,sans-serif;color:var(--accent)}
-.habit-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px} .chip{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;background:var(--bg);border:1px solid var(--line); cursor:pointer; user-select:none;} .chip.done{background:var(--good-soft); border-color:var(--good);} .chip span.dot{width:6px;height:6px;border-radius:999px;background:var(--ink-soft);flex:0 0 auto; transition:0.2s;} .chip.done span.dot{background:var(--good)} .chip span.name{font:500 11.5px/1 Inter,sans-serif;color:var(--ink-soft); transition:0.2s;} .chip.done span.name{color:var(--good)}
-.alert-row{display:flex;gap:8px;font:400 12.5px/1.5 Inter,sans-serif;color:var(--ink)} .alert-row .bullet{color:var(--accent);flex:0 0 auto}
-.nav-modules{display:flex;flex-direction:column;gap:4px} .mod-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px} .mod3{display:flex;flex-direction:column;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 8px; cursor:pointer} .mod3-badge{width:36px;height:36px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;font-family:Newsreader,serif} .mod3-name{font:600 11.5px/1.2 Inter,sans-serif;color:var(--ink);text-align:center}
-.group-title{margin:4px 0 -6px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft)} .card{background:var(--card);border-radius:18px;padding:14px 16px;border:1px solid var(--line)} .insight-tag{margin:0 0 3px;font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--accent)} .insight-text{margin:0;font-size:13.5px;line-height:1.45;font-weight:600} .section-label{margin:0;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft)}
-.cost-list{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px} .cost-list li{display:flex;align-items:baseline;gap:8px;font-size:12px;padding:2px 0} .cost-list li span:first-child{font-weight:600;flex:0 0 auto} .cost-freq{color:var(--ink-soft);font-size:11px;flex:1} .cost-val{font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent)}
-.mini-btn{font-family:inherit;font-size:12px;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:8px 14px;cursor:pointer;display:inline-block} .mini-btn.solid{background:var(--accent);border-color:var(--accent);color:#fff} .btn-row{display:flex;gap:8px;margin-top:12px} .btn-row .mini-btn{flex:1;text-align:center}
-.group{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden} .row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line)} .row:last-child{border-bottom:none} .row-body{flex:1;display:flex;flex-direction:column;gap:1px;min-width:0} .row-title{font-size:13.5px;font-weight:600} .row-sub{font-size:11.5px;color:var(--ink-soft)} .row-glyph{width:20px;text-align:center;font-size:15px;color:var(--accent);font-family:Newsreader,serif} .chev{color:var(--ink-soft);flex:0 0 auto}
-.reset-card{display:flex;gap:12px;align-items:flex-start;background:var(--track);border:1px dashed var(--ink-soft);border-radius:16px;padding:14px;opacity:.85} .reset-title{margin:0 0 3px;font-size:13px;font-weight:700} .reset-sub{margin:0;font-size:11.5px;line-height:1.45;color:var(--ink-soft)}
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:9;display:flex;justify-content:space-around;align-items:center;padding:8px 6px calc(6px + env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--line);} .tab{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;font-family:inherit;color:var(--ink-soft);font-size:9.5px;font-weight:600;padding:4px 6px;cursor:pointer;flex:1;max-width:90px} .tglyph{font-size:19px;font-family:Newsreader,serif;line-height:1} .tab.active{color:var(--accent)}
-
-.habit-group{display:flex;flex-direction:column;gap:8px;margin-top:10px}.habit-group:first-child{margin-top:0}.section-label{margin:0;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft)}
-.info-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}.info-item{padding:10px 12px;border-radius:12px;background:var(--track);border:1px solid var(--line);font-size:12.5px;line-height:1.45;color:var(--ink)}
-.mod-grid3{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:4px}
-.oracle-result { margin-top: 15px; font-style: italic; color: var(--ink); font-family: Newsreader, serif; font-size: 15px; line-height: 1.5; padding: 15px; background: var(--track); border-radius: 12px; text-align: center;}
-</style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BRGX — Sentido Aplicado à Gestão</title>
+<script src="./support.js"></script>
 </head>
 <body>
+<x-dc>
+<helmet>
+<style>
+  :root {
+    --brgx-teal: #003F46;
+    --brgx-teal-2: #075C63;
+    --brgx-gray: #6F7371;
+    --brgx-gray-dark: #343A3A;
+    --brgx-silver: #B8BCB8;
+    --brgx-gold: #A99563;
+    --brgx-gold-soft: #D6C8A2;
+    --brgx-paper: #F4F0E6;
+    --brgx-white: #FFFFFF;
+    --brgx-black: #111818;
+  }
 
-<header class="top">
-  <div class="brand">BRGX<small id="dateLine">carregando…</small></div>
-  <div class="theme-toggle" role="tablist" aria-label="Tema do BRGX">
-    <button class="t-opt active" data-theme="light" role="tab" aria-selected="true">Light</button>
-    <button class="t-opt" data-theme="acqua" role="tab" aria-selected="false">Acqua</button>
-  </div>
-</header>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: Inter, Arial, Helvetica, sans-serif; background: var(--brgx-paper); color: var(--brgx-black); }
+  a { text-decoration: none; color: inherit; }
 
-<main>
+  .site-shell {
+    position: relative;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at top left, rgba(0,63,70,0.10), transparent 34%),
+      linear-gradient(180deg, #F7F3EA 0%, #EFE9DB 100%);
+  }
 
-  <!-- === TELA: DASHBOARD === -->
-  <section class="screen active" data-screen="dashboard">
-    <div class="greet">
-      <p class="eyebrow" id="dateEyebrow">carregando...</p>
-      <h1>Qual é a melhor decisão agora?</h1>
+  .nav {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 24px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.03em;
+    color: var(--brgx-teal);
+  }
+
+  .nav-logo span { color: var(--brgx-gray); font-weight: 500; font-size: 12px; display: block; letter-spacing: 0.02em; }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--brgx-gray-dark);
+  }
+
+  .nav-links a:hover { color: var(--brgx-teal); }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--brgx-teal);
+    color: #fff;
+    padding: 14px 26px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    box-shadow: 0 14px 34px rgba(0,63,70,0.22);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brgx-teal);
+    padding: 13px 23px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 14px;
+    border: 1px solid rgba(0,63,70,0.22);
+    background: rgba(255,255,255,0.4);
+  }
+
+  .hero {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 64px 32px 96px;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 56px;
+    align-items: center;
+  }
+
+  .eyebrow {
+    color: var(--brgx-gold);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .hero h1 {
+    font-size: clamp(38px, 5.4vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    color: var(--brgx-teal);
+    margin-bottom: 22px;
+    font-weight: 800;
+  }
+
+  .hero p {
+    font-size: 17.5px;
+    line-height: 1.65;
+    color: var(--brgx-gray-dark);
+    max-width: 560px;
+    margin-bottom: 32px;
+  }
+
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  .hero-visual {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 24px 70px rgba(17,24,24,0.16);
+    border: 1px solid rgba(0,63,70,0.12);
+    min-height: 420px;
+  }
+
+  .hero-visual::before {
+    content: "";
+    position: absolute;
+    inset: 16px;
+    border: 1px solid rgba(169,149,99,0.45);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .hero-visual img { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+  .logo-strip {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 32px 72px;
+  }
+
+  .logo-strip .label {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 800;
+    color: var(--brgx-gold);
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+  .logo-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+
+  .logo-box {
+    background: rgba(255,255,255,0.6);
+    border: 1px solid rgba(0,63,70,0.10);
+    border-radius: 12px;
+    height: 92px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--brgx-teal-2);
+    font-size: 13px;
+    letter-spacing: -0.01em;
+  }
+
+  .section { max-width: 1180px; margin: 0 auto; padding: 88px 32px; }
+
+  .section-title { max-width: 760px; margin: 0 auto 48px; text-align: center; }
+
+  .section-title .eyebrow { text-align: center; }
+
+  .section-title h2 {
+    font-size: clamp(30px, 3.6vw, 46px);
+    color: var(--brgx-teal);
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    font-weight: 800;
+  }
+
+  .section-title p { font-size: 16.5px; line-height: 1.65; color: var(--brgx-gray-dark); }
+
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+
+  .brgx-card {
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(0,63,70,0.12);
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 12px 36px rgba(17,24,24,0.05);
+  }
+
+  .brgx-card .num {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--brgx-gold);
+    margin-bottom: 10px;
+  }
+
+  .brgx-card h3 { color: var(--brgx-teal); font-size: 18px; margin-bottom: 8px; font-weight: 700; }
+  .brgx-card p { color: var(--brgx-gray-dark); font-size: 14.5px; line-height: 1.6; }
+
+  .split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .split img {
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid rgba(0,63,70,0.12);
+    box-shadow: 0 20px 50px rgba(17,24,24,0.12);
+    display: block;
+  }
+
+  .gold-line { width: 72px; height: 2px; background: var(--brgx-gold); margin: 18px 0 22px; }
+
+  .pillars-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .pillar-item {
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(0,63,70,0.12);
+    border-radius: 14px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .pillar-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--brgx-gold); margin-top: 6px; flex-shrink: 0;
+  }
+
+  .pillar-item strong { display: block; color: var(--brgx-teal); font-size: 15px; margin-bottom: 3px; }
+  .pillar-item span { font-size: 13px; color: var(--brgx-gray-dark); line-height: 1.5; }
+
+  .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+
+  .step-card {
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(0,63,70,0.12);
+    border-radius: 16px;
+    padding: 30px 26px;
+  }
+
+  .step-num {
+    width: 34px; height: 34px; border-radius: 50%;
+    background: var(--brgx-teal); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 15px; margin-bottom: 16px;
+  }
+
+  .step-card h3 { color: var(--brgx-teal); font-size: 16.5px; margin-bottom: 8px; font-weight: 700; }
+  .step-card p { color: var(--brgx-gray-dark); font-size: 13.5px; line-height: 1.6; }
+
+  .dark-panel {
+    background: linear-gradient(135deg, #003F46, #062D32);
+    color: #fff;
+    border-radius: 22px;
+    padding: 56px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dark-panel::after {
+    content: "";
+    position: absolute;
+    right: -80px; top: -80px;
+    width: 280px; height: 280px;
+    border: 28px solid rgba(255,255,255,0.04);
+    transform: rotate(45deg);
+  }
+
+  .dark-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; position: relative; z-index: 1; }
+
+  .dark-panel .eyebrow { color: var(--brgx-gold-soft); text-align: left; }
+  .dark-panel h2 { font-size: clamp(26px, 3vw, 36px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 16px; }
+  .dark-panel p { font-size: 14.5px; line-height: 1.65; color: #CFE0E1; margin-bottom: 20px; }
+
+  .dark-list { display: flex; flex-direction: column; gap: 10px; }
+  .dark-list div { display: flex; gap: 10px; font-size: 14px; }
+  .dark-list span { color: var(--brgx-gold-soft); font-weight: 800; }
+
+  .dark-link {
+    display: inline-block;
+    color: var(--brgx-gold-soft);
+    font-size: 13.5px;
+    font-weight: 700;
+    border-bottom: 1px solid rgba(214,200,162,0.5);
+  }
+
+  .authority {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 48px;
+    align-items: center;
+  }
+
+  .authority img {
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid rgba(0,63,70,0.12);
+    box-shadow: 0 20px 50px rgba(17,24,24,0.12);
+  }
+
+  .authority h2 { font-size: clamp(26px, 3.2vw, 38px); color: var(--brgx-teal); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px; }
+  .authority p { font-size: 15.5px; line-height: 1.65; color: var(--brgx-gray-dark); margin-bottom: 10px; }
+
+  .cta-section {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 72px 32px 100px;
+    text-align: center;
+  }
+
+  .cta-section h2 { font-size: clamp(30px, 4vw, 44px); color: var(--brgx-teal); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 16px; }
+  .cta-section p { font-size: 16.5px; line-height: 1.6; color: var(--brgx-gray-dark); max-width: 540px; margin: 0 auto 32px; }
+
+  .cta-stats {
+    display: inline-flex;
+    align-items: center;
+    gap: 32px;
+    border-radius: 16px;
+    padding: 20px 34px;
+    margin-bottom: 30px;
+    background: rgba(255,255,255,0.75);
+    border: 1px solid rgba(0,63,70,0.12);
+  }
+
+  .cta-stats .stat small { display: block; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brgx-gold); font-weight: 800; margin-bottom: 4px; }
+  .cta-stats .stat strong { font-size: 22px; color: var(--brgx-teal); font-weight: 800; }
+  .cta-stats .divider { width: 1px; height: 36px; background: rgba(0,63,70,0.15); }
+
+  footer {
+    border-top: 1px solid rgba(0,63,70,0.12);
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 32px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--brgx-gray);
+  }
+
+  footer .foot-logo { font-weight: 800; color: var(--brgx-teal); }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; padding-top: 40px; }
+    .nav-links { display: none; }
+    .card-grid, .steps-grid, .logo-grid { grid-template-columns: 1fr; }
+    .split, .dark-grid, .authority { grid-template-columns: 1fr; }
+    .pillars-grid { grid-template-columns: 1fr; }
+    .dark-panel { padding: 34px 24px; }
+    footer { flex-direction: column; gap: 10px; text-align: center; }
+  }
+</style>
+</helmet>
+
+<div class="site-shell">
+
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-logo">
+      BRGX
+      <span>Sentido Aplicado à Gestão</span>
     </div>
+    <div class="nav-links">
+      <a href="#solucoes">Soluções</a>
+      <a href="#plataforma">Plataforma</a>
+      <a href="#autoridade">Sobre</a>
+      <a href="proposta.html">Proposta</a>
+      <a href="https://wa.me/5511990130811" class="btn-primary">Fale com especialista</a>
+    </div>
+  </nav>
 
-    <div class="hero">
-      <div class="hero-ring">
-        <svg viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="8"/>
-          <circle id="score-circle" cx="50" cy="50" r="42" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9"/>
-        </svg>
-        <strong id="score-display">0%</strong>
-      </div>
-      <div class="hero-copy">
-        <p class="hero-label">Hábitos Concluídos</p>
-        <p class="hero-text" id="score-text">Sincronizando banco de dados...</p>
+  <!-- HERO -->
+  <header class="hero">
+    <div>
+      <div class="eyebrow">BRGX · Sentido Aplicado à Gestão</div>
+      <h1>Gestão aplicada para operações de beleza que precisam crescer com método.</h1>
+      <p>
+        Consultoria estratégica e plataforma operacional para salões, spas e negócios de beleza de alto padrão.
+        Organizamos atendimento, equipe, processos, indicadores e recorrência em uma gestão clara, mensurável e executável.
+      </p>
+      <div class="hero-actions">
+        <a href="https://wa.me/5511990130811" class="btn-primary">Fale com especialista</a>
+        <a href="https://brgxbrasil.github.io/app/" class="btn-secondary">Conhecer a plataforma</a>
       </div>
     </div>
-
-    <div class="tile-grid2">
-      <div class="tile">
-        <p class="tile-label">Semana do Ano</p>
-        <p class="tile-value plain" id="week-display">Semana --</p>
-      </div>
-      <div class="tile">
-        <p class="tile-label">Reset mental</p>
-        <p class="tile-value plain">Sem detox ativo</p>
-      </div>
+    <div class="hero-visual">
+      <img src="assets/brgx-dashboard.jpg" alt="Plataforma BRGX">
     </div>
+  </header>
 
-    <div class="tile">
-      <p class="tile-label" id="habitos-label-dash">Hábitos · Sincronizando...</p>
-      <div class="habit-chips" id="habitos-dash-container">
-        <!-- Injetado via JS -->
-      </div>
+  <!-- LOGOS / OPERAÇÕES -->
+  <section class="logo-strip">
+    <div class="label">Operações onde o método já foi aplicado</div>
+    <div class="logo-grid">
+      <div class="logo-box">Studio W</div>
+      <div class="logo-box">The Art Salon</div>
+      <div class="logo-box">Spa D</div>
+      <div class="logo-box">Sala D'Oro</div>
     </div>
+  </section>
 
-    <div class="nav-modules">
-      <p class="tile-label muted">Módulos</p>
-      <div class="mod-grid3">
-        <div class="mod3 nav-btn" data-target="habitos"><span class="mod3-badge">✓</span><span class="mod3-name">Hábitos</span></div>
-        <div class="mod3 nav-btn" data-target="metas"><span class="mod3-badge">◎</span><span class="mod3-name">Metas</span></div>
-        <div class="mod3 nav-btn" data-target="oracle"><span class="mod3-badge">✦</span><span class="mod3-name">Oráculo</span></div>
-        <div class="mod3 nav-btn" data-target="recamier"><span class="mod3-badge">♦</span><span class="mod3-name">Recamier</span></div>
+  <!-- SOLUÇÕES -->
+  <section class="section" id="solucoes">
+    <div class="section-title">
+      <div class="eyebrow">O que a BRGX resolve</div>
+      <h2>A operação cresce, mas continua dependendo de pessoas, memória e presença constante.</h2>
+      <p>A BRGX organiza o que hoje está solto: atendimento, rotina, equipe, indicadores, recorrência e execução.</p>
+    </div>
+    <div class="card-grid">
+      <div class="brgx-card">
+        <div class="num">01</div>
+        <h3>Faturamento que vira lucro</h3>
+        <p>Cada real da agenda mapeado, para você saber com número onde está a margem e onde está o próximo ganho.</p>
+      </div>
+      <div class="brgx-card">
+        <div class="num">02</div>
+        <h3>Atendimento que converte</h3>
+        <p>O primeiro contato deixa de ser só agendamento e passa a ativar cliente, no momento certo, com processo.</p>
+      </div>
+      <div class="brgx-card">
+        <div class="num">03</div>
+        <h3>Decisão com dado</h3>
+        <p>Comissão que alinha o time e rotina que roda sozinha. A operação sustentada por sistema, não por presença.</p>
       </div>
     </div>
   </section>
 
-  <!-- === TELA: HÁBITOS === -->
-  <section class="screen" data-screen="habitos">
-    <div class="greet">
-      <p class="eyebrow">Gestão Diária</p>
-      <h1>Hábitos da Semana</h1>
+  <!-- CONSULTORIA + PLATAFORMA -->
+  <section class="section">
+    <div class="section-title">
+      <div class="eyebrow">Como funciona</div>
+      <h2>A consultoria define a direção. A plataforma sustenta a execução.</h2>
     </div>
-    <div class="card">
-      <p class="insight-text">Toque para marcar. Sincronização em tempo real ativada.</p>
-      <div class="habit-chips" id="habitos-full-container" style="margin-top: 15px;">
-        <!-- Injetado via JS -->
-      </div>
-    </div>
-  </section>
-
-  <!-- === TELA: ORÁCULO === -->
-  <section class="screen" data-screen="oracle">
-    <div class="greet">
-      <p class="eyebrow">Leitura Diária</p>
-      <h1>Oráculo</h1>
-    </div>
-    <div class="card">
-      <p class="insight-tag">Seed Matemática Diária</p>
-      <p class="insight-text">A leitura não se repete aleatoriamente. Ela é ancorada na data de hoje e no canal escolhido.</p>
-      <div class="btn-row" style="flex-wrap: wrap;">
-        <button class="mini-btn solid" id="btn-iching">I-Ching</button>
-        <button class="mini-btn solid" id="btn-tarot">Tarot</button>
-        <button class="mini-btn solid" id="btn-runas">Runas</button>
-      </div>
-      <div id="oracle-output" class="oracle-result" style="display:none;"></div>
-    </div>
-  </section>
-
-  <!-- === TELA: METAS === -->
-  <section class="screen" data-screen="metas">
-    <div class="greet"><p class="eyebrow">Planejamento</p><h1>Metas</h1></div>
-    <div class="card">
-      <p class="insight-tag">Prioridades da semana</p>
-      <p class="insight-text">O plano agora combina foco, recuperação e execução em bloco.</p>
-      <div class="info-list">
-        <div class="info-item"><strong>Meta 1:</strong> fechar as 3 prioridades maiores até sexta.</div>
-        <div class="info-item"><strong>Meta 2:</strong> manter a rotina de sono e movimento sem perder o ritmo.</div>
-        <div class="info-item"><strong>Meta 3:</strong> revisar o orçamento e o estado emocional no fim de semana.</div>
+    <div class="split">
+      <img src="assets/consultoria-reuniao.jpg" alt="Consultoria BRGX">
+      <div>
+        <div class="eyebrow">Consultoria BRGX</div>
+        <h2 style="font-size:28px;color:var(--brgx-teal);font-weight:800;letter-spacing:-0.02em;">Diagnóstico, plano de ação e acompanhamento executivo</h2>
+        <div class="gold-line"></div>
+        <p style="color:var(--brgx-gray-dark);font-size:15.5px;line-height:1.65;">
+          Diagnóstico completo da operação, plano de ação estruturado, implantação supervisionada e entrega documentada.
+          Depois, acompanhamento contínuo com indicadores, sessões semanais e reuniões estratégicas mensais.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- === TELA: RECAMIER === -->
-  <section class="screen" data-screen="recamier">
-    <div class="greet"><p class="eyebrow">Acolhimento e presença</p><h1>Recamier</h1></div>
-    <div class="card">
-      <p class="insight-tag">Fluxo de cuidado</p>
-      <p class="insight-text">Este módulo reúne o ritual de acolhimento, a sequência de presença e o próximo ponto de atenção.</p>
-      <div class="info-list">
-        <div class="info-item">Respirar fundo, reduzir ruído mental e escolher uma ação simples antes de seguir.</div>
-        <div class="info-item">Anotar o que precisa ser resolvido hoje e o que pode esperar até amanhã.</div>
-        <div class="info-item">Fechar o dia com um gesto de cuidado físico, emocional e operacional.</div>
+  <!-- 7 PILARES -->
+  <section class="section">
+    <div class="section-title">
+      <div class="eyebrow">A estrutura</div>
+      <h2>Os 7 pilares da operação</h2>
+    </div>
+    <div class="pillars-grid">
+      <div class="pillar-item"><span class="pillar-dot"></span><div><strong>Diagnóstico</strong><span>Onde a operação está, com número.</span></div></div>
+      <div class="pillar-item"><span class="pillar-dot"></span><div><strong>Liderança</strong><span>O que só você resolve, e por quê.</span></div></div>
+      <div class="pillar-item"><span class="pillar-dot"></span><div><strong>Organização</strong><span>Papéis e processos que não dependem de memória.</span></div></div>
+      <div class="pillar-item"><span class="pillar-dot"></span><div><strong>Operação</strong><span>Rotinas e POPs que rodam sem você.</span></div></div>
+      <div class="pillar-item"><span class="pillar-dot"></span><div><strong>Atendimento</strong><span>A recepção deixa de perder cliente.</span></div></div>
+      <div class="pillar-item"><span class="pillar-dot"></span><div><strong>Performance</strong><span>Comissão que paga o comportamento certo.</span></div></div>
+      <div class="pillar-item" style="grid-column: span 2;"><span class="pillar-dot"></span><div><strong>Retenção</strong><span>O que faz o cliente voltar, e o que só ocupa horário na agenda.</span></div></div>
+    </div>
+  </section>
+
+  <!-- COMO FUNCIONA -->
+  <section class="section">
+    <div class="section-title">
+      <div class="eyebrow">O processo</div>
+      <h2>Do diagnóstico à operação que anda sozinha</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Diagnóstico</h3>
+        <p>Dez dias de imersão. Você recebe seu Índice Propositivo e uma decisão prioritária por pilar abaixo do ideal.</p>
       </div>
-      <div class="btn-row">
-        <a class="mini-btn solid" href="standalone/BRGX Recamier.html" target="_blank" rel="noopener">Abrir Recamier</a>
-        <a class="mini-btn" href="standalone/BRGX Hub.html" target="_blank" rel="noopener">Abrir Hub</a>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Implantação</h3>
+        <p>POPs, metas, plano de recorrência e ativações, implantados com acompanhamento, não deixados num PDF.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Acompanhamento</h3>
+        <p>Consultoria recorrente e o Índice acompanhado ao vivo na plataforma BRGX, mês a mês.</p>
       </div>
     </div>
   </section>
 
-  <!-- === ABA: MAIS === -->
-  <section class="screen" id="sheet-mais" data-screen="mais">
-    <p class="group-title">Sistema</p>
-    <div class="group">
-      <div class="row">
-        <span class="row-glyph">⚙</span>
-        <div class="row-body"><span class="row-title">Tema</span><span class="row-sub">Light e Acqua — alterne no topo</span></div>
-      </div>
-      <div class="row">
-        <span class="row-glyph">◉</span>
-        <div class="row-body"><span class="row-title">Caixa</span><span class="row-sub">Painel financeiro e fluxo do dia</span></div>
-        <a class="mini-btn" href="standalone/BRGX Caixa.html" target="_blank" rel="noopener">Abrir</a>
-      </div>
-      <div class="row">
-        <span class="row-glyph">✦</span>
-        <div class="row-body"><span class="row-title">Oráculo</span><span class="row-sub">Leituras diárias por canal</span></div>
-        <a class="mini-btn" href="standalone/BRGX Oracle.html" target="_blank" rel="noopener">Abrir</a>
-      </div>
-      <div class="row">
-        <span class="row-glyph">♦</span>
-        <div class="row-body"><span class="row-title">Recamier</span><span class="row-sub">Ritual de acolhimento e presença</span></div>
-        <a class="mini-btn" href="standalone/BRGX Recamier.html" target="_blank" rel="noopener">Abrir</a>
+  <!-- PLATAFORMA -->
+  <section class="section" id="plataforma">
+    <div class="dark-panel">
+      <div class="dark-grid">
+        <div>
+          <div class="eyebrow">Plataforma BRGX</div>
+          <h2>Onde o método vira rotina, não relatório.</h2>
+          <p>Cada pilar operacional numa ferramenta que você controla: treinamentos, POPs, cronograma, distribuição de clientes, controle de ausências e indicadores acompanhados ao vivo.</p>
+          <a href="https://brgxbrasil.github.io/app/" class="dark-link">Acessar a plataforma BRGX →</a>
+        </div>
+        <div class="dark-list">
+          <div><span>·</span>Treinamentos e trilhas por função</div>
+          <div><span>·</span>POPs e cronograma online</div>
+          <div><span>·</span>Distribuição de clientes em tempo real</div>
+          <div><span>·</span>Controle de ausências e recorrências</div>
+          <div><span>·</span>Índice Propositivo acompanhado ao vivo</div>
+        </div>
       </div>
     </div>
   </section>
 
-</main>
+  <!-- AUTORIDADE -->
+  <section class="section" id="autoridade">
+    <div class="authority">
+      <img src="assets/diego-perfil.jpg" alt="Diego Borges">
+      <div>
+        <div class="eyebrow">Por trás da BRGX</div>
+        <h2>Diego Borges, gestor executivo há mais de 15 anos.</h2>
+        <p>Conduziu operações de beleza e bem-estar de alto padrão reconhecidas como referência em São Paulo e Rio de Janeiro.</p>
+        <p>Hoje aplica o mesmo padrão de gestão através da BRGX, unindo consultoria estratégica e tecnologia de execução.</p>
+      </div>
+    </div>
+  </section>
 
-<nav class="tabbar" id="tabbar">
-  <button class="tab active" data-tab="dashboard"><span class="tglyph">◉</span><span>Dashboard</span></button>
-  <button class="tab" data-tab="habitos"><span class="tglyph">✓</span><span>Hábitos</span></button>
-  <button class="tab" data-tab="metas"><span class="tglyph">◎</span><span>Metas</span></button>
-  <button class="tab" data-tab="oracle"><span class="tglyph">✦</span><span>Oráculo</span></button>
-  <button class="tab" data-tab="recamier"><span class="tglyph">♦</span><span>Recamier</span></button>
-  <button class="tab" data-tab="mais"><span class="tglyph" style="font-size:15px">•••</span><span>Mais</span></button>
-</nav>
+  <!-- CTA -->
+  <section class="cta-section" id="contato">
+    <div class="eyebrow" style="text-align:center;">Comece pelo diagnóstico</div>
+    <h2>Sua operação precisa de gestão aplicada, não apenas intenção.</h2>
+    <p>O diagnóstico é a porta de entrada. Dez dias, poucas operações por mês, por ordem de fechamento.</p>
+    <div class="cta-stats">
+      <div class="stat"><small>Prazo</small><strong>10 dias</strong></div>
+      <div class="divider"></div>
+      <div class="stat"><small>Investimento</small><strong>R$ 3.500</strong></div>
+    </div>
+    <div>
+      <a href="https://wa.me/5511990130811" class="btn-primary" style="padding:18px 40px;font-size:16px;">Falar no WhatsApp</a>
+    </div>
+  </section>
 
-<!-- LÓGICA DE FUNCIONAMENTO (FIREBASE REALTIME DATABASE + FALLBACK LOCAL) -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-logo">BRGX</div>
+    <div>Sentido Aplicado à Gestão · Consultoria e plataforma de gestão · SP / RJ</div>
+  </footer>
 
-  const firebaseConfig = {
-    apiKey: "COLE_SUA_API_KEY_AQUI",
-    databaseURL: "https://brgx-brasil-default-rtdb.firebaseio.com/",
-    projectId: "brgx-brasil"
-  };
+</div>
 
-  let db = null;
-  let firebaseReady = false;
-  try {
-    const app = initializeApp(firebaseConfig);
-    db = getDatabase(app);
-    firebaseReady = Boolean(firebaseConfig.apiKey && firebaseConfig.apiKey !== 'COLE_SUA_API_KEY_AQUI');
-  } catch (error) {
-    console.warn('Firebase indisponível, usando armazenamento local.', error);
-  }
-
-  const DIAS = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
-  const MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-  const dataAtual = new Date();
-  const strDataHoje = `${dataAtual.getFullYear()}-${dataAtual.getMonth() + 1}-${dataAtual.getDate()}`;
-
-  const storageKeys = {
-    theme: 'brgx-self-theme',
-    habits: 'brgx-self-habits-v2',
-    oracle: 'brgx-self-oracle-v2'
-  };
-
-  function readStorageJson(key, fallback) {
-    try {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : fallback;
-    } catch (error) {
-      console.warn('Falha ao ler storage', key, error);
-      return fallback;
-    }
-  }
-
-  function writeStorageJson(key, value) {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.warn('Falha ao salvar storage', key, error);
-    }
-  }
-
-  function getWeekNumber(d) {
-    const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-    const dayNum = date.getUTCDay() || 7;
-    date.setUTCDate(date.getUTCDate() + 4 - dayNum);
-    const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
-    return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
-  }
-
-  function getHabitsState() {
-    const storage = readStorageJson(storageKeys.habits, {});
-    return storage[strDataHoje] || {};
-  }
-
-  function saveHabitsState(state) {
-    const storage = readStorageJson(storageKeys.habits, {});
-    storage[strDataHoje] = state;
-    writeStorageJson(storageKeys.habits, storage);
-    if (firebaseReady && db) {
-      set(ref(db, `habitos/${strDataHoje}`), state).catch(() => {});
-    }
-  }
-
-  const dateStr = `${DIAS[dataAtual.getDay()]}, ${dataAtual.getDate()} de ${MESES[dataAtual.getMonth()]}`;
-  document.getElementById('dateLine').textContent = dateStr;
-  document.getElementById('dateEyebrow').textContent = dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
-  document.getElementById('week-display').textContent = `Semana ${getWeekNumber(dataAtual)}`;
-
-  const root = document.documentElement;
-  const savedTheme = localStorage.getItem(storageKeys.theme);
-  if (savedTheme === 'acqua') {
-    root.setAttribute('data-brgx-theme', 'acqua');
-    document.querySelectorAll('.t-opt').forEach(b => {
-      b.classList.toggle('active', b.dataset.theme === 'acqua');
-    });
-  }
-  document.querySelectorAll('.t-opt').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.t-opt').forEach(o => o.classList.remove('active'));
-      btn.classList.add('active');
-      root.setAttribute('data-brgx-theme', btn.dataset.theme);
-      localStorage.setItem(storageKeys.theme, btn.dataset.theme);
-    });
-  });
-
-  function openScreen(targetScreen) {
-    document.querySelectorAll('#tabbar .tab').forEach(t => {
-      t.classList.toggle('active', t.dataset.tab === targetScreen);
-    });
-    document.querySelectorAll('main .screen').forEach(s => {
-      const show = s.dataset.screen === targetScreen;
-      s.classList.toggle('active', show);
-    });
-  }
-
-  document.querySelectorAll('#tabbar .tab').forEach(btn => {
-    btn.addEventListener('click', () => openScreen(btn.dataset.tab));
-  });
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => openScreen(btn.dataset.target));
-  });
-
-  const ORACLE_DECKS = {
-    IChing: [
-      'Ação necessária. O momento pede movimento claro e focado.',
-      'Pausa e reflexão. Aguarde a poeira baixar antes de decidir.',
-      'Fluidez. Aceite o curso natural dos eventos hoje.',
-      'Estrutura. Organize as bases antes de expandir.',
-      'Desapego. Solte o que não serve mais para abrir espaço.',
-      'Conexão. A resposta está em reforçar o que já faz sentido.'
-    ],
-    Tarot: [
-      'Mudança em andamento. Você não precisa controlar tudo, só escolher o próximo passo.',
-      'Cuidado com excesso de pressão. Uma pausa simples já reequilibra.',
-      'Uma oportunidade aparece onde menos se espera. Fique atento.',
-      'A verdade do momento é simples: clareza é melhor do que ansiedade.',
-      'Hoje pede presença e menos análise. Siga o que faz sentido no corpo.'
-    ],
-    Runas: [
-      'Força. A energia disponível é suficiente para avançar com firmeza.',
-      'Sabedoria. O melhor caminho é o mais honesto e menos impulsivo.',
-      'Mudança. Não force, apenas acompanhe a direção que já está se abrindo.',
-      'Proteção. Cuidado com dispersão e com o que consome sua atenção.',
-      'Renovação. O descanso também faz parte da estratégia.'
-    ]
-  };
-
-  function hashString(value) {
-    let hash = 0;
-    for (let i = 0; i < value.length; i += 1) {
-      hash = (hash << 5) - hash + value.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash);
-  }
-
-  function gerarOraculo(canal) {
-    const out = document.getElementById('oracle-output');
-    out.style.display = 'block';
-    const storage = readStorageJson(storageKeys.oracle, {});
-    const key = `${dataAtual.getFullYear()}-${dataAtual.getMonth() + 1}-${dataAtual.getDate()}:${canal}`;
-    if (storage[key]) {
-      out.textContent = `[ ${canal} ] — ${storage[key]}`;
-      return;
-    }
-    const pool = ORACLE_DECKS[canal] || ORACLE_DECKS.IChing;
-    const index = hashString(key) % pool.length;
-    const message = pool[index];
-    storage[key] = message;
-    writeStorageJson(storageKeys.oracle, storage);
-    out.textContent = `[ ${canal} ] — ${message}`;
-  }
-
-  document.getElementById('btn-iching').addEventListener('click', () => gerarOraculo('IChing'));
-  document.getElementById('btn-tarot').addEventListener('click', () => gerarOraculo('Tarot'));
-  document.getElementById('btn-runas').addEventListener('click', () => gerarOraculo('Runas'));
-
-  const habitosBase = [
-    { id: 'h1', nome: 'Água com limão', group: 'daily' },
-    { id: 'h2', nome: 'Suplemento diário', group: 'daily' },
-    { id: 'h3', nome: 'Treino / alongamento', group: 'daily' },
-    { id: 'h4', nome: 'Meditação', group: 'daily' },
-    { id: 'h5', nome: 'Estudo', group: 'daily' },
-    { id: 'h6', nome: 'Escrita', group: 'daily' },
-    { id: 'h7', nome: 'Leitura', group: 'daily' },
-    { id: 'h8', nome: 'Exposição solar', group: 'daily' },
-    { id: 'h9', nome: 'Máscara facial', group: 'daily' },
-    { id: 'h10', nome: 'Organização da semana', group: 'weekly', label: 'Semana', hint: 'Segunda' },
-    { id: 'h11', nome: 'Planejamento do fim de semana', group: 'weekly', label: 'Semana', hint: 'Sexta' },
-    { id: 'h12', nome: 'Review semanal', group: 'weekly', label: 'Semana', hint: 'Domingo' },
-    { id: 'h13', nome: 'Descanso ativo', group: 'weekend', label: 'Fim de semana', hint: 'Sábado' },
-    { id: 'h14', nome: 'Ritual de sábado', group: 'weekend', label: 'Fim de semana', hint: 'Sábado' },
-    { id: 'h15', nome: 'Ritual de domingo', group: 'weekend', label: 'Fim de semana', hint: 'Domingo' }
-  ];
-
-  function getVisibleHabits() {
-    const day = dataAtual.getDay();
-    return habitosBase.filter(habito => {
-      if (habito.group === 'daily') return true;
-      if (habito.group === 'weekly') return [1, 5, 0].includes(day);
-      if (habito.group === 'weekend') return [6, 0].includes(day);
-      return false;
-    });
-  }
-
-  function renderHabits() {
-    const dados = getHabitsState();
-    const visibleHabits = getVisibleHabits();
-    const groups = [
-      { title: 'Hoje', items: visibleHabits.filter(h => h.group === 'daily') },
-      { title: 'Semana', items: visibleHabits.filter(h => h.group === 'weekly') },
-      { title: 'Fim de semana', items: visibleHabits.filter(h => h.group === 'weekend') }
-    ].filter(group => group.items.length);
-
-    const containerDash = document.getElementById('habitos-dash-container');
-    const containerFull = document.getElementById('habitos-full-container');
-    containerDash.innerHTML = '';
-    containerFull.innerHTML = '';
-
-    groups.forEach(group => {
-      const groupHtml = `<div class="habit-group"><p class="section-label">${group.title}</p><div class="habit-chips">${group.items.map(habito => {
-        const isDone = !!dados[habito.id];
-        return `<span class="chip ${isDone ? 'done' : ''}" data-id="${habito.id}"><span class="dot"></span><span class="name">${habito.nome}</span></span>`;
-      }).join('')}</div></div>`;
-      containerDash.insertAdjacentHTML('beforeend', groupHtml);
-      containerFull.insertAdjacentHTML('beforeend', groupHtml);
-    });
-
-    const concluidos = visibleHabits.filter(habito => !!dados[habito.id]).length;
-    const pct = Math.round((concluidos / visibleHabits.length) * 100) || 0;
-
-    document.getElementById('habitos-label-dash').textContent = `Hábitos · ${concluidos}/${visibleHabits.length}`;
-    document.getElementById('score-display').textContent = `${pct}%`;
-    document.getElementById('score-circle').style.strokeDashoffset = 263.9 - (263.9 * pct) / 100;
-
-    let msg = 'Tudo parado. Hora de começar.';
-    if (pct > 30) msg = 'No caminho, falta empurrar.';
-    if (pct > 70) msg = 'Ótimo ritmo, quase lá.';
-    if (pct === 100) msg = 'Dia dominado. Excelente!';
-    document.getElementById('score-text').textContent = msg;
-
-    document.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        const hId = chip.dataset.id;
-        const state = getHabitsState();
-        state[hId] = !state[hId];
-        saveHabitsState(state);
-        renderHabits();
-      });
-    });
-  }
-
-  renderHabits();
-
-</script>
+</x-dc>
 </body>
 </html>
