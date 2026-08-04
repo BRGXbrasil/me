@@ -1,7 +1,7 @@
-const CACHE = 'brgx-core-3';
+const CACHE = 'brgx-core-4';
 const ASSETS = [
   './',
-  './hub.html',
+  './index.html',
   './brgx.html',
   './manifest.webmanifest',
   './icon-192.png',
@@ -33,5 +33,5 @@ self.addEventListener('fetch', e => e.respondWith(
     const copy = r.clone();
     caches.open(CACHE).then(c => c.put(e.request, copy));
     return r;
-  }).catch(() => caches.match(e.request).then(r => r || caches.match('./hub.html')))
+  }).catch(() => caches.match(e.request).then(r => r || caches.match('./index.html')))
 ));

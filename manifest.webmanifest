@@ -1,7 +1,7 @@
 {
   "name": "BRGX",
   "short_name": "BRGX",
-  "start_url": "hub.html",
+  "start_url": ".",
   "scope": ".",
   "display": "standalone",
   "background_color": "#efece5",
