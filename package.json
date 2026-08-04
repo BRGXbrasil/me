@@ -1,7 +1,4 @@
 {
   "name": "brgxbrasil-me",
-  "private": true,
-  "dependencies": {
-    "@githubpage/blobs": "^8.1.0"
-  }
+  "private": true
 }
