@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="pt-BR" data-brgx-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#efece5" />
+<title>MEU · Reeducação Alimentar</title>
+<link rel="stylesheet" href="../assets/brgx-tokens.css" />
+<style>
+/* "Prato do dia" — indicadores circulares suaves, sem estética clínica */
+body{padding-bottom:40px}
+
+.plate-row{display:flex;gap:14px}
+.plate-ring{flex:1;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.plate-ring svg{width:76px;height:76px;transform:rotate(-90deg)}
+.plate-ring strong{margin-top:-58px;font:800 16px/1 Newsreader,serif;color:var(--ink)}
+.plate-ring span.lbl{font:700 10px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+
+.hydration-tap{cursor:pointer}
+
+.meal-list{display:flex;flex-direction:column;gap:8px}
+.meal-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.meal-time{flex:0 0 46px;font:700 11px/1 Inter,sans-serif;color:var(--ink-soft)}
+.meal-body{flex:1}
+.meal-type{font:600 12.5px/1.3 Inter,sans-serif}
+.meal-note{font:400 11.5px/1.3 Inter,sans-serif;color:var(--ink-soft)}
+.meal-row button{background:none;border:none;color:var(--danger);font-size:12px;cursor:pointer}
+
+.week-nav{display:flex;align-items:center;justify-content:space-between}
+.week-nav button{background:none;border:none;color:var(--accent);font:700 12px/1 Inter,sans-serif;cursor:pointer}
+.pattern-bars{display:flex;gap:6px;align-items:flex-end;height:70px;margin-top:10px}
+.pattern-bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px}
+.pattern-bar .bar{width:100%;border-radius:6px 6px 2px 2px;background:var(--accent2)}
+.pattern-bar .lbl{font:700 9.5px/1 Inter,sans-serif;color:var(--ink-soft);text-transform:uppercase}
+
+.goal-row{display:flex;align-items:center;gap:8px;font:500 12.5px/1.4 Inter,sans-serif;padding:6px 0}
+.goal-row.done{color:var(--ink-soft);text-decoration:line-through}
+.goal-dot{width:14px;height:14px;border-radius:999px;border:2px solid var(--track);flex:0 0 auto;cursor:pointer}
+.goal-dot.done{background:var(--good);border-color:var(--good)}
+
+.edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.edu-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.edu-card h4{margin:0 0 6px;font:600 12.5px/1.3 Newsreader,Georgia,serif;color:var(--accent2)}
+.edu-card p{margin:0;font:400 11.5px/1.5 Inter,sans-serif;color:var(--ink-soft)}
+
+.add-form{display:flex;flex-direction:column;gap:8px}
+.add-form input,.add-form select{font:500 13px/1 Inter,sans-serif;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+.add-form-row{display:flex;gap:8px}
+.add-form-row>*{flex:1}
+</style>
+</head>
+<body>
+
+<div class="brgx-head">
+  <a class="brgx-back" href="../index.html">← MEU</a>
+  <p class="brgx-eyebrow">MEU.app/reeducacao · pessoal</p>
+  <h1>Reeducação Alimentar</h1>
+  <p>Consciência, não contagem obsessiva. Refeições, hidratação e padrões da semana.</p>
+</div>
+
+<div class="brgx-shell">
+
+  <div class="plate-row">
+    <div class="plate-ring">
+      <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--track)" stroke-width="9"/><circle id="mealRingArc" cx="50" cy="50" r="42" fill="none" stroke="var(--accent2)" stroke-width="9" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9"/></svg>
+      <strong id="mealCount">0/3</strong>
+      <span class="lbl">Refeições hoje</span>
+    </div>
+    <div class="plate-ring hydration-tap" id="hydrationTap">
+      <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="42" fill="none" stroke="var(--track)" stroke-width="9"/><circle id="waterRingArc" cx="50" cy="50" r="42" fill="none" stroke="#5f9db0" stroke-width="9" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9"/></svg>
+      <strong id="waterCount">0/8</strong>
+      <span class="lbl">Copos d'água · toque</span>
+    </div>
+  </div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Refeições de hoje</p>
+    <div class="meal-list" id="mealList"></div>
+    <form class="add-form" id="mealForm" style="margin-top:10px">
+      <div class="add-form-row">
+        <select id="mealType">
+          <option>Café da manhã</option>
+          <option>Almoço</option>
+          <option>Lanche</option>
+          <option>Jantar</option>
+        </select>
+        <input type="time" id="mealTime" />
+      </div>
+      <input type="text" id="mealNote" placeholder="Nota (opcional, sem julgamento)" />
+      <button type="submit" class="mini-btn solid">Lançar refeição</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="week-nav">
+      <button type="button" id="prevWeek">‹ semana anterior</button>
+      <p class="section-label" id="weekLabel" style="margin:0">esta semana</p>
+      <button type="button" id="nextWeek">próxima semana ›</button>
+    </div>
+    <div class="pattern-bars" id="patternBars"></div>
+  </div>
+
+  <div class="card">
+    <p class="section-label" style="margin-bottom:8px">Metas alimentares</p>
+    <div id="goalList"></div>
+    <button type="button" class="mini-btn" id="addGoalBtn" style="margin-top:8px;width:100%">Lançar meta</button>
+  </div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Aprendizado</p>
+    <div class="edu-grid">
+      <div class="edu-card"><h4>Comer com atenção</h4><p>Sem tela junto — o corpo avisa "chega" mais cedo quando você está presente na refeição.</p></div>
+      <div class="edu-card"><h4>Proteína em toda refeição</h4><p>Ajuda a manter a saciedade e evita o pico e queda de energia entre refeições.</p></div>
+      <div class="edu-card"><h4>Água antes da fome</h4><p>Sede às vezes se disfarça de fome. Um copo d'água antes de decidir comer.</p></div>
+      <div class="edu-card"><h4>Sem comida proibida</h4><p>Restrição rígida gera compulsão. O objetivo é padrão, não perfeição.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../assets/brgx-shared.js"></script>
+<script>
+(function(){
+  let meals = brgxStorageGet('brgx-reeducacao-meals', []);
+  let hydration = brgxStorageGet('brgx-reeducacao-hydration', {});
+  let goals = brgxStorageGet('brgx-reeducacao-goals', [
+    {id:'g1', label:'3 refeições sem tela', done:false},
+    {id:'g2', label:'8 copos d’água por dia', done:false}
+  ]);
+  let weekOffset = 0;
+
+  function save(){
+    brgxStorageSet('brgx-reeducacao-meals', meals);
+    brgxStorageSet('brgx-reeducacao-hydration', hydration);
+    brgxStorageSet('brgx-reeducacao-goals', goals);
+  }
+
+  function todayKey(d=new Date()){ return d.toISOString().slice(0,10); }
+
+  function renderRings(){
+    const key = todayKey();
+    const todayMeals = meals.filter(m=>m.date===key).length;
+    const water = hydration[key] || 0;
+    const CIRC = 263.9;
+    document.getElementById('mealCount').textContent = `${Math.min(todayMeals,3)}/3`;
+    document.getElementById('mealRingArc').setAttribute('stroke-dashoffset', CIRC - CIRC*Math.min(todayMeals/3,1));
+    document.getElementById('waterCount').textContent = `${Math.min(water,8)}/8`;
+    document.getElementById('waterRingArc').setAttribute('stroke-dashoffset', CIRC - CIRC*Math.min(water/8,1));
+  }
+
+  function renderMeals(){
+    const key = todayKey();
+    const el = document.getElementById('mealList');
+    el.innerHTML = '';
+    const todays = meals.filter(m=>m.date===key);
+    if(todays.length===0){
+      el.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">Nenhuma refeição lançada hoje.</p>';
+      return;
+    }
+    todays.forEach(m=>{
+      const row = document.createElement('div');
+      row.className = 'meal-row';
+      row.innerHTML = `<span class="meal-time"></span><div class="meal-body"><p class="meal-type"></p><p class="meal-note"></p></div><button data-id="${m.id}">excluir</button>`;
+      row.querySelector('.meal-time').textContent = m.time || '--:--';
+      row.querySelector('.meal-type').textContent = m.type;
+      row.querySelector('.meal-note').textContent = m.note || '';
+      el.appendChild(row);
+    });
+    el.querySelectorAll('button[data-id]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        meals = meals.filter(m=>m.id!==btn.dataset.id);
+        save(); renderMeals(); renderRings(); renderPattern();
+      });
+    });
+  }
+
+  function renderPattern(){
+    const el = document.getElementById('patternBars');
+    el.innerHTML = '';
+    document.getElementById('weekLabel').textContent = weekOffset===0 ? 'esta semana' : (weekOffset<0 ? `${-weekOffset} semana(s) atrás` : `${weekOffset} semana(s) à frente`);
+    const DIAS = ['D','S','T','Q','Q','S','S'];
+    const base = new Date();
+    base.setDate(base.getDate() + weekOffset*7);
+    for(let i=6;i>=0;i--){
+      const d = new Date(base); d.setDate(d.getDate()-i);
+      const key = todayKey(d);
+      const count = meals.filter(m=>m.date===key).length;
+      const col = document.createElement('div');
+      col.className = 'pattern-bar';
+      col.innerHTML = `<div class="bar" style="height:${Math.min(count,4)*16+4}px"></div><span class="lbl"></span>`;
+      col.querySelector('.lbl').textContent = DIAS[d.getDay()];
+      el.appendChild(col);
+    }
+  }
+
+  function renderGoals(){
+    const el = document.getElementById('goalList');
+    el.innerHTML = '';
+    goals.forEach(g=>{
+      const row = document.createElement('div');
+      row.className = 'goal-row' + (g.done?' done':'');
+      row.innerHTML = `<span class="goal-dot ${g.done?'done':''}" data-id="${g.id}"></span><span></span>`;
+      row.querySelector('span:last-child').textContent = g.label;
+      el.appendChild(row);
+    });
+    el.querySelectorAll('.goal-dot').forEach(dot=>{
+      dot.addEventListener('click', ()=>{
+        const g = goals.find(x=>x.id===dot.dataset.id);
+        g.done = !g.done;
+        save(); renderGoals();
+      });
+    });
+  }
+
+  document.getElementById('hydrationTap').addEventListener('click', ()=>{
+    const key = todayKey();
+    hydration[key] = Math.min((hydration[key]||0)+1, 8);
+    save(); renderRings();
+  });
+
+  document.getElementById('mealForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const type = document.getElementById('mealType').value;
+    const time = document.getElementById('mealTime').value;
+    const note = document.getElementById('mealNote').value.trim();
+    meals.push({id:'m'+Date.now(), date: todayKey(), type, time, note});
+    save();
+    document.getElementById('mealNote').value='';
+    renderMeals(); renderRings(); renderPattern();
+  });
+
+  document.getElementById('addGoalBtn').addEventListener('click', ()=>{
+    const label = prompt('Nova meta alimentar');
+    if(!label) return;
+    goals.push({id:'g'+Date.now(), label, done:false});
+    save(); renderGoals();
+  });
+
+  document.getElementById('prevWeek').addEventListener('click', ()=>{ weekOffset--; renderPattern(); });
+  document.getElementById('nextWeek').addEventListener('click', ()=>{ weekOffset++; renderPattern(); });
+
+  renderRings(); renderMeals(); renderPattern(); renderGoals();
+})();
+</script>
+</body>
+</html>
