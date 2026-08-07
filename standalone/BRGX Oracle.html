@@ -16,24 +16,36 @@
 }
 body{padding-bottom:40px}
 
-.reading-hero{background:radial-gradient(120% 140% at 50% 0%, rgba(201,162,76,.16), transparent 60%), var(--card);border:1px solid var(--line);border-radius:26px;padding:28px 22px;text-align:center}
-.reading-hero .glyph{font-size:34px;color:var(--accent);font-family:Newsreader,serif;margin-bottom:10px}
-.reading-hero p.eyebrow{font:700 10px/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 10px}
-.reading-hero p.text{font:italic 500 17px/1.5 Newsreader,Georgia,serif;color:var(--ink);margin:0 0 18px}
+.mode-toggle{display:flex;gap:8px}
+.mode-toggle button{flex:1;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:transparent;color:var(--ink-soft);font:600 12px/1.3 Inter,sans-serif;cursor:pointer}
+.mode-toggle button.active{background:var(--accent);border-color:var(--accent);color:#161119}
+.mode-explain{font:400 11.5px/1.5 Inter,sans-serif;color:var(--ink-soft);margin:0}
 
-.pillars{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
-.pillar-tab{flex:0 0 auto;font:700 11px/1 Inter,sans-serif;letter-spacing:.04em;color:var(--ink-soft);background:var(--track);border:1px solid transparent;border-radius:999px;padding:8px 14px;cursor:pointer}
-.pillar-tab.active{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
-.pillar-body{font:400 13.5px/1.6 Inter,sans-serif;color:var(--ink)}
+.gen-row{display:flex;gap:8px}
+.gen-row input[type="date"]{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font:500 13px/1 Inter,sans-serif}
 
-.history-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.reading-hero{background:radial-gradient(120% 140% at 50% 0%, rgba(201,162,76,.16), transparent 60%), var(--card);border:1px solid var(--line);border-radius:26px;padding:24px 22px}
+.reading-hero .subtitle{font:700 10px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin:0 0 10px}
+.reading-hero .title{font:italic 600 22px/1.3 Newsreader,Georgia,serif;color:var(--ink);margin:0 0 14px}
+.reading-hero p.par{font:400 13.5px/1.65 Inter,sans-serif;color:var(--ink);margin:0 0 12px}
+.reading-hero .tags{display:flex;flex-wrap:wrap;gap:6px;padding-top:10px;border-top:1px solid var(--line)}
+.reading-hero .tags span{font:700 9.5px/1 Inter,sans-serif;text-transform:uppercase;letter-spacing:.04em;padding:5px 10px;border-radius:999px;background:var(--track);color:var(--ink-soft)}
+
+.voice-row{display:flex;align-items:center;gap:14px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.voice-btn{background:none;border:none;color:var(--accent);font:600 12.5px/1 Inter,sans-serif;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.voice-gear{background:none;border:none;color:var(--ink-soft);font-size:16px;cursor:pointer}
+.voice-picker{margin-top:10px;padding:12px;background:var(--track);border-radius:12px;max-height:180px;overflow-y:auto}
+.voice-picker .vopt{padding:7px 8px;font:500 12px/1.3 Inter,sans-serif;color:var(--ink);cursor:pointer;border-radius:6px}
+.voice-picker .vopt.active{color:var(--accent);font-weight:700}
+
+.history-row{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);align-items:center}
 .history-row:last-child{border-bottom:none}
-.history-date{flex:0 0 64px;font:700 11px/1.4 Inter,sans-serif;color:var(--ink-soft)}
-.history-text{flex:1;font:400 13px/1.5 Newsreader,Georgia,serif;color:var(--ink)}
+.history-date{flex:1;font:600 13px/1.4 Inter,sans-serif;color:var(--ink);cursor:pointer}
+.history-sub{display:block;font:400 11px/1.3 Inter,sans-serif;color:var(--ink-soft);margin-top:2px}
 .history-actions{display:flex;gap:6px;flex:0 0 auto}
 .history-actions button{background:none;border:none;color:var(--ink-soft);font-size:12px;cursor:pointer}
 .history-actions button.danger{color:var(--danger)}
-.reflected-tag{display:inline-block;margin-top:4px;font:700 9.5px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--good)}
+.reflected-tag{color:var(--good) !important}
 </style>
 </head>
 <body>
@@ -42,28 +54,23 @@ body{padding-bottom:40px}
   <a class="brgx-back" href="../index.html">← MEU</a>
   <p class="brgx-eyebrow">MEU.app/oraculo · pessoal</p>
   <h1>Oráculo</h1>
-  <p>Leitura do dia com 5 pilares: Astrologia, Numerologia, Kabbalah, The Pattern, Tiferet.</p>
+  <p>Leitura integrada do seu perfil real, ou síntese completa cruzando 9 fontes simbólicas.</p>
 </div>
 
 <div class="brgx-shell">
 
-  <div class="reading-hero">
-    <p class="eyebrow" id="readingDate">carregando…</p>
-    <p class="glyph">✦</p>
-    <p class="text" id="readingText">Toque em "gerar leitura" para abrir o dia.</p>
-    <div class="btn-row">
-      <button class="mini-btn solid" id="genBtn">Gerar leitura do dia</button>
-      <button class="mini-btn" id="reflectBtn">Marcar refletido</button>
-    </div>
+  <div class="mode-toggle">
+    <button id="modeLeitura" class="active">Leitura do dia</button>
+    <button id="modeSintese">Oráculo · síntese completa</button>
+  </div>
+  <p class="mode-explain" id="modeExplain">Astrologia, Numerologia, Kabbalah, The Pattern, Tiferet e o Memorial BRGX, costurados numa narrativa única.</p>
+
+  <div class="gen-row">
+    <input type="date" id="dateInput" />
+    <button class="mini-btn solid" id="genBtn">Gerar</button>
   </div>
 
-  <div>
-    <p class="section-label" style="margin-bottom:8px">Pilares</p>
-    <div class="pillars" id="pillars"></div>
-    <div class="card" style="margin-top:8px">
-      <p class="pillar-body" id="pillarBody"></p>
-    </div>
-  </div>
+  <div id="readingBox"></div>
 
   <div class="card">
     <p class="section-label" style="margin-bottom:4px">Histórico de leituras</p>
@@ -75,102 +82,543 @@ body{padding-bottom:40px}
 <script src="../assets/brgx-shared.js"></script>
 <script>
 (function(){
-  const PILLARS = {
-    astrologia: 'O céu de hoje pede atenção ao que já está em movimento, não ao que ainda falta começar.',
-    numerologia: 'O número do dia favorece fechamentos — o que está 90% pronto merece ir para 100%.',
-    kabbalah: 'A árvore aponta para equilíbrio entre rigor e expansão. Nenhum dos dois sozinho resolve.',
-    thepattern: 'Seu padrão de hoje tende à autocobrança. Vale nomear isso antes de agir a partir dele.',
-    tiferet: 'Beleza e verdade pedem para caminhar juntas — não escolha uma em detrimento da outra hoje.'
-  };
-  const PILLAR_LABEL = {astrologia:'Astrologia', numerologia:'Numerologia', kabbalah:'Kabbalah', thepattern:'The Pattern', tiferet:'Tiferet'};
 
-  let readings = brgxStorageGet('brgx-oracle-readings', []);
-  let activePillar = 'astrologia';
+/* ===== Motores portados de standalone/BRGX Oracle.html (main, PR #9) — verbatim ===== */
 
-  function save(){ brgxStorageSet('brgx-oracle-readings', readings); }
-  function todayKey(){ return new Date().toISOString().slice(0,10); }
+function parseLocalDate(dateStr) { const [y, m, d] = dateStr.split('-').map(Number); return new Date(y, m - 1, d); }
+function getDayOfWeek(date) { const days = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']; return days[parseLocalDate(date).getDay()]; }
 
-  function renderHero(){
-    const today = readings.find(r=>r.date===todayKey());
-    document.getElementById('readingDate').textContent = brgxDateLine();
-    document.getElementById('readingText').textContent = today ? today.text : 'Toque em "gerar leitura" para abrir o dia.';
-    document.getElementById('reflectBtn').textContent = today && today.reflected ? '✓ Refletido' : 'Marcar refletido';
-  }
+class OracleStorage {
+  static key = 'oracle-readings';
+  static getAll() { try { return JSON.parse(localStorage.getItem(this.key) || '{}'); } catch { return {}; } }
+  static save(date, data) { const r = this.getAll(); r[date] = { ...data, timestamp: new Date().toISOString() }; localStorage.setItem(this.key, JSON.stringify(r)); }
+  static get(date) { return this.getAll()[date] || null; }
+  static remove(date) { const r = this.getAll(); delete r[date]; localStorage.setItem(this.key, JSON.stringify(r)); }
+  static history() { return Object.keys(this.getAll()).sort().reverse(); }
+}
 
-  function renderPillars(){
-    const el = document.getElementById('pillars');
-    el.innerHTML = '';
-    Object.keys(PILLARS).forEach(key=>{
-      const b = document.createElement('button');
-      b.className = 'pillar-tab' + (key===activePillar?' active':'');
-      b.textContent = PILLAR_LABEL[key];
-      b.addEventListener('click', ()=>{ activePillar = key; renderPillars(); });
-      el.appendChild(b);
-    });
-    document.getElementById('pillarBody').textContent = PILLARS[activePillar];
-  }
-
-  function renderHistory(){
-    const el = document.getElementById('history');
-    el.innerHTML = '';
-    if(readings.length===0){
-      el.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">Nenhuma leitura arquivada ainda.</p>';
-      return;
+const AstrologyEngine = {
+  signos: [
+    { nome: 'Capricórnio', de: [12, 22], ate: [1, 19], elemento: 'Terra', regente: 'Saturno' },
+    { nome: 'Aquário', de: [1, 20], ate: [2, 18], elemento: 'Ar', regente: 'Saturno/Urano' },
+    { nome: 'Peixes', de: [2, 19], ate: [3, 20], elemento: 'Água', regente: 'Júpiter/Netuno' },
+    { nome: 'Áries', de: [3, 21], ate: [4, 19], elemento: 'Fogo', regente: 'Marte' },
+    { nome: 'Touro', de: [4, 20], ate: [5, 20], elemento: 'Terra', regente: 'Vênus' },
+    { nome: 'Gêmeos', de: [5, 21], ate: [6, 20], elemento: 'Ar', regente: 'Mercúrio' },
+    { nome: 'Câncer', de: [6, 21], ate: [7, 22], elemento: 'Água', regente: 'Lua' },
+    { nome: 'Leão', de: [7, 23], ate: [8, 22], elemento: 'Fogo', regente: 'Sol' },
+    { nome: 'Virgem', de: [8, 23], ate: [9, 22], elemento: 'Terra', regente: 'Mercúrio' },
+    { nome: 'Libra', de: [9, 23], ate: [10, 22], elemento: 'Ar', regente: 'Vênus' },
+    { nome: 'Escorpião', de: [10, 23], ate: [11, 21], elemento: 'Água', regente: 'Marte/Plutão' },
+    { nome: 'Sagitário', de: [11, 22], ate: [12, 21], elemento: 'Fogo', regente: 'Júpiter' },
+  ],
+  fasesLua: ['Lua Nova', 'Lua Crescente', 'Quarto Crescente', 'Gibosa Crescente', 'Lua Cheia', 'Gibosa Minguante', 'Quarto Minguante', 'Lua Minguante'],
+  calcularSignoSolar(d) {
+    const m = d.getMonth() + 1, dia = d.getDate();
+    for (const s of this.signos) {
+      const [dm, dd] = s.de, [am, ad] = s.ate;
+      if (dm > am) {
+        if ((m === dm && dia >= dd) || (m === am && dia <= ad)) return s;
+      } else {
+        if ((m === dm && dia >= dd) || (m === am && dia <= ad) || (m > dm && m < am)) return s;
+      }
     }
-    [...readings].reverse().forEach(r=>{
-      const row = document.createElement('div');
-      row.className = 'history-row';
-      row.innerHTML = `
-        <div class="history-date"></div>
-        <div style="flex:1">
-          <p class="history-text"></p>
-          ${r.reflected ? '<span class="reflected-tag">Refletido</span>' : ''}
-        </div>
-        <div class="history-actions">
-          <button data-act="edit" data-id="${r.id}" title="Editar nota">✎</button>
-          <button data-act="del" data-id="${r.id}" class="danger" title="Arquivar / excluir">✕</button>
-        </div>`;
-      row.querySelector('.history-date').textContent = r.date;
-      row.querySelector('.history-text').textContent = r.text;
-      el.appendChild(row);
-    });
-
-    el.querySelectorAll('[data-act="edit"]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const r = readings.find(x=>x.id===btn.dataset.id);
-        const novo = prompt('Editar nota da leitura', r.text);
-        if(novo && novo.trim()){ r.text = novo.trim(); save(); renderHistory(); renderHero(); }
-      });
-    });
-    el.querySelectorAll('[data-act="del"]').forEach(btn=>{
-      btn.addEventListener('click', async ()=>{
-        const ok = await brgxConfirm({title:'Arquivar leitura', text:'Essa leitura sai do histórico. Continuar?', confirmLabel:'Excluir'});
-        if(!ok) return;
-        readings = readings.filter(r=>r.id!==btn.dataset.id);
-        save(); renderHistory(); renderHero();
-      });
-    });
+    return this.signos[0];
+  },
+  calcularFaseLua(d) {
+    const luaNovaRef = Date.UTC(2000, 0, 6, 18, 14);
+    const diffDias = (d.getTime() - luaNovaRef) / 86400000;
+    const cicloSinodico = 29.53058867;
+    let idx = ((diffDias % cicloSinodico) / cicloSinodico) * 8;
+    idx = Math.floor(((idx % 8) + 8) % 8);
+    const iluminacao = Math.round(50 * (1 - Math.cos((diffDias % cicloSinodico) / cicloSinodico * 2 * Math.PI)));
+    return { nome: this.fasesLua[idx], iluminacaoPct: iluminacao };
+  },
+  calculate(date) {
+    const d = parseLocalDate(date);
+    const signo = this.calcularSignoSolar(d);
+    const lua = this.calcularFaseLua(d);
+    return { signo, lua };
   }
+};
 
-  document.getElementById('genBtn').addEventListener('click', ()=>{
-    const key = todayKey();
-    if(readings.find(r=>r.date===key)) return;
-    const text = PILLARS[activePillar];
-    readings.push({id:'r'+Date.now(), date:key, text, reflected:false});
-    save(); renderHero(); renderHistory();
+const NumerologyEngine = {
+  reduceToSingle(num) { while (num >= 10 && num !== 11 && num !== 22 && num !== 33) num = Math.floor(num / 10) + (num % 10); return num; },
+  calculate(date) {
+    const d = parseLocalDate(date);
+    const dayNum = this.reduceToSingle(d.getDate());
+    const monthNum = this.reduceToSingle(d.getMonth() + 1);
+    const yearNum = this.reduceToSingle(d.getFullYear());
+    const total = this.reduceToSingle(dayNum + monthNum + yearNum);
+    return { dayNum, monthNum, yearNum, total };
+  },
+  meanings: { 1: 'liderança, iniciativa, novidade', 2: 'receptividade, dualidade, equilíbrio', 3: 'criatividade, expressão, comunicação', 4: 'estrutura, estabilidade, construção', 5: 'movimento, mudança, liberdade', 6: 'harmonia, responsabilidade, serviço', 7: 'introspecção, sabedoria, espiritualidade', 8: 'poder, abundância, manifestação', 9: 'conclusão, transformação, compaixão', 11: 'intuição, iluminação, mediação', 22: 'mestre construtor, grande empreendimento', 33: 'mestre compassivo, sabedoria antiga' }
+};
+
+const KabbalaEngine = {
+  sefirot: { Keter: 'coroa luminosa, origem sem forma', Chokmah: 'o impulso criativo primordial', Binah: 'entendimento estruturador, o receptáculo', Chesed: 'misericórdia, expansão, generosidade', Gevurah: 'rigor, severidade, discernimento', Tiferet: 'beleza, coração, centro de integração', Netzach: 'vitória, emoção, criatividade visceral', Hod: 'esplendor, intelecto, comunicação', Yesod: 'fundação, inconsciente, os sonhos', Malkhuth: 'reino, manifestação, corpo' },
+  regenciaSemanal: {
+    0: { planeta: 'Sol', sefira: 'Tiferet' },
+    1: { planeta: 'Lua', sefira: 'Yesod' },
+    2: { planeta: 'Marte', sefira: 'Gevurah' },
+    3: { planeta: 'Mercúrio', sefira: 'Hod' },
+    4: { planeta: 'Júpiter', sefira: 'Chesed' },
+    5: { planeta: 'Vênus', sefira: 'Netzach' },
+    6: { planeta: 'Saturno', sefira: 'Binah' },
+  },
+  calculate(date) {
+    const d = parseLocalDate(date);
+    const dow = d.getDay();
+    const regencia = this.regenciaSemanal[dow];
+    const activeSefira = regencia.sefira;
+    const pathNum = (d.getDate() % 9) || 9;
+    return { pathNum, activeSefira, planetaRegente: regencia.planeta };
+  }
+};
+
+const ThePatternEngine = {
+  patterns: ['contração ritmada: o dia convida a um repouso controlado', 'expansão suave: há espaço emergindo para novas possibilidades', 'estabilidade aparente com tremores internos: o que parece fixo se move sutilmente', 'sincronicidade em cadeia: coincidências carregam mensagem', 'inversão de expectativas: o oposto do óbvio se revela verdadeiro', 'acumulação silenciosa: pequenos movimentos preparam mudança grande', 'clareza seguida de nebulosidade: compreensão e dúvida se alternam', 'compressão do espaço: múltiplas camadas reveladas em instante', 'liberação controlada: energias presas encontram saída', 'retorno ao começo: ciclo se fecha e reinicia em nível novo'],
+  microBehaviors: ['você começa antes de estar pronto', 'você demora para começar mesmo quando está pronto', 'você escolhe o caminho conhecível sobre o mais direto', 'você coloca eficiência antes de alinhamento', 'você confunde movimento com progresso', 'você confunde pausa com derrota', 'você reconhece seu reflexo em outros e reage', 'você nota detalhes que outros deixam passar', 'você sente antes de entender', 'você entende antes de sentir'],
+  calculate(date) {
+    const d = parseLocalDate(date);
+    return { pattern: this.patterns[d.getDate() % this.patterns.length], behavior: this.microBehaviors[(d.getDate() + 4) % this.microBehaviors.length] };
+  }
+};
+
+const TiferetEngine = {
+  themes: ['integrar os opostos que estão no seu coração agora', 'sentir o que você vem evitando sentir', 'reconhecer a verdade que sua alma já sabe', 'equilibrar fazer e ser, sem sacrificar nenhum dos dois', 'usar a vulnerabilidade como força, não como fraqueza', 'mostrar o reflexo autêntico, sem filtro social', 'aprender com a ferida em vez de escondê-la', 'aceitar a beleza que existe no desequilíbrio atual', 'aceitar o que não pode ser mudado agora', 'permanecer estável no centro enquanto tudo ao redor gira'],
+  calculate(date) { const d = parseLocalDate(date); return { theme: this.themes[d.getDate() % this.themes.length] }; }
+};
+
+const MEMORIAL_BRGX_DEFAULT = {
+  versao: 1,
+  perfil: { nascimento: '30/03/1989', local: 'Rio Bonito, RJ', sol: 'Áries', ascendente: 'Touro', lua: 'Capricórnio', vidaCaminho: '33/6' },
+  ancora: 'organizar sem carregar',
+  gatilhos: ['rejeição', 'deslealdade', 'injustiça', 'não ser prioridade', 'não ser reconhecido', 'humilhação', 'atraso', 'instabilidade financeira'],
+  reguladores: ['liberdade', 'música', 'praia', 'bicicleta', 'dança', 'afeto', 'conversa profunda', 'histórias', 'tempo livre'],
+  partesInternas: [
+    { nome: 'O Protetor', fala: 'Eu preciso me virar.', virtude: 'resiliência', risco: 'não pedir ajuda quando precisa' },
+    { nome: 'O Responsável', fala: 'Eu preciso fazer direito.', virtude: 'confiabilidade', risco: 'autocobrança excessiva' },
+    { nome: 'O Controlador', fala: 'Se eu controlar, evito a dor.', virtude: 'planejamento', risco: 'tentar controlar o que é do outro' },
+    { nome: 'O Orgulhoso', fala: 'Não vou aceitar ser diminuído.', virtude: 'autorrespeito', risco: 'rigidez diante da vulnerabilidade' },
+    { nome: 'O Lutador', fala: 'Eu não vou desistir.', virtude: 'persistência', risco: 'insistir além do ponto saudável' },
+    { nome: 'O que Foge', fala: 'Se eu sair antes, não sofro depois.', virtude: 'autoproteção', risco: 'evitar experiências que exigem maturidade' },
+    { nome: 'O que se Fecha', fala: 'Se ninguém entrar, ninguém me machuca.', virtude: 'recolhimento', risco: 'isolamento emocional' },
+    { nome: 'O que Sofre em Silêncio', fala: null, virtude: 'continuidade sob pressão', risco: 'emoção sem expressão imediata' },
+    { nome: 'O Menino que quer ser Visto', fala: 'Olhem para mim como eu sou.', virtude: 'autenticidade', risco: 'vergonha e controle quando ameaçado' },
+    { nome: 'O Diego Livre', fala: null, virtude: 'existir sem precisar provar nada', risco: null },
+  ],
+  padroesCentrais: [
+    'Tensão entre liberdade e segurança: não é escolher uma ou outra, é ter segurança suficiente para viver livre.',
+    'Sensação de atraso com linha de chegada nunca definida com clareza — a meta se move.',
+    'Estrutura de dívida com o eu ideal: cada conquista revela a próxima parcela, sem quitar o saldo.',
+    'Tendência a transformar desejo de conexão em necessidade de garantir o resultado (controle afetivo).',
+    'Autocobrança pode transformar "fiz algo errado" em "o que há de errado comigo".',
+  ],
+  sabotadores: ['excesso de responsabilidade emocional por resultados que não são só seus', 'dificuldade de decepcionar, mesmo quando decepcionar é o caminho mais honesto'],
+  sombra: ['a vaidade que precisa ser vista fazendo certo', 'o medo de perder admiração pesar mais do que perder razão'],
+  novaRegraInterna: 'Não transforme sua paz em recompensa por chegar a algum lugar.',
+  atualizadoEm: '2026-07-26',
+};
+
+class MemorialStore {
+  static KEY = 'brgx-memorial';
+  static get() {
+    try { const raw = localStorage.getItem(this.KEY); if (raw) return JSON.parse(raw); } catch (e) {}
+    try { localStorage.setItem(this.KEY, JSON.stringify(MEMORIAL_BRGX_DEFAULT)); } catch (e) {}
+    return MEMORIAL_BRGX_DEFAULT;
+  }
+}
+
+const EMOTIONAL_TITLES = ['Repouso que rende', 'Espaço se abrindo', 'Chão que se move', 'Sinais em cadeia', 'O óbvio ao contrário', 'Silêncio que constrói', 'Luz e névoa', 'Camadas reveladas', 'Solta o que pesa', 'Volta ao início'];
+
+const ELEMENTOS_RELACAO = {
+  'Fogo|Fogo': 'o dia amplifica quem você já é', 'Terra|Terra': 'o dia reforça sua base, sem novidade forçada', 'Ar|Ar': 'o dia acelera o que já está em movimento na sua cabeça', 'Água|Água': 'o dia aprofunda o que você já sente, sem precisar de mais estímulo',
+  'Fogo|Ar': 'o dia dá combustível para o que você já queria fazer', 'Ar|Fogo': 'o dia dá combustível para o que você já queria fazer',
+  'Terra|Água': 'o dia nutre devagar, sem pressa', 'Água|Terra': 'o dia nutre devagar, sem pressa',
+  'Fogo|Água': 'o dia pede para sentir antes de agir — o ímpeto e a emoção puxam para lados diferentes', 'Água|Fogo': 'o dia pede para sentir antes de agir — o ímpeto e a emoção puxam para lados diferentes',
+  'Terra|Ar': 'o dia pede para escolher entre o plano concreto e a ideia solta — os dois competem por atenção', 'Ar|Terra': 'o dia pede para escolher entre o plano concreto e a ideia solta — os dois competem por atenção',
+  'Fogo|Terra': 'o dia mistura pressa com necessidade de estrutura, sem contradição real', 'Terra|Fogo': 'o dia mistura pressa com necessidade de estrutura, sem contradição real',
+  'Ar|Água': 'o dia mistura pensamento e sentimento, um tentando explicar o outro', 'Água|Ar': 'o dia mistura pensamento e sentimento, um tentando explicar o outro',
+};
+
+function generateIntegratedReading(date, memorial) {
+  const num = NumerologyEngine.calculate(date);
+  const numMeaning = NumerologyEngine.meanings[num.total] || 'equilíbrio entre polaridades';
+  const astro = AstrologyEngine.calculate(date);
+  const kab = KabbalaEngine.calculate(date);
+  const kabSefiraMeaning = KabbalaEngine.sefirot[kab.activeSefira];
+  const patt = ThePatternEngine.calculate(date);
+  const tif = TiferetEngine.calculate(date);
+  const dayOfWeek = getDayOfWeek(date);
+  const d = parseLocalDate(date);
+  const idx = d.getDate() % EMOTIONAL_TITLES.length;
+
+  const m = memorial;
+  const perfil = m.perfil;
+  const parte = m.partesInternas[d.getDate() % m.partesInternas.length];
+  const padrao = m.padroesCentrais[(d.getDate() + 2) % m.padroesCentrais.length];
+  const gatilho = m.gatilhos[(d.getDate() + 1) % m.gatilhos.length];
+  const regulador = m.reguladores[d.getDate() % m.reguladores.length];
+  const sabotador = m.sabotadores[d.getDate() % m.sabotadores.length];
+  const sombra = m.sombra[(d.getDate() + 1) % m.sombra.length];
+
+  const signoNatal = AstrologyEngine.signos.find((s) => s.nome === perfil.sol);
+  const relacaoElementar = signoNatal
+    ? (ELEMENTOS_RELACAO[signoNatal.elemento + '|' + astro.signo.elemento] || 'o dia conversa com seu Sol natal sem atrito nem reforço direto')
+    : '';
+
+  const tiferetEhRegente = kab.activeSefira === 'Tiferet';
+  const fraseRegencia = tiferetEhRegente
+    ? 'Hoje o Sol rege diretamente — Tiferet está ativa, e o trânsito solar está em ' + astro.signo.nome + '.'
+    : 'Quem rege hoje é ' + kab.planetaRegente + ' (' + kab.activeSefira + ' — ' + kabSefiraMeaning + '), enquanto o Sol trânsita por ' + astro.signo.nome + '; Tiferet, seu centro, recebe essa energia por refração.';
+
+  const paragrafo1 =
+    fraseRegencia + ' Seu Sol natal está em ' + perfil.sol + ' (' + (signoNatal ? signoNatal.elemento : '') + ') — ' + relacaoElementar + '. ' +
+    'A Lua está em ' + astro.lua.nome.toLowerCase() + ', com cerca de ' + astro.lua.iluminacaoPct + '% de iluminação, e seu Ascendente em ' + perfil.ascendente + ' costuma ser a primeira reação que os outros veem em você hoje.';
+
+  const paragrafo2 =
+    'O número do dia é ' + num.total + ': ' + numMeaning + '. Seu Caminho de Vida é ' + perfil.vidaCaminho + ' — a leitura de hoje conversa com essa base, não a substitui. ' +
+    'A parte sua mais ativa agora é ' + parte.nome + (parte.fala ? (', que costuma dizer "' + parte.fala + '"') : '') + ': a virtude dela é ' + parte.virtude + ', e o risco, se ela assumir sozinha, é ' + (parte.risco || 'perder o equilíbrio com as outras partes') + '.';
+
+  const paragrafo3 =
+    padrao + ' Na prática, isso aparece como ' + patt.behavior + ', puxado por ' + sabotador + ', com ' + sombra + ' logo atrás. ' +
+    'Se ' + gatilho + ' aparecer hoje, ' + regulador + ' é o que te traz de volta ao centro. O convite é ' + tif.theme + ' — e a regra que vale lembrar: "' + m.novaRegraInterna + '"';
+
+  return {
+    subtitle: dayOfWeek.toUpperCase() + ' · NÚMERO ' + num.total + ' · ' + astro.lua.nome,
+    title: EMOTIONAL_TITLES[idx],
+    paragrafos: [paragrafo1, paragrafo2, paragrafo3],
+    canais: ['Astrologia', 'Numerologia', 'Kabbalah', 'The Pattern', 'Tiferet', 'Memorial BRGX'],
+  };
+}
+
+const TarotEngine = {
+  cartas: [
+    { nome: 'O Louco', tema: 'início sem mapa, confiança no salto' },
+    { nome: 'A Imperatriz', tema: 'fertilidade, criação, abundância que não precisa provar nada' },
+    { nome: 'O Eremita', tema: 'recuo estratégico, luz interna antes da resposta externa' },
+    { nome: 'A Roda da Fortuna', tema: 'ciclos que giram independente de mérito ou culpa' },
+    { nome: 'A Justiça', tema: 'ajuste de contas, verdade que pede honestidade consigo' },
+    { nome: 'A Torre', tema: 'estrutura que precisa cair para revelar o que é sólido de verdade' },
+    { nome: 'A Estrela', tema: 'esperança depois do colapso, cura silenciosa' },
+    { nome: 'O Sol', tema: 'clareza sem disfarce, alegria que não pede permissão' },
+    { nome: 'O Julgamento', tema: 'chamado para se ver com mais rigor e mais compaixão ao mesmo tempo' },
+    { nome: 'O Mundo', tema: 'fechamento de ciclo, integração do que foi aprendido' },
+  ],
+  calculate(date) { const d = parseLocalDate(date); return this.cartas[(d.getDate() + d.getMonth()) % this.cartas.length]; },
+};
+
+const JungEngine = {
+  arquetipos: [
+    { nome: 'O Sábio', foco: 'busca por sentido através da reflexão e do distanciamento' },
+    { nome: 'O Herói', foco: 'enfrentamento direto de um obstáculo que exige coragem' },
+    { nome: 'A Sombra', foco: 'confronto com o que foi reprimido ou negado em si mesmo' },
+    { nome: 'O Cuidador', foco: 'impulso de proteger e sustentar algo ou alguém além de si' },
+    { nome: 'O Criador', foco: 'necessidade de dar forma a algo que ainda não existe' },
+    { nome: 'O Governante', foco: 'organização, ordem, assumir responsabilidade por um território' },
+    { nome: 'O Inocente', foco: 'confiança renovada, ver com olhos livres de cinismo' },
+    { nome: 'O Explorador', foco: 'inquietação produtiva, recusa em se acomodar no conhecido' },
+  ],
+  calculate(date) { const d = parseLocalDate(date); return this.arquetipos[(d.getDate() * 3 + d.getMonth()) % this.arquetipos.length]; },
+};
+
+const EstoicismoEngine = {
+  principios: [
+    { nome: 'Dicotomia do controle', orientacao: 'separe o que depende de você do que não depende, e solte a energia gasta na segunda coluna' },
+    { nome: 'Amor fati', orientacao: 'não apenas aceite o que aconteceu, mas encontre nele o material para seguir construindo' },
+    { nome: 'Memento mori', orientacao: 'a urgência de hoje diminui quando lembrada ao lado do tempo que realmente existe' },
+    { nome: 'Virtude como único bem', orientacao: 'a ação certa importa mais que o resultado que você não controla' },
+    { nome: 'Premeditatio malorum', orientacao: 'antecipar o que pode dar errado tira o poder do medo, não o alimenta' },
+    { nome: 'Visão do alto (view from above)', orientacao: 'olhar o problema de longe reduz o peso que ele tem de perto' },
+  ],
+  calculate(date) { const d = parseLocalDate(date); return this.principios[(d.getMonth() * 2 + d.getDate()) % this.principios.length]; },
+};
+
+const IChingEngine = {
+  trigramas: [
+    { nome: 'Qian (Céu)', simbolo: '☰', qualidade: 'força criativa, iniciativa pura' },
+    { nome: 'Dui (Lago)', simbolo: '☱', qualidade: 'alegria serena, troca aberta' },
+    { nome: 'Li (Fogo)', simbolo: '☲', qualidade: 'clareza, adesão luminosa, visão' },
+    { nome: 'Zhen (Trovão)', simbolo: '☳', qualidade: 'movimento súbito, despertar, choque' },
+    { nome: 'Xun (Vento)', simbolo: '☴', qualidade: 'penetração suave, influência gradual' },
+    { nome: 'Kan (Água)', simbolo: '☵', qualidade: 'perigo profundo, perseverança no abismo' },
+    { nome: 'Gen (Montanha)', simbolo: '☶', qualidade: 'quietude, limite, parada necessária' },
+    { nome: 'Kun (Terra)', simbolo: '☷', qualidade: 'receptividade absoluta, sustentação' },
+  ],
+  calcularHexagrama(date) {
+    const d = parseLocalDate(date);
+    const soma = d.getDate() + (d.getMonth() + 1) + d.getFullYear();
+    const idxSuperior = soma % 8;
+    const idxInferior = (soma * 3 + d.getDate()) % 8;
+    return { superior: this.trigramas[idxSuperior], inferior: this.trigramas[idxInferior] };
+  },
+  calculate(date) {
+    const hex = this.calcularHexagrama(date);
+    const leitura = hex.superior.nome === hex.inferior.nome
+      ? `dobrado: ${hex.superior.nome} sobre ${hex.inferior.nome}, a mesma força se intensifica sozinha`
+      : `${hex.superior.nome} acima de ${hex.inferior.nome}: ${hex.superior.qualidade} pressionando sobre ${hex.inferior.qualidade}`;
+    return { ...hex, leitura };
+  },
+};
+
+function classificarConvergencia(temas) {
+  const stopwords = ['de', 'da', 'do', 'com', 'que', 'para', 'sem', 'ou', 'e', 'a', 'o', 'em'];
+  const palavras = temas.flatMap((t) => t.toLowerCase().split(/\s+/).filter((w) => w.length > 3 && !stopwords.includes(w)));
+  const freq = {};
+  palavras.forEach((p) => { freq[p] = (freq[p] || 0) + 1; });
+  return Object.entries(freq).filter(([, c]) => c >= 2).map(([w]) => w);
+}
+
+function sintetizarOraculo(date) {
+  const astro = AstrologyEngine.calculate(date);
+  const num = NumerologyEngine.calculate(date);
+  const kab = KabbalaEngine.calculate(date);
+  const patt = ThePatternEngine.calculate(date);
+  const tif = TiferetEngine.calculate(date);
+  const tarot = TarotEngine.calculate(date);
+  const jung = JungEngine.calculate(date);
+  const estoico = EstoicismoEngine.calculate(date);
+  const iching = IChingEngine.calculate(date);
+
+  const kabSefiraMeaning = KabbalaEngine.sefirot[kab.activeSefira];
+  const numMeaning = NumerologyEngine.meanings[num.total] || 'equilíbrio entre polaridades';
+
+  const fontes = [
+    { nome: 'Astrologia', tema: `Sol em ${astro.signo.nome}, ${astro.lua.nome}` },
+    { nome: 'Numerologia', tema: numMeaning },
+    { nome: 'Kabbalah', tema: kabSefiraMeaning },
+    { nome: 'The Pattern', tema: patt.pattern },
+    { nome: 'Tiferet', tema: tif.theme },
+    { nome: 'Tarot', tema: tarot.tema },
+    { nome: 'Jung', tema: jung.foco },
+    { nome: 'Estoicismo', tema: estoico.orientacao },
+    { nome: 'I Ching', tema: `Hexagrama ${iching.superior.simbolo}${iching.inferior.simbolo}: ${iching.leitura}` },
+  ];
+
+  const convergencias = classificarConvergencia(fontes.map((f) => f.tema));
+  const nivelConvergencia = convergencias.length >= 2 ? 'alta' : convergencias.length === 1 ? 'moderada' : 'baixa';
+
+  const aberturaConvergencia = nivelConvergencia === 'alta'
+    ? 'Várias camadas apontam para a mesma direção hoje — quando astrologia, arquétipos e ferramentas simbólicas concordam, vale prestar atenção redobrada.'
+    : nivelConvergencia === 'moderada'
+    ? 'Há uma linha de sentido comum entre algumas das fontes consultadas, mesmo que nem todas apontem exatamente para o mesmo lugar.'
+    : 'As fontes de hoje trazem ângulos diferentes — isso não é contradição, é um convite a olhar a situação por mais de um lado antes de decidir.';
+
+  return {
+    subtitle: `SÍNTESE ORÁCULO · ${getDayOfWeek(date).toUpperCase()}`,
+    title: `Convergência ${nivelConvergencia}`,
+    paragrafos: [
+      aberturaConvergencia,
+      `O arquétipo de ${jung.nome} está ativo — ${jung.foco}. Isso conversa com o tema de ${tarot.nome}: ${tarot.tema}.`,
+      `Do ponto de vista simbólico, ${kabSefiraMeaning} sustenta o convite de ${tif.theme}. O padrão comportamental do dia (${patt.pattern}) reforça essa direção.`,
+      `O I Ching traz ${iching.superior.simbolo} sobre ${iching.inferior.simbolo}: ${iching.leitura}.`,
+      `Na prática, o princípio estoico de ${estoico.nome} orienta o caminho: ${estoico.orientacao}.`,
+    ],
+    canais: fontes.map((f) => f.nome),
+  };
+}
+
+/* ===== Voz — portado de standalone/BRGX Oracle.html (main) ===== */
+
+function vozPreferidaMasculina(vozes) {
+  const MASC = ['felipe', 'daniel', 'joaquim', 'ricardo', 'antonio', 'antônio', 'thiago', 'bruno', 'marcos', 'paulo', 'carlos', 'diego', 'eddy', 'reed', 'rocko', 'male', 'masculin', 'homem'];
+  const FEM = ['luciana', 'joana', 'maria', 'catarina', 'fernanda', 'ines', 'inês', 'francisca', 'female', 'feminin', 'mulher', 'google portugu', 'flo', 'sandy', 'shelley'];
+  const BOA = ['enhanced', 'premium', 'neural', 'natural', 'siri'];
+  const nota = (v) => {
+    const n = (v.name || '').toLowerCase();
+    const lang = (v.lang || '').toLowerCase().replace('_', '-');
+    let s = 0;
+    if (MASC.some((m) => n.includes(m))) s += 100;
+    if (FEM.some((f) => n.includes(f))) s -= 80;
+    if (BOA.some((b) => n.includes(b))) s += 40;
+    if (lang.indexOf('pt-br') === 0) s += 10; else if (lang.indexOf('pt') === 0) s += 4;
+    if (v.localService) s += 5;
+    return s;
+  };
+  return vozes.slice().sort((a, b) => nota(b) - nota(a))[0] || null;
+}
+
+function segmentarFala(texto) {
+  const partes = String(texto).replace(/[—–]/g, ',').split(/([.!?…]+)/);
+  const frases = [];
+  for (let i = 0; i < partes.length; i += 2) {
+    const corpo = (partes[i] || '').trim();
+    const pont = partes[i + 1] || '';
+    if (corpo) frases.push(corpo + pont);
+  }
+  return frases.length ? frases : [String(texto).trim()].filter(Boolean);
+}
+
+let vozesDisponiveis = [];
+let vozTocando = false;
+
+function carregarVozesPTBR() {
+  const todas = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+  vozesDisponiveis = todas.filter((v) => v.lang && v.lang.toLowerCase().replace('_', '-').startsWith('pt'));
+  return vozesDisponiveis;
+}
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = carregarVozesPTBR;
+  let tentativas = 0;
+  (function poll(){ tentativas++; const p = carregarVozesPTBR(); if(!p.length && tentativas < 12) setTimeout(poll, 400); })();
+}
+
+function pegarVoz() {
+  const vozes = vozesDisponiveis.length ? vozesDisponiveis : carregarVozesPTBR();
+  const nomeSalvo = localStorage.getItem('brgx-voz-nome');
+  if (nomeSalvo) { const esc = vozes.find(v => v.name === nomeSalvo); if (esc) return esc; }
+  return vozPreferidaMasculina(vozes);
+}
+
+function ouvirTexto(texto, onDone){
+  if (!('speechSynthesis' in window)) return;
+  if (vozTocando) { window.speechSynthesis.cancel(); vozTocando = false; onDone(); return; }
+  window.speechSynthesis.cancel();
+  const voz = pegarVoz();
+  const frases = segmentarFala(texto);
+  if (!frases.length) return;
+  vozTocando = true;
+  (function falarIndice(i){
+    if (i >= frases.length) { vozTocando = false; onDone(); return; }
+    const utter = new SpeechSynthesisUtterance(frases[i]);
+    utter.lang = 'pt-BR'; if (voz) utter.voice = voz; utter.rate = 0.9; utter.pitch = 0.62;
+    utter.onend = () => { if (vozTocando) setTimeout(() => falarIndice(i + 1), 260); };
+    utter.onerror = () => { vozTocando = false; onDone(); };
+    window.speechSynthesis.speak(utter);
+  })(0);
+}
+
+/* ===== UI vanilla — layout noturno do redesign, dados/lógica reais acima ===== */
+
+let modo = 'leitura';
+let currentReading = null;
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+document.getElementById('dateInput').value = todayStr();
+
+function setModo(m){
+  modo = m;
+  document.getElementById('modeLeitura').classList.toggle('active', m==='leitura');
+  document.getElementById('modeSintese').classList.toggle('active', m==='sintese');
+  document.getElementById('modeExplain').textContent = m==='leitura'
+    ? 'Astrologia, Numerologia, Kabbalah, The Pattern, Tiferet e o Memorial BRGX, costurados numa narrativa única.'
+    : 'Cruza astrologia, numerologia, Kabbalah, The Pattern, Tiferet, Tarot, Jung, Estoicismo e I Ching, ponderando convergências.';
+  loadForDate(document.getElementById('dateInput').value);
+}
+document.getElementById('modeLeitura').addEventListener('click', ()=>setModo('leitura'));
+document.getElementById('modeSintese').addEventListener('click', ()=>setModo('sintese'));
+
+function renderReading(data){
+  currentReading = data;
+  const box = document.getElementById('readingBox');
+  if (!data){ box.innerHTML = ''; return; }
+  box.innerHTML = `
+    <div class="reading-hero">
+      <p class="subtitle"></p>
+      <p class="title"></p>
+      <div class="pars"></div>
+      <div class="tags"></div>
+      <div class="voice-row">
+        <button class="voice-btn" id="ouvirBtn">🔊 Ouvir leitura</button>
+        <button class="voice-gear" id="vozGear" title="Escolher voz">⚙</button>
+        ${data.reflected ? '<span class="reflected-tag" style="font:700 11px/1 Inter,sans-serif;text-transform:uppercase;letter-spacing:.04em;margin-left:auto">✓ Refletido</span>' : ''}
+      </div>
+      <div class="voice-picker" id="vozPicker" style="display:none"></div>
+      <div class="btn-row" style="margin-top:14px">
+        <button class="mini-btn" id="reflectBtn">${data.reflected ? '✓ Refletido' : 'Marcar refletido'}</button>
+      </div>
+    </div>`;
+  box.querySelector('.subtitle').textContent = data.subtitle;
+  box.querySelector('.title').textContent = data.title;
+  const pars = box.querySelector('.pars');
+  (data.paragrafos||[]).forEach(p=>{ const el=document.createElement('p'); el.className='par'; el.textContent=p; pars.appendChild(el); });
+  const tags = box.querySelector('.tags');
+  (data.canais||[]).forEach(c=>{ const s=document.createElement('span'); s.textContent=c; tags.appendChild(s); });
+
+  document.getElementById('ouvirBtn').addEventListener('click', ()=>{
+    const btn = document.getElementById('ouvirBtn');
+    ouvirTexto([data.title, ...(data.paragrafos||[])].join(' '), ()=>{ btn.textContent = '🔊 Ouvir leitura'; });
+    btn.textContent = vozTocando ? '⏸ Parar' : '🔊 Ouvir leitura';
   });
-
+  document.getElementById('vozGear').addEventListener('click', ()=>{
+    const picker = document.getElementById('vozPicker');
+    const open = picker.style.display !== 'none';
+    if (open) { picker.style.display = 'none'; return; }
+    const vozes = vozesDisponiveis.length ? vozesDisponiveis : carregarVozesPTBR();
+    const nomeSalvo = localStorage.getItem('brgx-voz-nome');
+    picker.innerHTML = vozes.length ? '' : '<p style="font-size:11.5px;color:var(--ink-soft);margin:0">Nenhuma voz em português encontrada neste navegador.</p>';
+    vozes.forEach(v=>{
+      const opt = document.createElement('div');
+      opt.className = 'vopt' + (v.name===nomeSalvo ? ' active' : '');
+      opt.textContent = (v.name===nomeSalvo ? '● ' : '○ ') + v.name + ' (' + v.lang + ')';
+      opt.addEventListener('click', ()=>{ localStorage.setItem('brgx-voz-nome', v.name); picker.style.display='none'; });
+      picker.appendChild(opt);
+    });
+    picker.style.display = 'block';
+  });
   document.getElementById('reflectBtn').addEventListener('click', ()=>{
-    const key = todayKey();
-    let today = readings.find(r=>r.date===key);
-    if(!today) return;
-    today.reflected = !today.reflected;
-    save(); renderHero(); renderHistory();
+    data.reflected = !data.reflected;
+    OracleStorage.save(data.date, data);
+    renderReading(data);
+    renderHistory();
   });
+}
 
-  renderHero();
-  renderPillars();
+function loadForDate(date){
+  const stored = OracleStorage.get(date);
+  if (stored && stored._modo === modo) { renderReading(stored); return; }
+  renderReading(null);
+}
+
+document.getElementById('genBtn').addEventListener('click', ()=>{
+  const date = document.getElementById('dateInput').value || todayStr();
+  const r = modo === 'leitura' ? generateIntegratedReading(date, MemorialStore.get()) : sintetizarOraculo(date);
+  const data = { date, _modo: modo, dayOfWeek: getDayOfWeek(date), subtitle: r.subtitle, title: r.title, paragrafos: r.paragrafos, canais: r.canais, reflected: false };
+  OracleStorage.save(date, data);
+  renderReading(data);
   renderHistory();
+});
+
+function renderHistory(){
+  const el = document.getElementById('history');
+  const dates = OracleStorage.history();
+  el.innerHTML = '';
+  if (dates.length===0){
+    el.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">Nenhuma leitura salva ainda.</p>';
+    return;
+  }
+  dates.slice(0,15).forEach(date=>{
+    const entry = OracleStorage.get(date);
+    const row = document.createElement('div');
+    row.className = 'history-row';
+    row.innerHTML = `
+      <div class="history-date">
+        ${new Date(date+'T00:00:00').toLocaleDateString('pt-BR')} — ${getDayOfWeek(date)}
+        <span class="history-sub"></span>
+      </div>
+      <div class="history-actions"><button data-id="${date}" class="danger">excluir</button></div>`;
+    row.querySelector('.history-sub').textContent = (entry && entry.title) ? entry.title + (entry.reflected ? ' · refletido' : '') : '';
+    row.querySelector('.history-date').addEventListener('click', ()=>{
+      document.getElementById('dateInput').value = date;
+      if (entry) { modo = entry._modo || 'leitura'; setModo(modo); renderReading(entry); }
+    });
+    el.appendChild(row);
+  });
+  el.querySelectorAll('[data-id]').forEach(btn=>{
+    btn.addEventListener('click', async (e)=>{
+      e.stopPropagation();
+      const ok = await brgxConfirm({title:'Excluir leitura', text:'Essa leitura sai do histórico permanentemente. Continuar?', confirmLabel:'Excluir'});
+      if (!ok) return;
+      OracleStorage.remove(btn.dataset.id);
+      renderHistory();
+      if (currentReading && currentReading.date===btn.dataset.id) renderReading(null);
+    });
+  });
+}
+
+loadForDate(todayStr());
+renderHistory();
 })();
 </script>
 </body>
