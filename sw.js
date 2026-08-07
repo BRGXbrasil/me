@@ -1,4 +1,4 @@
-const CACHE = 'brgx-core-5';
+const CACHE = 'brgx-core-6';
 const ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const ASSETS = [
   './icon-512.png',
   './assets/brgx-tokens.css',
   './assets/brgx-shared.js',
+  './assets/brgx-specialist.js',
   './standalone/BRGX Dashboard.html',
   './standalone/BRGX Rotina.html',
   './standalone/BRGX Metas.html',

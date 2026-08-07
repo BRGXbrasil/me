@@ -65,4 +65,24 @@ a{color:inherit;text-decoration:none}
 .brgx-shell{max-width:560px;margin:0 auto;padding:0 20px calc(40px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
 .section-label{margin:4px 0 -4px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
 
+/* Bolinha flutuante do especialista + painel de chat — compartilhado entre os apps que têm um "dono" definido */
+.brgx-spec-bubble{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:40;width:52px;height:52px;border-radius:999px;background:var(--accent);color:#fff;border:none;box-shadow:var(--shadow-pop);font:800 10.5px/1 Inter,sans-serif;letter-spacing:.02em;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.brgx-spec-panel{position:fixed;inset:0;z-index:45;display:none;align-items:flex-end;justify-content:center;background:rgba(20,17,12,.45)}
+.brgx-spec-panel.open{display:flex}
+.brgx-spec-card{width:100%;max-width:440px;max-height:78vh;background:var(--card);border-radius:20px 20px 0 0;display:flex;flex-direction:column;overflow:hidden}
+@media (min-width:560px){ .brgx-spec-panel{align-items:center} .brgx-spec-card{border-radius:20px;max-height:70vh} }
+.brgx-spec-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.brgx-spec-head .name{font:600 16px/1.2 Newsreader,Georgia,serif;color:var(--ink)}
+.brgx-spec-head button{background:none;border:none;color:var(--ink-soft);font-size:18px;cursor:pointer}
+.brgx-spec-msgs{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:10px}
+.brgx-spec-msg{max-width:82%;padding:9px 13px;border-radius:14px;font:400 13.5px/1.5 Inter,sans-serif}
+.brgx-spec-msg.user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
+.brgx-spec-msg.model{align-self:flex-start;background:var(--track);color:var(--ink);border-bottom-left-radius:4px}
+.brgx-spec-msg.error{align-self:center;background:var(--danger-soft);color:var(--danger);font-size:12px;text-align:center}
+.brgx-spec-form{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
+.brgx-spec-form input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:20px;background:var(--bg);color:var(--ink);font:400 13.5px/1 Inter,sans-serif}
+.brgx-spec-form button{border:none;background:none;cursor:pointer;font-size:17px;color:var(--ink-soft);flex:0 0 auto;padding:0 4px}
+.brgx-spec-form button.send{color:var(--accent)}
+.brgx-spec-form button.mic.active{color:var(--danger)}
+
 @media (prefers-reduced-motion:reduce){*{transition:none !important}}
