@@ -1,545 +1,454 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!doctype html>
+<html lang="pt-BR" data-brgx-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BRGX Caixa - Sala D'Oro</title>
-    <style>
-        :root {
-            --bg-color: #f6f2e9;
-            --card-bg: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --primary: #0f172a;
-            --success: #10b981;
-            --danger: #ef4444;
-            --border: #e5e7eb;
-        }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#efece5" />
+<title>MEU · Caixa</title>
+<link rel="stylesheet" href="../assets/brgx-tokens.css" />
+<style>
+/* Carteira pessoal — cartões tipo "talão" pros dois ciclos, envelopes pro 50/30/20.
+   De propósito bem diferente da grade/timeline dos outros apps: aqui é papelada de verdade. */
+body{padding-bottom:40px}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+.wallet-hero{background:linear-gradient(150deg,var(--hero-dark) 0%,var(--accent) 100%);border-radius:24px;padding:22px 20px;color:#fff;display:flex;gap:18px}
+.wallet-hero .col{flex:1}
+.wallet-hero .lbl{font:700 10px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);margin:0 0 6px}
+.wallet-hero .val{font:700 24px/1.1 Newsreader,Georgia,serif;margin:0}
+.wallet-hero .val.small{font-size:17px}
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 20px;
-        }
+.pend-card{background:var(--track);border:1px dashed var(--danger);border-radius:16px;padding:14px 16px}
+.pend-title{margin:0 0 8px;font:700 12px/1.3 Inter,sans-serif;color:var(--danger)}
+.pend-row{display:flex;align-items:center;gap:10px;padding:6px 0;font:500 13px/1.4 Inter,sans-serif}
+.pend-row input[type="date"]{border:1px solid var(--line);border-radius:8px;padding:5px 8px;font:500 12.5px/1 Inter,sans-serif;background:var(--card)}
 
-        .header {
-            max-width: 1200px;
-            margin: 0 auto 20px auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+/* Cartões-talão dos ciclos */
+.ticket{position:relative;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-card)}
+.ticket-head{background:var(--accent);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:baseline}
+.ticket-head .day{font:700 20px/1 Newsreader,Georgia,serif}
+.ticket-head .renda{font:600 13px/1 Inter,sans-serif}
+.ticket-perf{height:0;border-top:2px dashed var(--line);margin:0 18px}
+.ticket-body{padding:14px 18px}
+.ticket-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.ticket-row:last-of-type{border-bottom:none}
+.ticket-row .prazo-dot{width:8px;height:8px;border-radius:999px;flex:0 0 auto}
+.ticket-row .prazo-dot.curto{background:var(--accent2)}
+.ticket-row .prazo-dot.medio{background:var(--gold)}
+.ticket-row .prazo-dot.longo{background:var(--good)}
+.ticket-row .name{flex:1;font:500 13px/1.3 Inter,sans-serif}
+.ticket-row .amount{font:700 13px/1 Inter,sans-serif;color:var(--ink)}
+.ticket-row .amount.saida{color:var(--danger)}
+.ticket-row .rowbtns{display:flex;gap:4px}
+.ticket-row .rowbtns button{background:none;border:none;color:var(--ink-soft);font-size:11px;cursor:pointer;padding:2px}
+.ticket-summary{display:flex;justify-content:space-between;padding-top:10px;margin-top:4px;border-top:1px solid var(--line)}
+.ticket-summary .lbl{font:700 11px/1 Inter,sans-serif;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.04em}
+.ticket-summary .val{font:700 15px/1 Newsreader,Georgia,serif;color:var(--good)}
 
-        .header h1 {
-            font-size: 24px;
-            color: var(--primary);
-        }
+/* Envelopes 50/30/20 */
+.envelopes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.envelope{position:relative;background:var(--card);border:1px solid var(--line);border-radius:0 0 14px 14px;padding:16px 10px 12px;text-align:center;margin-top:14px}
+.envelope::before{content:'';position:absolute;left:0;right:0;top:-14px;height:14px;background:var(--track);clip-path:polygon(0 0,50% 100%,100% 0)}
+.envelope .tag{font:700 9.5px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 6px}
+.envelope .pct{font:700 20px/1 Newsreader,Georgia,serif;color:var(--ink);margin:0 0 2px}
+.envelope .target{font:500 10.5px/1 Inter,sans-serif;color:var(--ink-soft)}
+.envelope .bar{height:5px;border-radius:999px;background:var(--track);margin-top:8px;overflow:hidden}
+.envelope .bar span{display:block;height:100%}
+.envelope.curto .bar span{background:var(--accent2)}
+.envelope.medio .bar span{background:var(--gold)}
+.envelope.longo .bar span{background:var(--good)}
 
-        .btn-clear {
-            background-color: var(--danger);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-        }
+/* Meta financeira */
+.goal-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
+.goal-select{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:500 13px/1 Inter,sans-serif;margin-bottom:10px}
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 20px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        /* Dashboard Cards */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .dash-card {
-            background: var(--bg-color);
-            padding: 16px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .dash-card h3 {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .dash-card .value {
-            font-size: 24px;
-            font-weight: 700;
-        }
-
-        .text-success { color: var(--success); }
-        .text-danger { color: var(--danger); }
-        .text-primary { color: var(--primary); }
-
-        /* Forms */
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .form-group.full-width {
-            grid-column: span 2;
-        }
-
-        label {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-main);
-        }
-
-        input, select {
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            font-size: 14px;
-            background: #fff;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        button.btn-submit {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 16px;
-            transition: background 0.2s;
-        }
-
-        button.btn-submit:hover {
-            background-color: #334155;
-        }
-
-        /* Table */
-        .table-container {
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        th {
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        .badge {
-            padding: 4px 8px;
-            border-radius: 9999px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .badge-entrada { background: #d1fae5; color: #065f46; }
-        .badge-saida { background: #fee2e2; color: #991b1b; }
-        
-        .delete-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        /* Activities List */
-        .activity-list {
-            list-style: none;
-        }
-        
-        .activity-list li {
-            padding: 12px 0;
-            border-bottom: 1px dashed var(--border);
-            font-size: 14px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-        }
-
-        .activity-list li input[type="checkbox"] {
-            margin-top: 3px;
-        }
-
-        @media (max-width: 768px) {
-            .container { grid-template-columns: 1fr; }
-            .dashboard-grid { grid-template-columns: 1fr; }
-            .form-grid { grid-template-columns: 1fr; }
-            .form-group.full-width { grid-column: span 1; }
-        }
-    </style>
+.add-form{display:flex;flex-direction:column;gap:8px}
+.add-form input,.add-form select{font:500 13px/1 Inter,sans-serif;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+.add-form-row{display:flex;gap:8px}
+.add-form-row>*{flex:1}
+</style>
 </head>
 <body>
 
-    <a href="../index.html" style="display:inline-block;margin:16px 0 0;font:600 11px/1 Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#9c3b3b;text-decoration:none;">← BRGX</a>
+<div class="brgx-head">
+  <a class="brgx-back" href="../index.html">← MEU</a>
+  <p class="brgx-eyebrow">MEU.app/caixa · pessoal</p>
+  <h1>Caixa</h1>
+  <p>Orçamento pessoal — dois ciclos por mês, regra 50/30/20 e meta de economia.</p>
+</div>
 
-    <div class="header">
-        <h1>BRGX Caixa - Sala D'Oro</h1>
-        <button class="btn-clear" onclick="limparDados()">Zerar Sistema</button>
+<div class="brgx-shell">
+
+  <div class="wallet-hero">
+    <div class="col"><p class="lbl">Renda do mês</p><p class="val" id="heroRenda">—</p></div>
+    <div class="col"><p class="lbl">Gastos fixos</p><p class="val small" id="heroGastos">—</p></div>
+    <div class="col"><p class="lbl">Sobra</p><p class="val small" id="heroSobra">—</p></div>
+  </div>
+
+  <div id="pendenciasBox"></div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Ciclos do mês</p>
+    <div id="ciclos" style="display:flex;flex-direction:column;gap:12px"></div>
+  </div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Regra 50 / 30 / 20</p>
+    <div class="envelopes" id="envelopes"></div>
+  </div>
+
+  <div class="goal-card">
+    <p class="section-label" style="margin-bottom:10px">Meta financeira</p>
+    <select class="goal-select" id="goalSelect"></select>
+    <div id="goalProgress"></div>
+    <div class="add-form" style="margin-top:10px">
+      <div class="add-form-row">
+        <input type="number" id="economiaProgramada" placeholder="Economia programada/mês (R$)" min="0" step="10" />
+        <button type="button" class="mini-btn solid" id="salvarEconomiaBtn">Salvar</button>
+      </div>
+      <button type="button" class="mini-btn" id="lancarEconomiaBtn">Lançar economia deste mês na meta</button>
     </div>
+  </div>
 
-    <div class="container">
-        <!-- Coluna Principal (Lançamentos e Histórico) -->
-        <div class="main-column">
-            
-            <div class="dashboard-grid">
-                <div class="dash-card">
-                    <h3>Total Entradas</h3>
-                    <div class="value text-success" id="dash-entradas">R$ 0,00</div>
-                </div>
-                <div class="dash-card">
-                    <h3>Total Saídas</h3>
-                    <div class="value text-danger" id="dash-saidas">R$ 0,00</div>
-                </div>
-                <div class="dash-card">
-                    <h3>Saldo do Dia</h3>
-                    <div class="value text-primary" id="dash-saldo">R$ 0,00</div>
-                </div>
-            </div>
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Avulsos do mês</p>
+    <div id="avulsos" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
 
-            <div class="card">
-                <div class="card-title">Novo Lançamento</div>
-                <form id="form-lancamento" onsubmit="adicionarLancamento(event)">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Tipo</label>
-                            <select id="input-tipo" onchange="atualizarCategorias()">
-                                <option value="entrada">Entrada (Receita)</option>
-                                <option value="saida">Saída (Despesa/Repasse)</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Valor (R$)</label>
-                            <input type="number" id="input-valor" step="0.01" min="0.01" required placeholder="0.00">
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Descrição</label>
-                            <input type="text" id="input-descricao" required placeholder="Ex: Corte com a Iara, Material de limpeza...">
-                        </div>
-                        <div class="form-group">
-                            <label>Categoria</label>
-                            <select id="input-categoria">
-                                <!-- Preenchido via JS dependendo do Tipo -->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Forma de Pagamento / Movimento</label>
-                            <select id="input-pagamento">
-                                <option value="pix">Pix</option>
-                                <option value="cartao_credito">Cartão de Crédito</option>
-                                <option value="cartao_debito">Cartão de Débito</option>
-                                <option value="dinheiro">Dinheiro</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-submit">Registrar no Caixa</button>
-                </form>
-            </div>
+  <div class="card">
+    <p class="section-label" style="margin-bottom:10px">Lançar recorrência (todo mês)</p>
+    <form class="add-form" id="recForm">
+      <input type="text" id="recNome" placeholder="Nome (ex: Aluguel)" required />
+      <div class="add-form-row">
+        <input type="number" id="recValor" placeholder="Valor (R$)" min="0.01" step="0.01" required />
+        <select id="recTipo">
+          <option value="saida">Saída</option>
+          <option value="entrada">Entrada</option>
+        </select>
+      </div>
+      <div class="add-form-row">
+        <input type="number" id="recDia" placeholder="Dia do mês" min="1" max="31" required />
+        <select id="recPrazo">
+          <option value="curto">Curto prazo</option>
+          <option value="medio">Médio prazo</option>
+          <option value="longo">Longo prazo</option>
+        </select>
+      </div>
+      <button type="submit" class="mini-btn solid">Lançar recorrência</button>
+    </form>
+  </div>
 
-            <div class="card">
-                <div class="card-title">Histórico de Hoje</div>
-                <div class="table-container">
-                    <table id="tabela-historico">
-                        <thead>
-                            <tr>
-                                <th>Hora</th>
-                                <th>Tipo</th>
-                                <th>Descrição</th>
-                                <th>Categoria</th>
-                                <th>Pagamento</th>
-                                <th>Valor</th>
-                                <th>Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Rendizado via JS -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+  <div class="card">
+    <p class="section-label" style="margin-bottom:10px">Lançar avulso</p>
+    <form class="add-form" id="avulsoForm">
+      <input type="text" id="avNome" placeholder="Nome" required />
+      <div class="add-form-row">
+        <input type="number" id="avValor" placeholder="Valor (R$)" min="0.01" step="0.01" required />
+        <select id="avTipo">
+          <option value="saida">Saída</option>
+          <option value="entrada">Entrada</option>
+        </select>
+      </div>
+      <div class="add-form-row">
+        <select id="avPrazo">
+          <option value="curto">Curto prazo</option>
+          <option value="medio">Médio prazo</option>
+          <option value="longo">Longo prazo</option>
+        </select>
+        <input type="date" id="avData" />
+      </div>
+      <button type="submit" class="mini-btn solid">Lançar avulso</button>
+    </form>
+  </div>
 
-        <!-- Coluna Lateral (Gestão e Atividades) -->
-        <div class="side-column">
-            <div class="card">
-                <div class="card-title">Custos Fixos Mensais</div>
-                <ul class="activity-list">
-                    <li>Aluguel / Condomínio</li>
-                    <li>Água / Luz / Internet</li>
-                    <li>Folha de Pagamento (Equipe Escala 6x1)</li>
-                    <li>Taxas de Maquininha (Conferência)</li>
-                    <li>Contador</li>
-                </ul>
-            </div>
+</div>
 
-            <div class="card">
-                <div class="card-title">Atividades do Dia</div>
-                <ul class="activity-list">
-                    <li><input type="checkbox"> Conferir fundo de troco (Abertura)</li>
-                    <li><input type="checkbox"> Atualizar relatórios da Maquininha</li>
-                    <li><input type="checkbox"> Lançar vales-funcionário</li>
-                    <li><input type="checkbox"> Separar repasses/comissões</li>
-                    <li><input type="checkbox"> Fechamento e apuração de quebra</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+<script src="../assets/brgx-shared.js"></script>
+<script>
+(function(){
+  const PRAZO_LABEL = {curto:'Curto prazo', medio:'Médio prazo', longo:'Longo prazo'};
+  const fmt = (v)=> new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0);
 
-    <script>
-        // Opções de categorias baseadas no negócio (Sala D'Oro)
-        const categorias = {
-            entrada: [
-                { val: 'cabelos', label: 'Cabelos (Corte/Escova)' },
-                { val: 'quimica', label: 'Química (Coloração/Mechas)' },
-                { val: 'estetica', label: 'Estética' },
-                { val: 'produtos', label: 'Venda de Produtos' }
-            ],
-            saida: [
-                { val: 'comissao', label: 'Comissão/Repasse Profissional' },
-                { val: 'vale', label: 'Vale Funcionário' },
-                { val: 'despesa_dia', label: 'Despesa do Dia (Urgência)' },
-                { val: 'fornecedor', label: 'Pagamento Fornecedor' },
-                { val: 'sangria', label: 'Sangria (Retirada)' }
-            ]
-        };
+  let recorrencias = brgxStorageGet('brgx-caixa-recorrencias', [
+    {id:'r1', nome:'Salário', valor:5000, tipo:'entrada', diaDoMes:5, prazo:null},
+    {id:'r2', nome:'Aluguel', valor:2735, tipo:'saida', diaDoMes:5, prazo:'curto'},
+    {id:'r3', nome:'Acordos', valor:50, tipo:'saida', diaDoMes:5, prazo:'curto'},
+    {id:'r4', nome:'Internet mãe', valor:100, tipo:'saida', diaDoMes:5, prazo:'curto'},
+    {id:'r5', nome:'Claro', valor:80, tipo:'saida', diaDoMes:5, prazo:'curto'},
+    {id:'r6', nome:'iCloud', valor:20, tipo:'saida', diaDoMes:5, prazo:'curto'},
+    {id:'r7', nome:'Passagem', valor:150, tipo:'saida', diaDoMes:5, prazo:'curto'},
+    {id:'r8', nome:'Alimentação', valor:500, tipo:'saida', diaDoMes:5, prazo:'curto'},
+    {id:'r9', nome:'Salário', valor:5000, tipo:'entrada', diaDoMes:20, prazo:null},
+    {id:'r10', nome:'Passagem', valor:150, tipo:'saida', diaDoMes:20, prazo:'curto'},
+    {id:'r11', nome:'Spotify', valor:25, tipo:'saida', diaDoMes:20, prazo:'curto'},
+    {id:'r12', nome:'Convênio', valor:270, tipo:'saida', diaDoMes:20, prazo:'curto'},
+    {id:'r13', nome:'Internet', valor:100, tipo:'saida', diaDoMes:20, prazo:'curto'},
+    {id:'r14', nome:'Luz', valor:100, tipo:'saida', diaDoMes:20, prazo:'curto'},
+    {id:'r15', nome:'Alimentação', valor:500, tipo:'saida', diaDoMes:20, prazo:'curto'},
+  ]);
+  let lancamentos = brgxStorageGet('brgx-caixa-lancamentos', []);
+  let economiaProgramada = brgxStorageGet('brgx-caixa-economia-programada', 0);
+  let goalId = brgxStorageGet('brgx-caixa-meta-vinculada', null);
 
-        // Estado do aplicativo
-        let transacoes = [];
+  function saveAll(){
+    brgxStorageSet('brgx-caixa-recorrencias', recorrencias);
+    brgxStorageSet('brgx-caixa-lancamentos', lancamentos);
+  }
 
-        async function delayNetwork() {
-            return new Promise(resolve => setTimeout(resolve, 30));
-        }
+  function todayYM(){ const d = new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+  function ymOf(dateStr){ return dateStr ? dateStr.slice(0,7) : null; }
+  function daysInMonth(y,m){ return new Date(y, m, 0).getDate(); }
 
-        async function fetchStorageData(key, fallback) {
-            try {
-                await delayNetwork();
-                const raw = localStorage.getItem(key);
-                return raw ? JSON.parse(raw) : fallback;
-            } catch (error) {
-                console.warn('Falha ao carregar dados do caixa', error);
-                return fallback;
-            }
-        }
+  function ensureMonthGenerated(){
+    const now = new Date();
+    const ym = todayYM();
+    const dim = daysInMonth(now.getFullYear(), now.getMonth()+1);
+    recorrencias.forEach(rec=>{
+      const already = lancamentos.some(l => l.recId===rec.id && ymOf(l.data)===ym);
+      if (already) return;
+      const dia = Math.min(rec.diaDoMes, dim);
+      const data = ym + '-' + String(dia).padStart(2,'0');
+      lancamentos.push({ id:'l'+Date.now()+Math.random().toString(36).slice(2,6), recId:rec.id, nome:rec.nome, valor:rec.valor, tipo:rec.tipo, prazo:rec.prazo, data });
+    });
+    saveAll();
+  }
 
-        async function saveStorageData(key, value) {
-            try {
-                await delayNetwork();
-                localStorage.setItem(key, JSON.stringify(value));
-            } catch (error) {
-                console.warn('Falha ao salvar dados do caixa', error);
-            }
-        }
+  function renderHero(){
+    const ym = todayYM();
+    const mesLanc = lancamentos.filter(l => ymOf(l.data)===ym);
+    const renda = mesLanc.filter(l=>l.tipo==='entrada').reduce((s,l)=>s+l.valor,0);
+    const gastos = mesLanc.filter(l=>l.tipo==='saida').reduce((s,l)=>s+l.valor,0);
+    document.getElementById('heroRenda').textContent = fmt(renda);
+    document.getElementById('heroGastos').textContent = fmt(gastos);
+    document.getElementById('heroSobra').textContent = fmt(renda-gastos);
+  }
 
-        // Inicialização
-        document.addEventListener('DOMContentLoaded', async () => {
-            transacoes = await fetchStorageData('brgx_caixa_data', []);
-            atualizarCategorias();
-            renderizarInterface();
-        });
+  function renderPendencias(){
+    const box = document.getElementById('pendenciasBox');
+    const pend = lancamentos.filter(l=>!l.data);
+    if (pend.length===0){ box.innerHTML=''; return; }
+    box.innerHTML = `<div class="pend-card"><p class="pend-title">Pendências de data (${pend.length})</p><div id="pendList"></div></div>`;
+    const list = box.querySelector('#pendList');
+    pend.forEach(l=>{
+      const row = document.createElement('div');
+      row.className = 'pend-row';
+      row.innerHTML = `<span style="flex:1">${l.nome} · ${fmt(l.valor)}</span><input type="date" data-id="${l.id}" />`;
+      list.appendChild(row);
+    });
+    list.querySelectorAll('input[type="date"]').forEach(inp=>{
+      inp.addEventListener('change', ()=>{
+        const l = lancamentos.find(x=>x.id===inp.dataset.id);
+        l.data = inp.value;
+        saveAll(); renderAll();
+      });
+    });
+  }
 
-        function atualizarCategorias() {
-            const tipo = document.getElementById('input-tipo').value;
-            const selectCat = document.getElementById('input-categoria');
-            
-            // Limpa categorias atuais com segurança
-            selectCat.innerHTML = '';
-            
-            categorias[tipo].forEach(cat => {
-                const option = document.createElement('option');
-                option.value = cat.val;
-                option.textContent = cat.label;
-                selectCat.appendChild(option);
-            });
-        }
+  function renderCiclos(){
+    const ym = todayYM();
+    const mesLanc = lancamentos.filter(l => ymOf(l.data)===ym && l.recId);
+    const dias = [...new Set(recorrencias.map(r=>r.diaDoMes))].sort((a,b)=>a-b);
+    const el = document.getElementById('ciclos');
+    el.innerHTML = '';
+    dias.forEach(dia=>{
+      const items = mesLanc.filter(l=>{
+        const rec = recorrencias.find(r=>r.id===l.recId);
+        return rec && rec.diaDoMes === dia;
+      });
+      if (items.length===0) return;
+      const renda = items.filter(l=>l.tipo==='entrada').reduce((s,l)=>s+l.valor,0);
+      const gastos = items.filter(l=>l.tipo==='saida').reduce((s,l)=>s+l.valor,0);
+      const ticket = document.createElement('div');
+      ticket.className = 'ticket';
+      ticket.innerHTML = `
+        <div class="ticket-head"><span class="day">Dia ${dia}</span><span class="renda">${fmt(renda)}</span></div>
+        <div class="ticket-perf"></div>
+        <div class="ticket-body">
+          <div class="rows"></div>
+          <div class="ticket-summary"><span class="lbl">Dinheiro restante</span><span class="val">${fmt(renda-gastos)}</span></div>
+        </div>`;
+      const rows = ticket.querySelector('.rows');
+      items.filter(l=>l.tipo==='saida').forEach(l=>{
+        const row = document.createElement('div');
+        row.className = 'ticket-row';
+        row.innerHTML = `
+          <span class="prazo-dot ${l.prazo||'curto'}"></span>
+          <span class="name"></span>
+          <span class="amount saida"></span>
+          <div class="rowbtns">
+            <button data-act="edit" data-id="${l.id}">✎</button>
+            <button data-act="del" data-id="${l.id}">✕</button>
+          </div>`;
+        row.querySelector('.name').textContent = l.nome;
+        row.querySelector('.amount').textContent = '− ' + fmt(l.valor);
+        rows.appendChild(row);
+      });
+      el.appendChild(ticket);
+    });
+    el.querySelectorAll('[data-act="edit"]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const l = lancamentos.find(x=>x.id===btn.dataset.id);
+        const novo = prompt('Novo valor para "'+l.nome+'"', l.valor);
+        const num = parseFloat(novo);
+        if (!isNaN(num) && num>0){ l.valor = num; saveAll(); renderAll(); }
+      });
+    });
+    el.querySelectorAll('[data-act="del"]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const ok = await brgxConfirm({title:'Excluir lançamento', text:'Remove só este mês (a recorrência continua ativa pros próximos meses, edite-a se quiser parar). Continuar?', confirmLabel:'Excluir'});
+        if (!ok) return;
+        lancamentos = lancamentos.filter(x=>x.id!==btn.dataset.id);
+        saveAll(); renderAll();
+      });
+    });
+  }
 
-        function formatarMoeda(valor) {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
-        }
+  function renderAvulsos(){
+    const ym = todayYM();
+    const avulsos = lancamentos.filter(l => !l.recId && ymOf(l.data)===ym);
+    const el = document.getElementById('avulsos');
+    el.innerHTML = '';
+    if (avulsos.length===0){ el.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">Nenhum avulso este mês.</p>'; return; }
+    avulsos.forEach(l=>{
+      const row = document.createElement('div');
+      row.className = 'ticket-row';
+      row.style.cssText = 'background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px';
+      row.innerHTML = `
+        <span class="prazo-dot ${l.prazo||'curto'}"></span>
+        <span class="name"></span>
+        <span class="amount ${l.tipo==='saida'?'saida':''}"></span>
+        <div class="rowbtns"><button data-act="del" data-id="${l.id}">✕</button></div>`;
+      row.querySelector('.name').textContent = l.nome;
+      row.querySelector('.amount').textContent = (l.tipo==='saida'?'− ':'+ ') + fmt(l.valor);
+      el.appendChild(row);
+    });
+    el.querySelectorAll('[data-act="del"]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const ok = await brgxConfirm({title:'Excluir avulso', text:'Remove esse lançamento avulso. Continuar?', confirmLabel:'Excluir'});
+        if (!ok) return;
+        lancamentos = lancamentos.filter(x=>x.id!==btn.dataset.id);
+        saveAll(); renderAll();
+      });
+    });
+  }
 
-        function formatarHora(dataISO) {
-            const d = new Date(dataISO);
-            return d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        }
+  function renderEnvelopes(){
+    const ym = todayYM();
+    const mesLanc = lancamentos.filter(l => ymOf(l.data)===ym);
+    const renda = mesLanc.filter(l=>l.tipo==='entrada').reduce((s,l)=>s+l.valor,0) || 1;
+    const porPrazo = {curto:0, medio:0, longo:0};
+    mesLanc.filter(l=>l.tipo==='saida').forEach(l=>{ porPrazo[l.prazo||'curto'] += l.valor; });
+    const economiaLancada = brgxStorageGet('brgx-caixa-economia-lancada-'+ym, 0);
+    porPrazo.longo += economiaLancada;
 
-        async function adicionarLancamento(e) {
-            e.preventDefault();
+    const TARGET = {curto:50, medio:30, longo:20};
+    const el = document.getElementById('envelopes');
+    el.innerHTML = '';
+    ['curto','medio','longo'].forEach(k=>{
+      const pct = Math.round(porPrazo[k]/renda*100);
+      const div = document.createElement('div');
+      div.className = 'envelope ' + k;
+      div.innerHTML = `
+        <p class="tag">${PRAZO_LABEL[k]}</p>
+        <p class="pct">${pct}%</p>
+        <p class="target">meta ${TARGET[k]}% · ${fmt(porPrazo[k])}</p>
+        <div class="bar"><span style="width:${Math.min(pct/TARGET[k]*100,100)}%"></span></div>`;
+      el.appendChild(div);
+    });
+  }
 
-            const tipo = document.getElementById('input-tipo').value;
-            const valor = parseFloat(document.getElementById('input-valor').value);
-            const descricao = document.getElementById('input-descricao').value;
-            const categoria = document.getElementById('input-categoria').value;
-            
-            // Pegando o texto da opção selecionada para facilitar leitura no histórico
-            const selectCategoria = document.getElementById('input-categoria');
-            const categoriaTexto = selectCategoria.options[selectCategoria.selectedIndex].text;
-            
-            const pagamento = document.getElementById('input-pagamento').value;
-            const selectPagamento = document.getElementById('input-pagamento');
-            const pagamentoTexto = selectPagamento.options[selectPagamento.selectedIndex].text;
+  function renderGoal(){
+    const goals = brgxStorageGet('brgx-metas-goals', []);
+    const sel = document.getElementById('goalSelect');
+    sel.innerHTML = '<option value="">— nenhuma meta linkada —</option>';
+    goals.forEach(g=>{
+      const opt = document.createElement('option');
+      opt.value = g.id; opt.textContent = g.title;
+      if (g.id === goalId) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    const box = document.getElementById('goalProgress');
+    const goal = goals.find(g=>g.id===goalId);
+    if (!goal){ box.innerHTML = '<p style="color:var(--ink-soft);font-size:12.5px;margin:8px 0 0">Escolha uma meta pra acompanhar a economia aqui.</p>'; return; }
+    const valorAlvo = goal.valorAlvo || 0;
+    const valorAtual = goal.valorAtual || 0;
+    box.innerHTML = `
+      <div class="bar-row" style="margin-top:8px">
+        <div class="bar"><span style="width:${valorAlvo ? Math.min(100, valorAtual/valorAlvo*100) : 0}%"></span></div>
+        <span class="bar-pct">${valorAlvo ? Math.round(valorAtual/valorAlvo*100) : 0}%</span>
+      </div>
+      <p style="font-size:12px;color:var(--ink-soft);margin:6px 0 0">${fmt(valorAtual)} de ${valorAlvo ? fmt(valorAlvo) : 'sem valor-alvo definido'}</p>`;
+    document.getElementById('economiaProgramada').value = economiaProgramada || '';
+  }
 
-            const novaTransacao = {
-                id: Date.now().toString(),
-                data: new Date().toISOString(),
-                tipo: tipo,
-                valor: valor,
-                descricao: descricao.trim(),
-                categoriaTexto: categoriaTexto,
-                pagamentoTexto: pagamentoTexto
-            };
+  function renderAll(){
+    renderHero(); renderPendencias(); renderCiclos(); renderAvulsos(); renderEnvelopes(); renderGoal();
+  }
 
-            transacoes.push(novaTransacao);
-            await salvarDados();
-            renderizarInterface();
-            
-            // Limpar formulário (mantendo o tipo)
-            document.getElementById('input-valor').value = '';
-            document.getElementById('input-descricao').value = '';
-            document.getElementById('input-descricao').focus();
-        }
+  document.getElementById('goalSelect').addEventListener('change', (e)=>{
+    goalId = e.target.value || null;
+    brgxStorageSet('brgx-caixa-meta-vinculada', goalId);
+    renderGoal();
+  });
 
-        async function removerLancamento(id) {
-            if(confirm('Tem certeza que deseja apagar este lançamento?')) {
-                transacoes = transacoes.filter(t => t.id !== id);
-                await salvarDados();
-                renderizarInterface();
-            }
-        }
+  document.getElementById('salvarEconomiaBtn').addEventListener('click', ()=>{
+    const v = parseFloat(document.getElementById('economiaProgramada').value);
+    economiaProgramada = isNaN(v) ? 0 : v;
+    brgxStorageSet('brgx-caixa-economia-programada', economiaProgramada);
+  });
 
-        async function limparDados() {
-            if(confirm('ATENÇÃO: Isso vai apagar TODOS os dados do caixa. Deseja continuar?')) {
-                transacoes = [];
-                await salvarDados();
-                renderizarInterface();
-                // Desmarca os checkboxes das atividades
-                document.querySelectorAll('.activity-list input[type="checkbox"]').forEach(cb => cb.checked = false);
-            }
-        }
+  document.getElementById('lancarEconomiaBtn').addEventListener('click', ()=>{
+    if (!goalId){ alert('Escolha uma meta pra linkar primeiro.'); return; }
+    const goals = brgxStorageGet('brgx-metas-goals', []);
+    const goal = goals.find(g=>g.id===goalId);
+    if (!goal) return;
+    const ym = todayYM();
+    const mesLanc = lancamentos.filter(l => ymOf(l.data)===ym);
+    const renda = mesLanc.filter(l=>l.tipo==='entrada').reduce((s,l)=>s+l.valor,0);
+    const gastos = mesLanc.filter(l=>l.tipo==='saida').reduce((s,l)=>s+l.valor,0);
+    const sobra = renda - gastos;
+    const valor = Math.max(0, Math.min(economiaProgramada || sobra, sobra));
+    if (valor <= 0){ alert('Não há sobra disponível este mês.'); return; }
+    goal.valorAtual = (goal.valorAtual || 0) + valor;
+    if (goal.valorAlvo) goal.pct = Math.min(100, Math.round(goal.valorAtual / goal.valorAlvo * 100));
+    brgxStorageSet('brgx-metas-goals', goals);
+    brgxStorageSet('brgx-caixa-economia-lancada-'+ym, (brgxStorageGet('brgx-caixa-economia-lancada-'+ym,0)) + valor);
+    renderAll();
+  });
 
-        async function salvarDados() {
-            await saveStorageData('brgx_caixa_data', transacoes);
-        }
+  document.getElementById('recForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const nome = document.getElementById('recNome').value.trim();
+    const valor = parseFloat(document.getElementById('recValor').value);
+    const tipo = document.getElementById('recTipo').value;
+    const diaDoMes = parseInt(document.getElementById('recDia').value, 10);
+    const prazo = tipo==='saida' ? document.getElementById('recPrazo').value : null;
+    if (!nome || !valor || !diaDoMes) return;
+    recorrencias.push({id:'r'+Date.now(), nome, valor, tipo, diaDoMes, prazo});
+    saveAll();
+    e.target.reset();
+    ensureMonthGenerated();
+    renderAll();
+  });
 
-        function renderizarInterface() {
-            let totalEntradas = 0;
-            let totalSaidas = 0;
+  document.getElementById('avulsoForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const nome = document.getElementById('avNome').value.trim();
+    const valor = parseFloat(document.getElementById('avValor').value);
+    const tipo = document.getElementById('avTipo').value;
+    const prazo = tipo==='saida' ? document.getElementById('avPrazo').value : null;
+    const data = document.getElementById('avData').value || null;
+    if (!nome || !valor) return;
+    lancamentos.push({id:'l'+Date.now(), recId:null, nome, valor, tipo, prazo, data});
+    saveAll();
+    e.target.reset();
+    renderAll();
+  });
 
-            const tbody = document.querySelector('#tabela-historico tbody');
-            tbody.innerHTML = ''; // Limpa tabela com segurança (DOM base é fixo)
-
-            if(transacoes.length === 0) {
-                const tr = document.createElement('tr');
-                const td = document.createElement('td');
-                td.colSpan = 7;
-                td.textContent = 'Nenhum lançamento registrado hoje.';
-                td.style.textAlign = 'center';
-                tr.appendChild(td);
-                tbody.appendChild(tr);
-            } else {
-                // Renderiza do mais novo para o mais velho
-                [...transacoes].reverse().forEach(t => {
-                    if(t.tipo === 'entrada') totalEntradas += t.valor;
-                    if(t.tipo === 'saida') totalSaidas += t.valor;
-
-                    const tr = document.createElement('tr');
-                    
-                    const badgeClass = t.tipo === 'entrada' ? 'badge-entrada' : 'badge-saida';
-                    const tipoTexto = t.tipo === 'entrada' ? 'Entrada' : 'Saída';
-
-                    // Evitando InnerHTML complexo para prevenir bugs de aspas/injeção
-                    tr.innerHTML = `
-                        <td>${formatarHora(t.data)}</td>
-                        <td><span class="badge ${badgeClass}">${tipoTexto}</span></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td style="font-weight:600; color: ${t.tipo === 'entrada' ? 'var(--success)' : 'var(--danger)'}">
-                            ${t.tipo === 'saida' ? '- ' : ''}${formatarMoeda(t.valor)}
-                        </td>
-                        <td><button class="delete-btn" onclick="removerLancamento('${t.id}')">X</button></td>
-                    `;
-                    
-                    // Inserindo textos com textContent para garantir segurança total (Sem bugs de aspas na descrição)
-                    tr.children[2].textContent = t.descricao;
-                    tr.children[3].textContent = t.categoriaTexto;
-                    tr.children[4].textContent = t.pagamentoTexto;
-
-                    tbody.appendChild(tr);
-                });
-            }
-
-            // Atualiza Dashboard
-            const saldoAtual = totalEntradas - totalSaidas;
-            
-            document.getElementById('dash-entradas').textContent = formatarMoeda(totalEntradas);
-            document.getElementById('dash-saidas').textContent = formatarMoeda(totalSaidas);
-            
-            const dashSaldo = document.getElementById('dash-saldo');
-            dashSaldo.textContent = formatarMoeda(saldoAtual);
-            
-            // Muda a cor do saldo se ficar negativo
-            if(saldoAtual < 0) {
-                dashSaldo.className = 'value text-danger';
-            } else {
-                dashSaldo.className = 'value text-primary';
-            }
-        }
-    </script>
+  ensureMonthGenerated();
+  renderAll();
+})();
+</script>
+<script src="../assets/brgx-specialist.js"></script>
+<script>brgxInitSpecialist('chaves');</script>
 </body>
 </html>

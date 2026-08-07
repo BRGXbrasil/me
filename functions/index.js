@@ -65,6 +65,18 @@ const SPECIALISTS = {
     nome: 'Michelangelo',
     persona: `Voce e MICHELANGELO, diretor de expressao do hub pessoal do usuario (app Estilo). Trabalha com arte, estetica, identidade visual, percepcao e presenca, tanto para o estilo pessoal do usuario quanto para as redes sociais dele. Foco: beleza com proposito, nunca beleza vazia. Pergunta central: "Como isso pode ser sentido antes mesmo de ser explicado?" Quando o usuario mandar uma foto pedindo uma "lapidada", avalie com olho de diretor de arte: silhueta, proporcao, paleta de cor, coerencia entre a peca e quem a usa, e de 1 a 3 ajustes concretos e acionaveis, nunca uma lista longa. Elogio vazio nao ajuda ninguem: se algo nao funciona, diga o que e por que.`,
   },
+  archimedes: {
+    nome: 'Archimedes',
+    persona: `Voce e ARCHIMEDES, explorador do conhecimento do hub pessoal do usuario (app "Coisas que eu ainda nao sei", modo Socrates). Curiosidade genuina por qualquer territorio intelectual, hoje sobretudo neurologia, psicanalise e kabbalah. Foco: expansao mental, nao aplicacao imediata. Pergunta central: "O que ainda podemos descobrir?" Prefere abrir perguntas a fechar respostas. Quando o usuario trouxer um fato ou duvida, conecte com outros territorios do conhecimento quando fizer sentido, sem forcar a conexao.`,
+  },
+  chai: {
+    nome: 'Chai',
+    persona: `Voce e CHAI, curador de repertorio do hub pessoal do usuario (app Biblioteca, tambem cuida de redes sociais junto com Michelangelo). Trabalha com livros, autores, historias, cultura e arte. Foco: assimilacao, a melhor forma de viver aquele conhecimento, nao so acumula-lo. Pergunta central: "Qual e a melhor maneira de viver esse conhecimento?" Quando pedido, sugira leituras, autores e best sellers alinhados ao gosto que o usuario ja demonstrou, com uma frase curta do porque de cada sugestao.`,
+  },
+  chaves: {
+    nome: 'Chaves',
+    persona: `Voce e CHAVES, guardiao dos recursos do hub pessoal do usuario (app Caixa, orcamento pessoal). Cuida de dinheiro, patrimonio, riscos e sustentabilidade financeira. Pensa em liberdade, seguranca e longevidade, nao so em corte de gasto pelo corte. Foco: solidez. Pergunta central: "Quanto isso custa, quanto retorna e o que coloca em risco?" Quando o usuario perguntar sobre um gasto ou decisao financeira, avalie com pragmatismo, questione premissas fracas, e relacione com a regra 50/30/20 (curto/medio/longo prazo) que ele usa no app quando fizer sentido.`,
+  },
 };
 
 function corsHeaders(origin) {
@@ -119,6 +131,49 @@ exports.specialistChat = onRequest(
       res.status(200).json({ reply });
     } catch (err) {
       console.error('specialistChat error', err);
+      res.status(502).json({ error: 'gemini_call_failed' });
+    }
+  }
+);
+
+const BOOK_MOODS = ['aventura', 'misterio', 'romance', 'filosofia', 'drama', 'comedia', 'terror', 'biografia'];
+const MAX_TEXT_SAMPLE_LENGTH = 12000;
+
+exports.analyzeBookAtmosphere = onRequest(
+  { cors: false, secrets: [GEMINI_API_KEY], region: 'us-central1' },
+  async (req, res) => {
+    if (applyCors(req, res)) return;
+    if (req.method !== 'POST') { res.status(405).json({ error: 'method_not_allowed' }); return; }
+
+    const { title, textSample } = req.body || {};
+    if (!textSample || typeof textSample !== 'string' || !textSample.trim()) { res.status(400).json({ error: 'missing_text_sample' }); return; }
+
+    const systemInstruction = buildSystemInstruction('chai');
+    const prompt = `Livro: "${(title || 'sem titulo').slice(0, 200)}"\n\nAmostra do texto (sumario e trechos iniciais de capitulos):\n${textSample.slice(0, MAX_TEXT_SAMPLE_LENGTH)}\n\nCom base nessa amostra, defina a atmosfera de leitura deste livro especifico. Responda em JSON estrito, sem texto fora do JSON, no formato:\n{"baseMood": "<uma de ${BOOK_MOODS.join('|')}>", "changePoints": [{"atPercent": <numero de 1 a 99>, "mood": "<uma das opcoes>", "reason": "<motivo curto, uma frase>"}]}\nUse no maximo 4 changePoints, so para momentos de mudanca de tom claramente perceptiveis pela amostra (proporcao aproximada: a maior parte do livro fica no baseMood, changePoints sao excecao, nao regra). Se a amostra nao sugerir nenhuma mudanca de tom clara, devolva changePoints como array vazio.`;
+
+    try {
+      const genAI = new GoogleGenerativeAI(GEMINI_API_KEY.value());
+      const model = genAI.getGenerativeModel({
+        model: MODEL_NAME,
+        systemInstruction,
+        generationConfig: { responseMimeType: 'application/json' },
+      });
+      const result = await model.generateContent({ contents: [{ role: 'user', parts: [{ text: prompt }] }] });
+      const raw = result.response.text();
+      let parsed;
+      try { parsed = JSON.parse(raw); } catch { res.status(502).json({ error: 'invalid_model_json' }); return; }
+
+      const baseMood = BOOK_MOODS.includes(parsed.baseMood) ? parsed.baseMood : BOOK_MOODS[0];
+      const changePoints = Array.isArray(parsed.changePoints)
+        ? parsed.changePoints
+          .filter((c) => c && typeof c.atPercent === 'number' && BOOK_MOODS.includes(c.mood))
+          .slice(0, 4)
+          .map((c) => ({ atPercent: Math.max(1, Math.min(99, Math.round(c.atPercent))), mood: c.mood, reason: String(c.reason || '').slice(0, 200) }))
+        : [];
+
+      res.status(200).json({ baseMood, changePoints });
+    } catch (err) {
+      console.error('analyzeBookAtmosphere error', err);
       res.status(502).json({ error: 'gemini_call_failed' });
     }
   }
