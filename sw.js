@@ -1,4 +1,4 @@
-const CACHE = 'brgx-core-8';
+const CACHE = 'brgx-core-9';
 const ASSETS = [
   './',
   './index.html',

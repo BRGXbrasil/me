@@ -172,29 +172,18 @@ const BRGX_DIA_META = {
   DOM:{ label:'Domingo', tipo:'Estrutura', cat:'mente' },
 };
 
-/* Agenda física fixa (xlsx do usuário). `noite:true` = atividade acontece à noite,
-   e nesses dias o bloco das 07:00 continua sendo o treino principal. */
-const BRGX_ATIVIDADE_FISICA = {
-  SEG:{ nome:'Yoga',            icone:'🧘', slot:'manha' },
-  TER:{ nome:'Bike / Spinning', icone:'🚴', slot:'noite' },
-  QUA:{ nome:'Yoga',            icone:'🧘', slot:'manha' },
-  QUI:{ nome:'Bike / Spinning', icone:'🚴', slot:'noite' },
-  SEX:{ nome:'Dança',           icone:'💃', slot:'noite' },
-  SAB:{ nome:'Livre',           icone:'🌞', slot:null    },
-  DOM:{ nome:'Natação',         icone:'🏊', slot:'manha' },
+/* Agenda física semanal — dado real, extraído do app minha-rotina.html em uso
+   (substitui a versão que vinha do xlsx, que estava desatualizada). */
+const BRGX_AGENDA_FISICA = {
+  SEG:'Yoga', TER:'Spinning', QUA:'Corrida', QUI:'Dança', SEX:'Natação', SAB:'Livre', DOM:'Livre',
+};
+const BRGX_AGENDA_ICONES = {
+  Yoga:'🧘', Spinning:'🚴', Corrida:'🏃', Dança:'💃', Natação:'🏊', Livre:'🌞',
 };
 
-/* Nos dias de Yoga o treino principal migra para a noite (regra do usuário). */
-function brgxTreinoNoturno(dia){
-  const a = BRGX_ATIVIDADE_FISICA[dia];
-  if (a && a.slot === 'manha' && a.nome === 'Yoga') return 'Treino principal';
-  if (a && a.slot === 'noite') return a.nome;
-  return null;
-}
-
 function brgxManha(dia){
-  const a = BRGX_ATIVIDADE_FISICA[dia];
-  const ehYoga = a && a.nome === 'Yoga';
+  const atividade = BRGX_AGENDA_FISICA[dia];
+  const livre = atividade === 'Livre';
   return [
     { s:'05:10', e:'05:25', label:'Despertar · água morna com limão', cat:'ritual',
       nota:'Água morna com limão imediatamente. Abrir as janelas: luz natural ativa o cortisol.' },
@@ -206,8 +195,8 @@ function brgxManha(dia){
       nota:'10min de exposição solar. Vitamina D e ancoragem circadiana.' },
     { s:'06:30', e:'06:50', label:'Pet Júnior', cat:'vinculo',
       nota:'Saída da manhã, alimentação e treino curto do Júnior.' },
-    { s:'07:00', e:'07:50', label: ehYoga ? 'Yoga' : 'Treino principal', cat:'corpo',
-      nota: ehYoga ? 'Dia de Yoga: o treino principal migra para a noite.' : '50min. Treino principal do dia.' },
+    { s:'07:00', e:'07:50', label: livre ? 'Treino principal' : atividade, cat:'corpo',
+      nota: livre ? '50min. Treino principal do dia.' : `50min. Atividade física do dia: ${atividade}.` },
     { s:'07:50', e:'08:15', label:'Protetor, hidratante, remédio e postura', cat:'corpo',
       nota:'Skincare completo, remédio e 5min de postura.' },
   ];
@@ -289,61 +278,111 @@ function brgxBlocoAtual(grade, agora = new Date()){
   return { bloco:null, indice:-1, proximo: grade[0] };
 }
 
-/* ---- Hábitos ----
-   8 hábitos base na ordem da spec. Os compostos abrem em sub-checks usando os
-   hábitos atômicos reais do Notion. */
-const BRGX_HABITOS_BASE = [
-  { id:'h1', n:1, nome:'Água morna com limão', cat:'ritual', emoji:'🍋', quando:'05:10' },
-  { id:'h2', n:2, nome:'Intenção do dia',      cat:'mente',  emoji:'✍️', quando:'05:25' },
-  { id:'h3', n:3, nome:'Meditação',            cat:'mente',  emoji:'🧠', quando:'05:50' },
-  { id:'h4', n:4, nome:'Pegar sol',            cat:'corpo',  emoji:'☀️', quando:'06:20' },
-  { id:'h5', n:5, nome:'Treino / atividade',   cat:'corpo',  emoji:'🏃', quando:'07:00', dinamico:true },
-  { id:'h6', n:6, nome:'Protetor, hidratante, remédio e postura', cat:'corpo', emoji:'🧴', quando:'07:50',
-    subs:[
-      { id:'h6a', nome:'Protetor solar', emoji:'🧴' },
-      { id:'h6b', nome:'Pele',           emoji:'💧' },
-      { id:'h6c', nome:'Remédio',        emoji:'💊' },
-      { id:'h6d', nome:'Postura',        emoji:'🧍' },
-    ] },
-  { id:'h7', n:7, nome:'Controle financeiro, diário e não fumo', cat:'ritual', emoji:'📓', quando:'21:00',
-    subs:[
-      { id:'h7a', nome:'Controle financeiro', emoji:'💰' },
-      { id:'h7b', nome:'Diário escrito',      emoji:'📓' },
-      { id:'h7c', nome:'Não fumo',            emoji:'🚫' },
-    ] },
-  { id:'h8', n:8, nome:'Pet Júnior', cat:'vinculo', emoji:'🐾', quando:'06:30 e 21:55',
-    subs:[
-      { id:'h8a', nome:'Manhã', emoji:'🌅' },
-      { id:'h8b', nome:'Noite', emoji:'🌙' },
-    ] },
+function brgxDataISO(d = new Date()){ return d.toISOString().slice(0,10); }
+function brgxDiasAtras(n){ const d = new Date(); d.setDate(d.getDate()-n); return brgxDataISO(d); }
+
+/* ---- Rotina real (extraída do app minha-rotina.html, em uso de verdade pelo usuário) ----
+   Categorias, 17 hábitos com Nível (Mínimo/Ideal/Extra), views, abas, regra do dia ruim,
+   tarefas de semana/fds/mês, humores de fim de semana e o protocolo de detox de 90 dias.
+   Onde havia sobreposição com o que tinha sido montado a partir do PDF/Notion (Rodada 4),
+   esta é a fonte que vale — dados e lógica confirmados pelo usuário como os reais. */
+
+const BRGX_ROTINA_CATS = {
+  'Organização':     '#7a5c9e',
+  'Saúde':           '#4f7a5c',
+  'Casa':            '#b8722e',
+  'Alimentação':     '#3f9e88',
+  'Mental':          '#3f6f9e',
+  'Corpo':           '#4f8a8a',
+  'Desenvolvimento': '#b85a72',
+  'Atenção':         '#8a8471',
+  'Finanças':        '#c99a3a',
+  'Detox':           '#9c3b3b',
+};
+
+const BRGX_HABITOS = [
+  { id:'progresso', time:'A qualquer momento', nome:'Acompanhe seu progresso diário', categoria:'Organização',     periodo:'Qualquer momento', nivel:'Mínimo', freq:'Diário' },
+  { id:'limao',     time:'06:00',              nome:'Limão',                          categoria:'Saúde',           periodo:'Manhã',            nivel:'Mínimo', freq:'Diário' },
+  { id:'cama',      time:'06:15',              nome:'Arrumar a cama e abrir a janela', categoria:'Casa',            periodo:'Manhã',            nivel:'Mínimo', freq:'Diário' },
+  { id:'cafe',      time:'06:25',              nome:'Café da manhã',                  categoria:'Alimentação',     periodo:'Manhã',            nivel:'Mínimo', freq:'Diário' },
+  { id:'previsao',  time:'06:40',              nome:'Previsão do dia',                categoria:'Mental',          periodo:'Manhã',            nivel:'Ideal',  freq:'Diário' },
+  { id:'sol',       time:'07:00',              nome:'Sol e alongamento',              categoria:'Corpo',           periodo:'Manhã',            nivel:'Ideal',  freq:'Diário' },
+  { id:'treino',    time:'07:10 - 08:10',      nome:'Treino',                         categoria:'Corpo',           periodo:'Manhã',            nivel:'Extra',  freq:'Diário' },
+  { id:'estudo',    time:'08:00',              nome:'Estudo no caminho',              categoria:'Desenvolvimento', periodo:'Manhã',            nivel:'Ideal',  freq:'Dias úteis' },
+  { id:'redes',     time:'08:30',              nome:'Redes sociais',                  categoria:'Atenção',         periodo:'Manhã',            nivel:'Extra',  freq:'Diário' },
+  { id:'alimeq',    time:'08:30',              nome:'Alimentação equilibrada',        categoria:'Alimentação',     periodo:'Dia todo',         nivel:'Mínimo', freq:'Diário' },
+  { id:'medita',    time:'08:50',              nome:'Meditação',                      categoria:'Mental',          periodo:'Manhã',            nivel:'Ideal',  freq:'Diário' },
+  { id:'financas',  time:'21:00',              nome:'Controle financeiro',            categoria:'Finanças',        periodo:'Noite',            nivel:'Ideal',  freq:'Diário' },
+  { id:'bike',      time:'21:30',              nome:'Bike',                           categoria:'Corpo',           periodo:'Noite',            nivel:'Extra',  freq:'Diário' },
+  { id:'leitura',   time:'22:00',              nome:'Leitura noite',                  categoria:'Mental',          periodo:'Noite',            nivel:'Ideal',  freq:'Diário' },
+  { id:'naofumo',   time:'22:40',              nome:'Não fumo',                       categoria:'Detox',           periodo:'Noite',            nivel:'Mínimo', freq:'Diário' },
+  { id:'diario',    time:'22:45',              nome:'Diário',                         categoria:'Mental',          periodo:'Noite',            nivel:'Ideal',  freq:'Diário' },
+  { id:'remedio',   time:'22:45',              nome:'Remédio',                        categoria:'Saúde',           periodo:'Noite',            nivel:'Mínimo', freq:'Diário' },
 ];
 
-/* Hábitos do Notion que não cabem nos 8 compostos — seguem rastreados à parte. */
-const BRGX_HABITOS_EXTRA = [
-  { id:'x1', nome:'Alongamento',     cat:'corpo',       emoji:'🤸', freq:'Diário' },
-  { id:'x2', nome:'Whey',            cat:'corpo',       emoji:'🥤', freq:'Pós-treino' },
-  { id:'x3', nome:'Estudo',          cat:'criacao',     emoji:'🎧', freq:'Nos transportes' },
-  { id:'x4', nome:'Escrita',         cat:'mente',       emoji:'✍️', freq:'Diário' },
-  { id:'x5', nome:'Leitura',         cat:'mente',       emoji:'📖', freq:'20:15' },
-  { id:'x6', nome:'Fio dental',      cat:'corpo',       emoji:'🦷', freq:'Diário' },
-  { id:'x7', nome:'Clareador dental',cat:'corpo',       emoji:'🪥', freq:'Diário' },
-  { id:'x8', nome:'Máscara facial',  cat:'regeneracao', emoji:'🧖', freq:'Domingo ou segunda' },
+const BRGX_HABITOS_VIEWS = [
+  { key:'todos',  label:'Todos' },
+  { key:'manha',  label:'Manhã' },
+  { key:'noite',  label:'Noite' },
+  { key:'minimo', label:'Mínimo obrigatório' },
 ];
 
-/* ---- Streak (regras da página ⚙️ BRGX do Notion) ----
+const BRGX_ROTINA_TABS = [
+  { key:'hoje',   label:'Hoje' },
+  { key:'semana', label:'Semana' },
+  { key:'fds',    label:'Fim de semana' },
+  { key:'mes',    label:'Mês' },
+];
+
+const BRGX_REGRA_DIA_RUIM = 'Quando a energia estiver baixa, não preciso cumprir tudo. Preciso apenas cumprir o mínimo: saúde, casa, alimentação, não fumar e remédio. O objetivo é manter a identidade, não buscar perfeição.';
+
+const BRGX_WEEKLY_TASKS = [
+  { id:'esfoliacao',   nome:'Esfoliação',          quando:'Qua e sáb' },
+  { id:'mascara',      nome:'Máscara facial',       quando:'Domingo' },
+  { id:'revisao_sem',  nome:'Revisão da semana',    quando:'Domingo' },
+];
+const BRGX_WEEKEND_TASKS = [
+  { id:'autocuidado',   nome:'Autocuidado especial' },
+  { id:'detox_digital', nome:'Digital detox' },
+  { id:'criatividade',  nome:'Criatividade livre' },
+  { id:'casa',          nome:'Organização da casa' },
+  { id:'spa',           nome:'Massagem ou day spa' },
+  { id:'cultural',      nome:'Evento cultural' },
+];
+const BRGX_MONTH_TASKS = [
+  { id:'revisao_mes', nome:'Revisão mensal' },
+  { id:'workshop',    nome:'Workshop ou curso' },
+];
+const BRGX_MOODS = [
+  { key:'descansado', label:'Descansado', hint:'Chegou com energia — pode puxar o que te dá prazer e movimento.' },
+  { key:'neutro',      label:'Neutro',     hint:'Equilíbrio. Um fds normal: escolha um cuidado e um prazer.' },
+  { key:'cansado',     label:'Cansado',    hint:'Prioridade é restaurar. Digital detox e descanso valem mais que produtividade.' },
+  { key:'ansioso',     label:'Ansioso',    hint:'Devagar. Uma coisa de cada vez — organização da casa e corpo ajudam a aterrar.' },
+  { key:'animado',     label:'Animado',    hint:'Aproveite: criatividade livre ou evento cultural cabem bem agora.' },
+];
+
+function brgxSemanaKey(d = new Date()){
+  const x = new Date(d);
+  const dia = x.getDay();
+  const diff = (dia === 0 ? -6 : 1) - dia;
+  x.setDate(x.getDate() + diff);
+  return 'w' + brgxDataISO(x);
+}
+function brgxMesKey(d = new Date()){ return 'm' + d.getFullYear() + '-' + (d.getMonth() + 1); }
+
+/* ---- "Feito hoje" — uma chave por data (brgx-rotina-done-<data>), igual ao app real. ---- */
+function brgxRotinaDoneDia(dataISO){ return brgxStorageGet('brgx-rotina-done-' + dataISO, {}); }
+
+/* ---- Streak (não existe no app real — regra própria, aplicada aos 17 hábitos reais) ----
    21 dias consecutivos = consolidado.
    1 dia perdido mantém a sequência. 2 dias perdidos seguidos reiniciam. */
 const BRGX_STREAK_CONSOLIDADO = 21;
 
-function brgxDataISO(d = new Date()){ return d.toISOString().slice(0,10); }
-function brgxDiasAtras(n){ const d = new Date(); d.setDate(d.getDate()-n); return brgxDataISO(d); }
-
-function brgxCalcularStreak(log, habitoId, hoje = new Date()){
+function brgxCalcularStreak(habitoId, hoje = new Date()){
   let streak = 0, perdidosSeguidos = 0;
   for (let i = 0; i < 400; i++){
     const d = new Date(hoje); d.setDate(d.getDate()-i);
-    const key = brgxDataISO(d);
-    const feito = !!(log[key] && log[key][habitoId]);
+    const feito = !!brgxRotinaDoneDia(brgxDataISO(d))[habitoId];
     if (feito){ streak++; perdidosSeguidos = 0; continue; }
     // Hoje ainda não conta como perdido: o dia não acabou.
     if (i === 0) continue;
@@ -353,23 +392,29 @@ function brgxCalcularStreak(log, habitoId, hoje = new Date()){
   return { dias: streak, consolidado: streak >= BRGX_STREAK_CONSOLIDADO };
 }
 
-function brgxAderencia(log, ids, dias = 7){
+function brgxAderencia(ids, dias = 7){
   let feitos = 0, total = 0;
   for (let i = 1; i <= dias; i++){
-    const key = brgxDiasAtras(i);
-    const dl = log[key] || {};
+    const dl = brgxRotinaDoneDia(brgxDiasAtras(i));
     ids.forEach(id => { total++; if (dl[id]) feitos++; });
   }
   return total ? feitos/total : 0;
 }
 
-/* ---- Fins de semana temáticos ---- */
-const BRGX_FDS_CATS = {
-  estrutura:   { label:'Estrutura',   emoji:'🏗️', cat:'criacao',     upgrade:{ 'h5':'Treino estruturado' } },
-  regeneracao: { label:'Regeneração', emoji:'🧩', cat:'regeneracao', upgrade:{ 'h5':'Treino regenerativo', 'h3':'Meditação longa' } },
-  vinculo:     { label:'Vínculo',     emoji:'🤝', cat:'vinculo',     upgrade:{ 'h8':'Pet Júnior · passeio longo' } },
-  expressao:   { label:'Expressão',   emoji:'🎭', cat:'expressao',   upgrade:{ 'h2':'Intenção do dia · escrita livre' } },
-};
+/* ---- Detox mental de 90 dias — protocolo real, chave brgx-reset-start (ISO ou null) ---- */
+const BRGX_DETOX_FASES = [
+  { nome:'Reset',            de:1,  ate:21, foco:'Cortar ruído e gatilhos' },
+  { nome:'Evolução',         de:22, ate:45, foco:'Instalar padrões limpos' },
+  { nome:'Alta performance', de:46, ate:75, foco:'Sustentar energia e foco' },
+  { nome:'Maestria',         de:76, ate:90, foco:'Consolidar sem força bruta' },
+];
+function brgxDetoxStatus(inicioISO){
+  if (!inicioISO) return { ativo:false };
+  const dias = Math.min(90, Math.floor((Date.now() - new Date(inicioISO).getTime()) / 86400000) + 1);
+  const pct = Math.round((dias / 90) * 100);
+  const fase = BRGX_DETOX_FASES.find(f => dias >= f.de && dias <= f.ate) || BRGX_DETOX_FASES[0];
+  return { ativo:true, dias, pct, fase };
+}
 
 /* ---- Pomodoro ----
    25min de foco + 5min de pausa durante 09:00–19:00, excluindo 1h de almoço.

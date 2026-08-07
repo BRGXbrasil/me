@@ -340,14 +340,20 @@ a{color:inherit;text-decoration:none}
   var hoje = new Date().toISOString().slice(0,10);
   function get(k, f){ try{ var r=localStorage.getItem(k); return r===null?f:JSON.parse(r); }catch(e){ return f; } }
 
-  var BASE = [['h1','Água com limão'],['h2','Intenção do dia'],['h3','Meditação'],['h4','Pegar sol'],
-              ['h5','Treino / atividade'],['h6','Protetor e postura'],['h7','Financeiro e diário'],['h8','Pet Júnior']];
-  var dl = (get('brgx-rotina-log',{})[hoje]) || {};
-  var feitos = BASE.filter(function(h){ return dl[h[0]]; }).length;
-  var score = Math.round(feitos/BASE.length*100);
+  /* 17 hábitos reais (app minha-rotina.html). Os chips mostram só o nível Mínimo —
+     a "Regra do dia ruim" — e o score do hero considera os 17. */
+  var HAB = [['progresso','Progresso diário'],['limao','Limão'],['cama','Arrumar a cama'],['cafe','Café da manhã'],
+             ['previsao','Previsão do dia'],['sol','Sol e alongamento'],['treino','Treino'],['estudo','Estudo no caminho'],
+             ['redes','Redes sociais'],['alimeq','Alimentação equilibrada'],['medita','Meditação'],['financas','Controle financeiro'],
+             ['bike','Bike'],['leitura','Leitura noite'],['naofumo','Não fumo'],['diario','Diário'],['remedio','Remédio']];
+  var MINIMOS = ['progresso','limao','cama','cafe','alimeq','naofumo','remedio'];
+  var BASE = HAB.filter(function(h){ return MINIMOS.indexOf(h[0]) !== -1; });
+  var dl = get('brgx-rotina-done-' + hoje, {});
+  var feitos = HAB.filter(function(h){ return dl[h[0]]; }).length;
+  var score = Math.round(feitos/HAB.length*100);
 
   var lbl = document.getElementById('habitLabel');
-  if (lbl) lbl.textContent = 'Rotina · ' + feitos + '/' + BASE.length;
+  if (lbl) lbl.textContent = 'Rotina · ' + feitos + '/' + HAB.length;
 
   var chips = document.getElementById('habitChips');
   if (chips) BASE.forEach(function(h){
@@ -378,10 +384,10 @@ a{color:inherit;text-decoration:none}
   var cxl = cx && cx.parentElement.querySelector('.tile-label');
   if (cxl) cxl.textContent = 'Caixa · limite disponível';
 
-  // Reset mental
-  var rst = get('brgx-reset-detox',{ativo:false});
+  // Detox mental de 90 dias
+  var detoxStart = get('brgx-reset-start', null);
   var rv = document.querySelectorAll('.tile-value.plain')[0];
-  if (rv) rv.textContent = rst.ativo ? 'Detox ativo' : 'Sem detox ativo';
+  if (rv) rv.textContent = detoxStart ? 'Detox ativo' : 'Sem detox ativo';
 
   // Próxima ação = o "Faça" do Eisenhower da manhã, gravado no Dashboard
   var eis = (get('brgx-eisenhower',{})[hoje]) || {};
@@ -403,7 +409,7 @@ a{color:inherit;text-decoration:none}
   // Alerta coerente com o número real
   var al = document.querySelector('.alert-row span:last-child');
   if (al) al.textContent = feitos === 0 ? 'Nenhum hábito marcado ainda hoje.'
-        : (feitos < BASE.length/2 ? 'Menos da metade dos hábitos feitos hoje.' : 'Ritmo bom até agora.');
+        : (feitos < HAB.length/2 ? 'Menos da metade dos hábitos feitos hoje.' : 'Ritmo bom até agora.');
 })();
 
 if ('serviceWorker' in navigator) {
