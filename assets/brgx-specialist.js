@@ -12,6 +12,9 @@ const SPECIALIST_META = {
   chez: { nome: 'Chez', mono: 'CHZ' },
   check: { nome: 'Check', mono: 'CHK' },
   michelangelo: { nome: 'Michelangelo', mono: 'MI' },
+  archimedes: { nome: 'Archimedes', mono: 'AR' },
+  chai: { nome: 'Chai', mono: 'CH' },
+  chaves: { nome: 'Chaves', mono: 'CHV' },
 };
 
 function brgxInitSpecialist(specialistId) {

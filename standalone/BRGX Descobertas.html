@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="pt-BR" data-brgx-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#efece5" />
+<title>MEU · Descobertas</title>
+<link rel="stylesheet" href="../assets/brgx-tokens.css" />
+<style>
+/* "Respira aventura" — cartão único que estoura como descoberta desbloqueada, sem grid, sem timeline */
+body{padding-bottom:40px}
+
+.aula-card{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 18px}
+.aula-badge{width:46px;height:46px;border-radius:999px;background:var(--accent2);color:#fff;display:flex;align-items:center;justify-content:center;font:800 17px/1 Newsreader,serif;flex:0 0 auto}
+.aula-info{flex:1}
+.aula-info .lbl{font:700 10px/1 Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 3px}
+.aula-info input{border:none;background:none;font:600 15px/1.3 Newsreader,Georgia,serif;color:var(--ink);width:100%;padding:0}
+
+.cat-filters{display:flex;flex-wrap:wrap;gap:6px}
+.cat-filters .pill{cursor:pointer;border:1px solid transparent}
+.cat-filters .pill.active{background:var(--accent2);color:#fff}
+
+.discovery-stage{position:relative;min-height:280px;display:flex;align-items:center;justify-content:center}
+.discovery-card{width:100%;background:radial-gradient(140% 160% at 20% 0%, rgba(201,121,63,.16), transparent 60%), var(--card);border:1px solid var(--line);border-radius:26px;padding:30px 24px;text-align:center;box-shadow:var(--shadow-pop);transform:scale(1);opacity:1;transition:transform .25s ease, opacity .25s ease}
+.discovery-card.swap{transform:scale(.94);opacity:0}
+.discovery-glyph{font-size:30px;margin-bottom:12px}
+.discovery-cat{font:700 10px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin:0 0 12px}
+.discovery-text{font:italic 500 18px/1.5 Newsreader,Georgia,serif;color:var(--ink);margin:0}
+.discovery-empty{font:400 13.5px/1.5 Inter,sans-serif;color:var(--ink-soft)}
+
+.discovery-actions{display:flex;justify-content:center;gap:8px;margin-top:18px}
+.counter-strip{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px}
+.counter-strip .n{font:700 13px/1 Inter,sans-serif;color:var(--ink)}
+.counter-strip .lbl{font:500 11.5px/1 Inter,sans-serif;color:var(--ink-soft)}
+
+.fact-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.fact-row.sabido{opacity:.55}
+.fact-body{flex:1;min-width:0}
+.fact-cat{font:700 9.5px/1 Inter,sans-serif;text-transform:uppercase;letter-spacing:.05em;color:var(--accent2);margin:0 0 3px}
+.fact-text{font:500 13px/1.4 Inter,sans-serif;color:var(--ink);margin:0}
+.fact-row .rowbtns button{background:none;border:none;color:var(--ink-soft);font-size:12px;cursor:pointer;padding:2px}
+.fact-row .rowbtns button.danger{color:var(--danger)}
+
+.add-form{display:flex;flex-direction:column;gap:8px}
+.add-form input,.add-form select,.add-form textarea{font:500 13px/1 Inter,sans-serif;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font-family:Inter,sans-serif}
+.add-form textarea{min-height:70px;resize:vertical}
+</style>
+</head>
+<body>
+
+<div class="brgx-head">
+  <a class="brgx-back" href="../index.html">← MEU</a>
+  <p class="brgx-eyebrow">MEU.app/descobertas · pessoal</p>
+  <h1>Coisas que eu ainda não sei</h1>
+  <p>Neurologia, psicanálise, kabbalah e o que mais vier. Descobertas sorteadas, uma de cada vez.</p>
+</div>
+
+<div class="brgx-shell">
+
+  <div class="aula-card">
+    <div class="aula-badge" id="aulaBadge">12</div>
+    <div class="aula-info">
+      <p class="lbl">Próxima aula</p>
+      <input type="text" id="aulaInput" placeholder="ex: 12, ou 12 · qui 20h" />
+    </div>
+  </div>
+
+  <div class="cat-filters" id="catFilters"></div>
+
+  <div>
+    <div class="discovery-stage">
+      <div class="discovery-card" id="discoveryCard">
+        <p class="discovery-glyph">🧭</p>
+        <p class="discovery-cat" id="discoveryCat"></p>
+        <p class="discovery-text" id="discoveryText">Cadastre a primeira descoberta aí embaixo pra começar a sortear.</p>
+      </div>
+    </div>
+    <div class="discovery-actions">
+      <button class="mini-btn solid" id="novaBtn">Nova descoberta</button>
+      <button class="mini-btn" id="sabiaBtn">Já sei isso</button>
+    </div>
+    <div class="counter-strip">
+      <span class="n" id="counterN">0/0</span>
+      <span class="lbl">descobertas feitas</span>
+    </div>
+  </div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Todas as descobertas</p>
+    <div id="factList" style="display:flex;flex-direction:column;gap:8px"></div>
+  </div>
+
+  <div class="card">
+    <p class="section-label" style="margin-bottom:10px">Lançar descoberta</p>
+    <form class="add-form" id="factForm">
+      <div style="display:flex;gap:8px">
+        <select id="factCat" style="flex:1"></select>
+        <button type="button" class="mini-btn" id="newCatBtn">+ categoria</button>
+      </div>
+      <textarea id="factText" placeholder="O que você ainda não sabia?" required></textarea>
+      <button type="submit" class="mini-btn solid">Lançar</button>
+    </form>
+  </div>
+
+</div>
+
+<script src="../assets/brgx-shared.js"></script>
+<script>
+(function(){
+  let categorias = brgxStorageGet('brgx-descobertas-categorias', [
+    {id:'c1', nome:'Neurologia'}, {id:'c2', nome:'Psicanálise'}, {id:'c3', nome:'Kabbalah'}
+  ]);
+  let fatos = brgxStorageGet('brgx-descobertas-fatos', []);
+  let aula = brgxStorageGet('brgx-descobertas-proxima-aula', '12');
+  let activeCat = 'all';
+  let current = null;
+
+  function saveAll(){
+    brgxStorageSet('brgx-descobertas-categorias', categorias);
+    brgxStorageSet('brgx-descobertas-fatos', fatos);
+  }
+
+  function catName(id){ const c = categorias.find(x=>x.id===id); return c ? c.nome : '—'; }
+
+  function renderAulaBadge(){
+    document.getElementById('aulaInput').value = aula;
+    const numMatch = String(aula).match(/\d+/);
+    document.getElementById('aulaBadge').textContent = numMatch ? numMatch[0] : '?';
+  }
+  document.getElementById('aulaInput').addEventListener('input', (e)=>{
+    aula = e.target.value;
+    brgxStorageSet('brgx-descobertas-proxima-aula', aula);
+    renderAulaBadge();
+  });
+
+  function renderFilters(){
+    const el = document.getElementById('catFilters');
+    el.innerHTML = '';
+    const all = document.createElement('span');
+    all.className = 'pill' + (activeCat==='all' ? ' active' : '');
+    all.textContent = 'Todas';
+    all.addEventListener('click', ()=>{ activeCat='all'; renderFilters(); sortear(); });
+    el.appendChild(all);
+    categorias.forEach(c=>{
+      const p = document.createElement('span');
+      p.className = 'pill' + (activeCat===c.id ? ' active' : '');
+      p.textContent = c.nome;
+      p.addEventListener('click', ()=>{ activeCat=c.id; renderFilters(); sortear(); });
+      el.appendChild(p);
+    });
+  }
+
+  function renderCatSelect(){
+    const sel = document.getElementById('factCat');
+    sel.innerHTML = '';
+    categorias.forEach(c=>{
+      const opt = document.createElement('option');
+      opt.value = c.id; opt.textContent = c.nome;
+      sel.appendChild(opt);
+    });
+  }
+
+  function pool(){
+    return fatos.filter(f => !f.sabido && (activeCat==='all' || f.categoriaId===activeCat));
+  }
+
+  function sortear(){
+    const p = pool();
+    const card = document.getElementById('discoveryCard');
+    card.classList.add('swap');
+    setTimeout(()=>{
+      if (p.length===0){
+        current = null;
+        document.getElementById('discoveryCat').textContent = '';
+        document.getElementById('discoveryText').textContent = fatos.length===0
+          ? 'Cadastre a primeira descoberta aí embaixo pra começar a sortear.'
+          : 'Nenhuma descoberta pendente nessa categoria — tudo já sabido!';
+      } else {
+        current = p[Math.floor(Math.random()*p.length)];
+        document.getElementById('discoveryCat').textContent = catName(current.categoriaId);
+        document.getElementById('discoveryText').textContent = current.texto;
+      }
+      card.classList.remove('swap');
+    }, 180);
+    renderCounter();
+  }
+
+  function renderCounter(){
+    const total = fatos.length;
+    const sabidos = fatos.filter(f=>f.sabido).length;
+    document.getElementById('counterN').textContent = sabidos + '/' + total;
+  }
+
+  function renderFactList(){
+    const el = document.getElementById('factList');
+    el.innerHTML = '';
+    if (fatos.length===0){
+      el.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">Nenhuma descoberta cadastrada ainda.</p>';
+      return;
+    }
+    [...fatos].reverse().forEach(f=>{
+      const row = document.createElement('div');
+      row.className = 'fact-row' + (f.sabido ? ' sabido' : '');
+      row.innerHTML = `
+        <div class="fact-body"><p class="fact-cat"></p><p class="fact-text"></p></div>
+        <div class="rowbtns">
+          <button data-act="edit" data-id="${f.id}">✎</button>
+          <button data-act="del" data-id="${f.id}" class="danger">✕</button>
+        </div>`;
+      row.querySelector('.fact-cat').textContent = catName(f.categoriaId) + (f.sabido ? ' · já sei' : '');
+      row.querySelector('.fact-text').textContent = f.texto;
+      el.appendChild(row);
+    });
+    el.querySelectorAll('[data-act="edit"]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const f = fatos.find(x=>x.id===btn.dataset.id);
+        const novo = prompt('Editar descoberta', f.texto);
+        if (novo && novo.trim()){ f.texto = novo.trim(); saveAll(); renderFactList(); }
+      });
+    });
+    el.querySelectorAll('[data-act="del"]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const ok = await brgxConfirm({title:'Excluir descoberta', text:'Remove essa descoberta de vez. Continuar?', confirmLabel:'Excluir'});
+        if (!ok) return;
+        fatos = fatos.filter(f=>f.id!==btn.dataset.id);
+        saveAll(); renderFactList(); renderCounter(); sortear();
+      });
+    });
+  }
+
+  document.getElementById('novaBtn').addEventListener('click', sortear);
+  document.getElementById('sabiaBtn').addEventListener('click', ()=>{
+    if (!current) return;
+    current.sabido = true;
+    saveAll(); renderFactList(); sortear();
+  });
+
+  document.getElementById('newCatBtn').addEventListener('click', ()=>{
+    const nome = prompt('Nova categoria');
+    if (!nome || !nome.trim()) return;
+    categorias.push({id:'c'+Date.now(), nome:nome.trim()});
+    saveAll(); renderFilters(); renderCatSelect();
+  });
+
+  document.getElementById('factForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const categoriaId = document.getElementById('factCat').value;
+    const texto = document.getElementById('factText').value.trim();
+    if (!texto || !categoriaId) return;
+    fatos.push({id:'f'+Date.now(), categoriaId, texto, sabido:false});
+    saveAll();
+    document.getElementById('factText').value = '';
+    renderFactList(); renderCounter(); sortear();
+  });
+
+  renderAulaBadge();
+  renderFilters();
+  renderCatSelect();
+  renderFactList();
+  renderCounter();
+  sortear();
+})();
+</script>
+<script src="../assets/brgx-specialist.js"></script>
+<script>brgxInitSpecialist('archimedes');</script>
+</body>
+</html>

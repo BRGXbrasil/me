@@ -1,4 +1,4 @@
-const CACHE = 'brgx-core-6';
+const CACHE = 'brgx-core-7';
 const ASSETS = [
   './',
   './index.html',
@@ -17,7 +17,9 @@ const ASSETS = [
   './standalone/BRGX Recamier.html',
   './standalone/BRGX Pet.html',
   './standalone/BRGX Estilo.html',
-  './standalone/BRGX Reeducacao.html'
+  './standalone/BRGX Reeducacao.html',
+  './standalone/BRGX Descobertas.html',
+  './standalone/BRGX Biblioteca.html'
 ];
 
 // addAll e atomico: um unico asset ausente derrubava o install inteiro e o app
