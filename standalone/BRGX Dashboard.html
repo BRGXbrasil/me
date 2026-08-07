@@ -122,7 +122,7 @@ body{padding-bottom:40px}
   <!-- Progresso -->
   <div class="card prog" id="prog"></div>
 
-  <!-- Vitória do dia -->
+  <!-- Vitória do dia — leitura; a edição primária fica na Rotina/Hoje -->
   <div class="card vitoria">
     <p class="section-label" style="margin-bottom:10px">Vitória do dia</p>
     <div id="vitoriaView"></div>
@@ -186,13 +186,10 @@ body{padding-bottom:40px}
 <script src="../assets/brgx-specialist.js"></script>
 <script>
 (function(){
-  const K_VIT   = 'brgx-vitoria-dia';     // { 'YYYY-MM-DD': texto }
   const K_POMO  = 'brgx-pomodoro';        // { 'YYYY-MM-DD': { ciclos:[bool], nota:'' } }
   const K_EISEN = 'brgx-eisenhower';      // { 'YYYY-MM-DD': { faca, ag1, ag2 } }
-  const K_RESET = 'brgx-reset-detox';
 
   const hojeK = brgxDataISO();
-  let vit   = brgxStorageGet(K_VIT, {});
   let pomo  = brgxStorageGet(K_POMO, {});
   let eisen = brgxStorageGet(K_EISEN, {});
 
@@ -224,11 +221,12 @@ body{padding-bottom:40px}
 
   /* ---------- Progresso do dia ---------- */
   function renderProg(){
-    const log = brgxStorageGet('brgx-rotina-log', {});
-    const dl = log[hojeK] || {};
-    const ids = BRGX_HABITOS_BASE.map(h=>h.id);
+    const dl = brgxRotinaDoneDia(hojeK);
+    const ids = BRGX_HABITOS.map(h=>h.id);
     const feitos = ids.filter(id=>dl[id]).length;
     const pct = Math.round(feitos/ids.length*100);
+    const minIds = BRGX_HABITOS.filter(h=>h.nivel==='Mínimo').map(h=>h.id);
+    const minFeitos = minIds.filter(id=>dl[id]).length;
     const C = 2*Math.PI*22;
     document.getElementById('prog').innerHTML = `
       <div class="prog-ring">
@@ -240,70 +238,56 @@ body{padding-bottom:40px}
         <b>${pct}</b>
       </div>
       <div class="prog-txt">
-        <div class="prog-t1">${feitos} de ${ids.length} hábitos base</div>
+        <div class="prog-t1">${feitos} de ${ids.length} hábitos · mínimo ${minFeitos}/${minIds.length}</div>
         <div class="prog-t2">${pct >= 100 ? 'Dia fechado. Vitória completa.' : 'Vitória diária vem antes de perfeição.'}</div>
       </div>`;
   }
 
-  /* ---------- Vitória do dia ---------- */
+  /* ---------- Vitória do dia — leitura; edição primária fica na Rotina/Hoje ---------- */
   function renderVitoria(){
     const el = document.getElementById('vitoriaView');
-    const txt = vit[hojeK];
+    const txt = brgxStorageGet('brgx-rotina-vitoria-' + hojeK, '');
     if (txt){
       el.innerHTML = `<p class="eco"></p>
-        <div class="btn-row" style="margin-top:12px"><button class="mini-btn" id="vitEdit">Editar intenção</button></div>`;
+        <div class="btn-row" style="margin-top:12px"><a class="mini-btn" href="BRGX Rotina.html">Editar na Rotina</a></div>`;
       el.querySelector('.eco').textContent = '“' + txt + '”';
-      document.getElementById('vitEdit').addEventListener('click', ()=>{ editarVitoria(txt); });
     } else {
-      editarVitoria('');
+      el.innerHTML = `<p style="font:400 12.5px/1.5 var(--font-sans);color:var(--ink-dim);margin:0 0 12px">Ainda não escrita hoje.</p>
+        <div class="btn-row"><a class="mini-btn solid" href="BRGX Rotina.html">Escrever na Rotina</a></div>`;
     }
-  }
-  function editarVitoria(valor){
-    const el = document.getElementById('vitoriaView');
-    el.innerHTML = `<textarea id="vitInput" placeholder="A intenção que você escreveu às 05:25…"></textarea>
-      <div class="btn-row" style="margin-top:10px"><button class="mini-btn solid" id="vitSave">Salvar vitória</button></div>`;
-    el.querySelector('#vitInput').value = valor || '';
-    document.getElementById('vitSave').addEventListener('click', ()=>{
-      const v = document.getElementById('vitInput').value.trim();
-      if (v) vit[hojeK] = v; else delete vit[hojeK];
-      brgxStorageSet(K_VIT, vit);
-      renderVitoria();
-    });
   }
 
   /* ---------- Luz de painel: detox ----------
-     vermelho = o sistema avalia que precisa · verde = ativo · apagada = inativo.
+     vermelho = o sistema avalia que precisaria começar · verde = protocolo real ativo · apagada = tudo bem.
      Heurística local sempre disponível; o Chico refina quando o backend estiver no ar. */
   function precisaDetox(){
-    const log = brgxStorageGet('brgx-rotina-log', {});
-    const ids = BRGX_HABITOS_BASE.map(h=>h.id);
-    const ader = brgxAderencia(log, ids, 7);
-    const quebradas = ids.filter(id => brgxCalcularStreak(log, id).dias === 0).length;
+    const minIds = BRGX_HABITOS.filter(h=>h.nivel==='Mínimo').map(h=>h.id);
+    const ader = brgxAderencia(minIds, 7);
+    const quebradas = minIds.filter(id => brgxCalcularStreak(id).dias === 0).length;
     return { precisa: ader < 0.6 || quebradas >= 4, ader, quebradas };
   }
 
   function renderLamp(){
-    const reset = brgxStorageGet(K_RESET, { ativo:false });
+    const st = brgxDetoxStatus(brgxStorageGet('brgx-reset-start', null));
     const d = precisaDetox();
     const el = document.getElementById('lampRow');
-    let cls = '', ico = '○', t1 = 'Reset inativo', t2 = 'Nada a sinalizar. O sistema está rodando.';
-    if (reset.ativo){
-      cls = 'verde'; ico = '◉'; t1 = 'Reset ativo';
-      const ini = new Date(reset.inicio);
-      t2 = `Detox em andamento, dia ${Math.floor((Date.now()-ini.getTime())/86400000)+1} de 90.`;
+    let cls = '', ico = '○', t1 = 'Detox inativo', t2 = 'Nada a sinalizar. O sistema está rodando.';
+    if (st.ativo){
+      cls = 'verde'; ico = '◉'; t1 = 'Detox de 90 dias ativo';
+      t2 = `${st.fase.nome} · dia ${st.dias} de 90.`;
     } else if (d.precisa){
       cls = 'vermelho'; ico = '◉'; t1 = 'Chico sinaliza: você precisa de detox';
-      t2 = `Aderência de ${Math.round(d.ader*100)}% nos últimos 7 dias${d.quebradas ? ` e ${d.quebradas} sequências zeradas` : ''}.`;
+      t2 = `Aderência de ${Math.round(d.ader*100)}% nos hábitos mínimos nos últimos 7 dias${d.quebradas ? ` e ${d.quebradas} sequências zeradas` : ''}.`;
     }
     el.innerHTML = `<span class="lamp ${cls}" style="color:${cls==='vermelho'?'var(--danger)':cls==='verde'?'var(--good)':'var(--ink-dim)'}">${ico}</span>
       <span class="lamp-txt"><span class="lamp-t1" style="color:${cls==='vermelho'?'var(--danger)':cls==='verde'?'var(--good)':'var(--ink-soft)'}"></span>
       <span class="lamp-t2"></span></span>
-      ${(!reset.ativo && d.precisa) ? '<a class="mini-btn" href="BRGX Rotina.html">Abrir Reset</a>' : ''}`;
+      ${(!st.ativo && d.precisa) ? '<a class="mini-btn" href="BRGX Rotina.html">Abrir detox</a>' : ''}`;
     el.querySelector('.lamp-t1').textContent = t1;
     el.querySelector('.lamp-t2').textContent = t2;
 
     // Refino opcional pelo Chico — só quando o backend existir.
-    if (typeof FUNCTIONS_BASE_URL !== 'undefined' && FUNCTIONS_BASE_URL && !reset.ativo){
+    if (typeof FUNCTIONS_BASE_URL !== 'undefined' && FUNCTIONS_BASE_URL && !st.ativo){
       fetch(FUNCTIONS_BASE_URL + '/specialistChat', {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ specialistId:'chico', message:
@@ -432,9 +416,8 @@ body{padding-bottom:40px}
   }
 
   function tiles(){
-    const log = brgxStorageGet('brgx-rotina-log', {});
-    const dl = log[hojeK] || {};
-    const ids = BRGX_HABITOS_BASE.map(h=>h.id);
+    const dl = brgxRotinaDoneDia(hojeK);
+    const ids = BRGX_HABITOS.map(h=>h.id);
 
     const cx = limiteCaixa();
     const care = brgxStorageGet('brgx-pet-care', []);
@@ -454,7 +437,7 @@ body{padding-bottom:40px}
       { app:'Caixa', val: cx.temDados ? fmtBRL(cx.limite) : '—',
         sub:'Limite disponível real', href:'BRGX Caixa.html', wide:true },
       { app:'Rotina', val: `${ids.filter(id=>dl[id]).length}/${ids.length}`,
-        sub:'Hábitos base de hoje', href:'BRGX Rotina.html' },
+        sub:'Hábitos de hoje', href:'BRGX Rotina.html' },
       { app:'Metas', val: goals.length ? `${goals[0].pct||0}%` : '—', sm:!goals.length,
         sub: goals.length ? goals[0].title : 'Nenhuma meta lançada', href:'BRGX Metas.html' },
       { app:'Pet · Júnior', val: pend ? pend.name : 'Tudo feito', sm:true,
