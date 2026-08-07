@@ -1,98 +1,221 @@
 <!doctype html>
-<html lang="pt-BR" data-brgx-theme="light">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#efece5" />
+<meta name="theme-color" content="#08080A" />
 <title>MEU · Rotina</title>
 <link rel="stylesheet" href="../assets/brgx-tokens.css" />
 <style>
+/* Arquitetura de tempo — trilho vertical com blocos rígidos (Lei de Parkinson),
+   checklist de hábitos e painel de fins de semana. */
 body{padding-bottom:40px}
+.brgx-shell{max-width:660px}
 
-/* Grade horária do dia — lista vertical com trilho de hora à esquerda */
-.day-grid{display:flex;flex-direction:column;border-left:2px solid var(--line);margin-left:6px}
-.day-slot{position:relative;padding:0 0 16px 20px}
-.day-slot::before{content:'';position:absolute;left:-7px;top:3px;width:12px;height:12px;border-radius:999px;background:var(--card);border:2px solid var(--track)}
-.day-slot.done::before{background:var(--good);border-color:var(--good)}
-.day-time{font:700 10.5px/1 Inter,sans-serif;letter-spacing:.06em;color:var(--ink-soft);margin:0 0 4px}
-.slot-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
-.slot-row.done{background:var(--good-soft);border-color:transparent}
-.slot-check{width:22px;height:22px;border-radius:999px;border:2px solid var(--track);flex:0 0 auto;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:#fff;background:var(--card)}
-.slot-row.done .slot-check{background:var(--good);border-color:var(--good)}
-.slot-body{flex:1;min-width:0}
-.slot-name{font:600 13.5px/1.3 Inter,sans-serif;color:var(--ink)}
-.slot-cat{font:500 11px/1.3 Inter,sans-serif;color:var(--ink-soft)}
-.slot-actions{display:flex;gap:4px;flex:0 0 auto}
-.slot-actions button{background:none;border:none;color:var(--ink-soft);font-size:13px;cursor:pointer;padding:4px}
-.slot-actions button.danger{color:var(--danger)}
+/* Seletor de dia */
+.day-rail{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.day-chip{
+  flex:0 0 auto;background:var(--s2);border:1px solid var(--line);border-radius:12px;
+  padding:9px 13px;cursor:pointer;text-align:center;transition:all .15s;
+}
+.day-chip .d{font:700 12px/1 var(--font-mono);letter-spacing:.08em;color:var(--ink-soft)}
+.day-chip .t{font:600 8.5px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;margin-top:4px;display:block}
+.day-chip.active{background:var(--gold);border-color:var(--gold)}
+.day-chip.active .d{color:#141000}
+.day-chip.active .t{color:rgba(20,16,0,.65)}
+.day-chip.hoje:not(.active){border-color:var(--gold-dim)}
+
+/* Faixa de status */
+.stat-strip{display:flex;background:var(--s2);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.stat-cell{flex:1;padding:12px 10px;text-align:center;border-right:1px solid var(--line)}
+.stat-cell:last-child{border-right:none}
+.stat-cell .k{font:700 8.5px/1 var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
+.stat-cell .v{font:700 17px/1.1 var(--font-serif);margin-top:5px}
+
+/* Abas */
+.view-tabs{display:flex;gap:4px;background:var(--s1);border:1px solid var(--line);border-radius:12px;padding:4px}
+.view-tabs button{
+  flex:1;background:none;border:none;border-radius:9px;padding:9px;cursor:pointer;
+  font:600 12px/1 var(--font-sans);color:var(--ink-soft);transition:all .15s;
+}
+.view-tabs button.active{background:var(--s3);color:var(--gold)}
+
+/* Trilho da grade */
+.grade{display:flex;flex-direction:column}
+.blk{display:flex;gap:10px}
+.blk-time{width:52px;flex-shrink:0;padding-top:12px;text-align:right}
+.blk-time .s{font:700 11px/1 var(--font-mono);color:var(--gold)}
+.blk-time .e{font:400 9px/1 var(--font-mono);color:var(--ink-dim);margin-top:3px;display:block}
+.blk-rail{width:13px;flex-shrink:0;display:flex;flex-direction:column;align-items:center}
+.blk-dot{width:8px;height:8px;border-radius:50%;margin-top:15px;flex-shrink:0}
+.blk-line{width:1px;flex:1;margin-top:2px;opacity:.32}
+.blk-card{
+  flex:1;margin-bottom:5px;background:var(--s2);border:1px solid var(--line);
+  border-left-width:2px;border-radius:11px;padding:10px 13px;transition:border-color .15s;
+}
+.blk-card.tem-nota{cursor:pointer}
+.blk-card.tem-nota:hover{border-color:var(--line-hi)}
+.blk-card.agora{background:var(--gold-soft);border-color:rgba(200,168,75,.42)}
+.blk-label{font:500 13px/1.35 var(--font-sans);color:var(--ink)}
+.blk-card.sono .blk-label{color:var(--ink-soft)}
+.blk-meta{margin-top:6px;display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+.blk-agora-tag{font:700 8.5px/1 var(--font-mono);letter-spacing:.12em;color:var(--gold)}
+.blk-nota{
+  margin-top:9px;padding-top:9px;border-top:1px solid var(--line);
+  font:400 11.5px/1.65 var(--font-sans);color:var(--ink-soft);
+}
+
+/* Atividade física flexível da noite */
+.flex-activity{
+  display:flex;align-items:center;gap:10px;margin:2px 0 5px 75px;
+  background:var(--s1);border:1px dashed var(--line-hi);border-radius:11px;padding:10px 13px;
+}
+.flex-activity .ico{font-size:17px}
+.flex-activity .txt{flex:1;font:500 12.5px/1.35 var(--font-sans);color:var(--ink)}
+.flex-activity .tag{font:700 8.5px/1 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim)}
+
+/* Checklist */
+.hab{
+  display:flex;align-items:flex-start;gap:11px;background:var(--s2);border:1px solid var(--line);
+  border-left-width:2px;border-radius:12px;padding:11px 13px;margin-bottom:7px;transition:all .15s;
+}
+.hab.done{background:var(--good-soft);border-color:transparent;border-left-color:var(--good)}
+.hab-num{
+  width:19px;height:19px;border-radius:5px;flex-shrink:0;margin-top:1px;
+  background:var(--s3);color:var(--ink-dim);
+  font:700 10px/19px var(--font-mono);text-align:center;
+}
+.hab.done .hab-num{background:var(--good);color:#04140B}
+.hab-body{flex:1;min-width:0}
+.hab-nome{font:600 13.5px/1.3 var(--font-sans);color:var(--ink)}
+.hab.done .hab-nome{color:var(--ink-soft)}
+.hab-sub{font:400 10.5px/1.3 var(--font-mono);color:var(--ink-dim);margin-top:3px}
+.hab-check{
+  width:24px;height:24px;border-radius:7px;border:1.5px solid var(--line-hi);flex-shrink:0;
+  cursor:pointer;background:var(--s1);color:#04140B;font-size:13px;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+}
+.hab.done .hab-check{background:var(--good);border-color:var(--good)}
+.hab-streak{font:700 9.5px/1 var(--font-mono);color:var(--gold);white-space:nowrap;margin-top:5px;display:inline-block}
+.hab-streak.consolidado{color:var(--good)}
+.subs{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px}
+.sub-chip{
+  display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:8px;
+  background:var(--s1);border:1px solid var(--line);cursor:pointer;
+  font:500 10.5px/1 var(--font-sans);color:var(--ink-soft);transition:all .12s;
+}
+.sub-chip.done{background:var(--good-soft);border-color:transparent;color:var(--good)}
+
+/* Fins de semana */
+.fds-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fds-card{
+  background:var(--s2);border:1px solid var(--line);border-left-width:2px;border-radius:12px;
+  padding:12px;cursor:pointer;transition:all .15s;
+}
+.fds-card .emo{font-size:19px}
+.fds-card .nm{font:600 13px/1.2 var(--font-serif);margin-top:5px}
+.fds-card .cnt{font:700 8.5px/1 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);margin-top:5px}
+.fds-card.ativo{background:var(--gold-soft);border-color:var(--gold-dim)}
+.fds-card.faltando{border-style:dashed}
+
+/* Modo Reset */
+.reset-bar{
+  display:flex;align-items:center;gap:12px;background:var(--s1);
+  border:1px solid var(--line);border-radius:13px;padding:13px 15px;
+}
+.reset-bar.on{background:var(--good-soft);border-color:rgba(76,175,125,.35)}
+.reset-bar .lamp{width:9px;height:9px;border-radius:50%;background:var(--ink-dim);flex-shrink:0}
+.reset-bar.on .lamp{background:var(--good);box-shadow:0 0 10px var(--good)}
+.reset-bar .txt{flex:1}
+.reset-bar .t1{font:600 12.5px/1.3 var(--font-sans);color:var(--ink)}
+.reset-bar .t2{font:400 10.5px/1.4 var(--font-mono);color:var(--ink-dim);margin-top:3px}
 
 /* Heatmap semanal */
-.heatmap{display:flex;gap:6px;justify-content:space-between}
-.heat-day{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
-.heat-sq{width:100%;aspect-ratio:1;border-radius:8px;background:var(--track)}
-.heat-label{font:700 9.5px/1 Inter,sans-serif;color:var(--ink-soft);text-transform:uppercase}
-
-/* Filtros de categoria */
-.cat-filters{display:flex;flex-wrap:wrap;gap:6px}
-.cat-filters .pill{cursor:pointer;border:1px solid transparent}
-.cat-filters .pill.active{background:var(--accent);color:#fff}
-
-/* Modo Reset — affordance desativado, prepara o encaixe futuro */
-.reset-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:14px;background:var(--track);border:1px dashed var(--ink-soft);opacity:.8}
-.reset-toggle-copy{font:600 12.5px/1.4 Inter,sans-serif;color:var(--ink-soft)}
-.reset-toggle button{font:700 10.5px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:8px 12px;cursor:not-allowed}
+.heat{display:flex;gap:5px}
+.heat-d{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.heat-sq{width:100%;aspect-ratio:1;border-radius:7px;background:var(--s3)}
+.heat-l{font:700 8.5px/1 var(--font-mono);color:var(--ink-dim)}
 
 .add-form{display:flex;flex-direction:column;gap:8px}
-.add-form input,.add-form select{font:500 13px/1 Inter,sans-serif;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
-.add-form-row{display:flex;gap:8px}
-.add-form-row>*{flex:1}
+.add-row{display:flex;gap:8px}
+.add-row>*{flex:1}
 </style>
 </head>
 <body>
 
 <div class="brgx-head">
   <a class="brgx-back" href="../index.html">← MEU</a>
-  <p class="brgx-eyebrow">MEU.app/rotina · pessoal</p>
+  <p class="brgx-eyebrow">MEU.app/rotina</p>
   <h1>Rotina</h1>
-  <p>Grade do dia por horário e visão semanal em heatmap. Marcar, editar ou excluir hábitos.</p>
+  <p>Arquitetura de tempo. Blocos com início e fim rígidos, hábitos rastreados e fins de semana com intenção.</p>
 </div>
 
 <div class="brgx-shell">
 
-  <div class="card">
-    <p class="section-label">Semana</p>
-    <div class="heatmap" id="heatmap" style="margin-top:10px"></div>
+  <div class="day-rail" id="dayRail"></div>
+
+  <div class="stat-strip" id="statStrip"></div>
+
+  <div class="reset-bar" id="resetBar">
+    <span class="lamp"></span>
+    <span class="txt">
+      <span class="t1" id="resetT1">Modo Reset · detox 90 dias</span>
+      <span class="t2" id="resetT2">Inativo</span>
+    </span>
+    <button class="mini-btn" id="resetBtn">Ativar</button>
   </div>
 
-  <div class="reset-toggle">
-    <span class="reset-toggle-copy">Modo Reset (detox 90 dias) — em breve, acoplado aqui</span>
-    <button type="button" disabled>Ativar</button>
+  <div class="view-tabs">
+    <button id="tabGrade" class="active">Grade do dia</button>
+    <button id="tabCheck">Checklist</button>
+    <button id="tabFds">Fins de semana</button>
   </div>
 
-  <div class="cat-filters" id="catFilters"></div>
-
-  <div>
-    <p class="section-label" style="margin-bottom:8px">Hoje</p>
-    <div class="day-grid" id="dayGrid"></div>
+  <!-- GRADE -->
+  <div id="viewGrade">
+    <div class="grade" id="grade"></div>
   </div>
 
-  <div class="card">
-    <p class="section-label" style="margin-bottom:10px">Lançar novo hábito</p>
-    <form class="add-form" id="addForm">
-      <input type="text" id="habitName" placeholder="Nome do hábito" required />
-      <div class="add-form-row">
-        <select id="habitCat">
-          <option value="ritual">Ritual</option>
-          <option value="mente">Mente</option>
-          <option value="corpo">Corpo</option>
-          <option value="criacao">Criação</option>
-          <option value="trabalho">Trabalho</option>
-          <option value="vinculo">Vínculo</option>
-        </select>
-        <input type="time" id="habitTime" value="08:00" />
-      </div>
-      <button type="submit" class="mini-btn solid">Lançar hábito</button>
-    </form>
+  <!-- CHECKLIST -->
+  <div id="viewCheck" style="display:none">
+    <div>
+      <p class="section-label" style="margin-bottom:10px">Hábitos base</p>
+      <div id="habBase"></div>
+    </div>
+    <div style="margin-top:18px">
+      <p class="section-label" style="margin-bottom:10px">Também rastreados</p>
+      <div id="habExtra"></div>
+    </div>
+    <div style="margin-top:18px">
+      <p class="section-label" style="margin-bottom:10px">Semana</p>
+      <div class="card"><div class="heat" id="heat"></div></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <p class="section-label" style="margin-bottom:10px">Hábito temporário</p>
+      <form class="add-form" id="tmpForm">
+        <input type="text" id="tmpNome" placeholder="Ex: banho de mar, ligar pra vó" required />
+        <button type="submit" class="mini-btn solid">Lançar hábito temporário</button>
+      </form>
+      <div id="tmpList" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- FINS DE SEMANA -->
+  <div id="viewFds" style="display:none">
+    <div class="card">
+      <p class="section-label" style="margin-bottom:4px">Este fim de semana</p>
+      <p style="font:400 12px/1.55 var(--font-sans);color:var(--ink-soft);margin:6px 0 12px">
+        Escolha a categoria dominante. Ela vira o chapéu de upgrade dos hábitos comuns do sábado e domingo.
+      </p>
+      <div class="fds-grid" id="fdsGrid"></div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <p class="section-label" style="margin-bottom:4px">Cobertura do mês</p>
+      <p style="font:400 12px/1.55 var(--font-sans);color:var(--ink-soft);margin:6px 0 12px">
+        Todas as quatro precisam aparecer ao menos uma vez por mês.
+      </p>
+      <div class="fds-grid" id="fdsCobertura"></div>
+    </div>
   </div>
 
 </div>
@@ -100,137 +223,345 @@ body{padding-bottom:40px}
 <script src="../assets/brgx-shared.js"></script>
 <script>
 (function(){
-  const CAT_LABEL = {ritual:'Ritual',mente:'Mente',corpo:'Corpo',criacao:'Criação',trabalho:'Trabalho',vinculo:'Vínculo'};
-  const todayKey = (d=new Date()) => d.toISOString().slice(0,10);
+  const K_LOG   = 'brgx-rotina-log';        // { 'YYYY-MM-DD': { habitoId: true } }
+  const K_TMP   = 'brgx-rotina-temporarios';
+  const K_FDS   = 'brgx-rotina-fds';        // { 'YYYY-MM-DD(domingo)': 'estrutura' }
+  const K_RESET = 'brgx-reset-detox';       // { ativo, inicio }
 
-  let habits = brgxStorageGet('brgx-rotina-habits', [
-    {id:'h1', name:'Água com limão', cat:'ritual', time:'07:00'},
-    {id:'h2', name:'Treino / alongamento', cat:'corpo', time:'08:00'},
-    {id:'h3', name:'Meditação', cat:'mente', time:'21:30'}
-  ]);
-  let log = brgxStorageGet('brgx-rotina-log', {});
-  let activeCat = 'all';
+  let log   = brgxStorageGet(K_LOG, {});
+  let tmps  = brgxStorageGet(K_TMP, []);
+  let fds   = brgxStorageGet(K_FDS, {});
+  let reset = brgxStorageGet(K_RESET, { ativo:false, inicio:null });
 
-  function save(){
-    brgxStorageSet('brgx-rotina-habits', habits);
-    brgxStorageSet('brgx-rotina-log', log);
+  const hoje = brgxDiaDeHoje();
+  let dia = hoje;
+  let view = 'grade';
+
+  const salvarLog = () => brgxStorageSet(K_LOG, log);
+  const hojeKey = () => brgxDataISO();
+  const logDoDia = () => (log[hojeKey()] || (log[hojeKey()] = {}));
+
+  /* Sábado e domingo compartilham o mesmo fim de semana: a chave é o domingo. */
+  function chaveFds(d = new Date()){
+    const x = new Date(d);
+    const dow = x.getDay();
+    if (dow === 6) x.setDate(x.getDate() + 1);      // sábado -> domingo seguinte
+    else if (dow !== 0) x.setDate(x.getDate() + (7 - dow)); // resto -> próximo domingo
+    return brgxDataISO(x);
+  }
+  const fdsAtual = () => fds[chaveFds()] || null;
+
+  /* Chapéu de upgrade: no fim de semana o hábito comum ganha um nome elevado. */
+  function nomeDoHabito(h){
+    if (dia !== 'SAB' && dia !== 'DOM') return h.nome;
+    const cat = fdsAtual();
+    if (!cat) return h.nome;
+    const up = (BRGX_FDS_CATS[cat] || {}).upgrade || {};
+    return up[h.id] || h.nome;
   }
 
-  function dayLog(key){ return log[key] || (log[key]={}); }
-
-  function renderFilters(){
-    const cats = ['all', ...new Set(habits.map(h=>h.cat))];
-    const el = document.getElementById('catFilters');
+  /* ---------- Dias ---------- */
+  function renderDias(){
+    const el = document.getElementById('dayRail');
     el.innerHTML = '';
-    cats.forEach(c=>{
-      const p = document.createElement('span');
-      p.className = 'pill' + (c===activeCat ? ' active' : '');
-      p.textContent = c==='all' ? 'Todas' : CAT_LABEL[c] || c;
-      p.addEventListener('click', ()=>{ activeCat=c; renderFilters(); renderGrid(); });
-      el.appendChild(p);
+    ['SEG','TER','QUA','QUI','SEX','SAB','DOM'].forEach(d=>{
+      const m = BRGX_DIA_META[d];
+      const b = document.createElement('button');
+      b.className = 'day-chip' + (d===dia?' active':'') + (d===hoje?' hoje':'');
+      b.innerHTML = `<span class="d">${d}</span><span class="t"></span>`;
+      const t = b.querySelector('.t');
+      t.textContent = m.tipo;
+      if (d !== dia) t.style.color = brgxCatColor(m.cat);
+      b.addEventListener('click', ()=>{ dia = d; renderTudo(); });
+      el.appendChild(b);
     });
   }
 
-  function renderGrid(){
-    const key = todayKey();
-    const todayLog = dayLog(key);
-    const grid = document.getElementById('dayGrid');
-    grid.innerHTML = '';
-    const list = habits.filter(h => activeCat==='all' || h.cat===activeCat)
-      .sort((a,b)=> (a.time||'').localeCompare(b.time||''));
+  function renderStats(){
+    const grade = brgxGrade(dia);
+    const ativos = grade.filter(b => b.cat !== 'sono').length;
+    const af = BRGX_ATIVIDADE_FISICA[dia];
+    const ids = BRGX_HABITOS_BASE.map(h=>h.id);
+    const dl = log[hojeKey()] || {};
+    const feitos = ids.filter(id => dl[id]).length;
 
-    if(list.length===0){
-      grid.innerHTML = '<p style="color:var(--ink-soft);font-size:13px;padding-left:8px">Nenhum hábito nessa categoria ainda.</p>';
-      return;
-    }
+    document.getElementById('statStrip').innerHTML = `
+      <div class="stat-cell"><div class="k">Blocos</div><div class="v" style="color:var(--gold)">${ativos}</div></div>
+      <div class="stat-cell"><div class="k">Atividade</div><div class="v" style="font-size:13px;font-family:var(--font-sans)">${af.icone} ${af.nome}</div></div>
+      <div class="stat-cell"><div class="k">Hábitos hoje</div><div class="v" style="color:var(--good)">${feitos}/${ids.length}</div></div>
+      <div class="stat-cell"><div class="k">Sono</div><div class="v" style="color:var(--ink-soft)">7h10</div></div>`;
+  }
 
-    list.forEach(h=>{
-      const done = !!todayLog[h.id];
-      const slot = document.createElement('div');
-      slot.className = 'day-slot' + (done?' done':'');
-      slot.innerHTML = `
-        <p class="day-time">${h.time || '--:--'}</p>
-        <div class="slot-row ${done?'done':''}">
-          <button class="slot-check" data-id="${h.id}">${done?'✓':''}</button>
-          <div class="slot-body">
-            <p class="slot-name"></p>
-            <p class="slot-cat">${CAT_LABEL[h.cat]||h.cat}</p>
-          </div>
-          <div class="slot-actions">
-            <button data-act="edit" data-id="${h.id}" title="Editar">✎</button>
-            <button data-act="del" data-id="${h.id}" class="danger" title="Excluir">✕</button>
+  /* ---------- Grade ---------- */
+  function renderGrade(){
+    const grade = brgxGrade(dia);
+    const atual = (dia === hoje) ? brgxBlocoAtual(grade) : { bloco:null };
+    const el = document.getElementById('grade');
+    el.innerHTML = '';
+
+    const noturna = brgxTreinoNoturno(dia);
+
+    grade.forEach((b, i)=>{
+      const cor = brgxCatColor(b.cat);
+      const ehAgora = atual.bloco === b;
+      const row = document.createElement('div');
+      row.className = 'blk';
+      row.innerHTML = `
+        <div class="blk-time"><span class="s">${b.s}</span><span class="e">${b.e}</span></div>
+        <div class="blk-rail">
+          <span class="blk-dot" style="background:${cor}${b.cat==='sono'?'':';box-shadow:0 0 7px '+cor+'66'}"></span>
+          <span class="blk-line" style="background:${cor}"></span>
+        </div>
+        <div class="blk-card ${b.nota?'tem-nota':''} ${ehAgora?'agora':''} ${b.cat==='sono'?'sono':''}" style="border-left-color:${cor}">
+          <div class="blk-label"></div>
+          <div class="blk-meta">
+            <span class="cat-badge" style="background:${cor}1F;color:${cor}">${BRGX_CATS[b.cat].label}</span>
+            ${ehAgora?'<span class="blk-agora-tag">● AGORA</span>':''}
+            ${b.nota?'<span style="font:400 9px/1 var(--font-mono);color:var(--ink-dim)">toque para abrir</span>':''}
           </div>
         </div>`;
-      slot.querySelector('.slot-name').textContent = h.name;
-      grid.appendChild(slot);
-    });
+      row.querySelector('.blk-label').textContent = b.label;
 
-    grid.querySelectorAll('.slot-check').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const id = btn.dataset.id;
-        todayLog[id] = !todayLog[id];
-        save();
-        renderGrid();
-        renderHeatmap();
-      });
-    });
-    grid.querySelectorAll('[data-act="del"]').forEach(btn=>{
-      btn.addEventListener('click', async ()=>{
-        const ok = await brgxConfirm({title:'Excluir hábito', text:'Isso remove o hábito e seu histórico de marcações futuras. Continuar?', confirmLabel:'Excluir'});
-        if(!ok) return;
-        habits = habits.filter(h=>h.id!==btn.dataset.id);
-        save(); renderFilters(); renderGrid();
-      });
-    });
-    grid.querySelectorAll('[data-act="edit"]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const h = habits.find(x=>x.id===btn.dataset.id);
-        const novo = prompt('Novo nome do hábito', h.name);
-        if(novo && novo.trim()){ h.name = novo.trim(); save(); renderGrid(); }
-      });
+      if (b.nota){
+        const card = row.querySelector('.blk-card');
+        card.addEventListener('click', ()=>{
+          const existe = card.querySelector('.blk-nota');
+          if (existe){ existe.remove(); return; }
+          const n = document.createElement('div');
+          n.className = 'blk-nota';
+          n.textContent = b.nota;
+          card.appendChild(n);
+        });
+      }
+      el.appendChild(row);
+
+      // A atividade física da noite é flexível: entra depois da descompressão,
+      // sem sobrescrever nenhum bloco fixo.
+      if (noturna && b.s === '19:30'){
+        const af = BRGX_ATIVIDADE_FISICA[dia];
+        const fa = document.createElement('div');
+        fa.className = 'flex-activity';
+        fa.innerHTML = `<span class="ico">${af.slot==='noite'?af.icone:'🏋️'}</span>
+          <span class="txt"></span><span class="tag">Flexível</span>`;
+        fa.querySelector('.txt').textContent = noturna;
+        el.appendChild(fa);
+      }
     });
   }
 
-  function renderHeatmap(){
-    const el = document.getElementById('heatmap');
+  /* ---------- Checklist ---------- */
+  function linhaHabito(h, opts = {}){
+    const dl = logDoDia();
+    const feito = !!dl[h.id];
+    const cor = brgxCatColor(h.cat);
+    const st = brgxCalcularStreak(log, h.id);
+
+    const row = document.createElement('div');
+    row.className = 'hab' + (feito?' done':'');
+    row.style.borderLeftColor = cor;
+    row.innerHTML = `
+      ${opts.num ? `<span class="hab-num">${h.n}</span>` : ''}
+      <div class="hab-body">
+        <div class="hab-nome"></div>
+        <div class="hab-sub"></div>
+        <span class="hab-streak ${st.consolidado?'consolidado':''}"></span>
+        <div class="subs"></div>
+      </div>
+      <button class="hab-check">${feito?'✓':''}</button>`;
+
+    let nome = opts.nomeCustom || nomeDoHabito(h);
+    if (h.dinamico){
+      const af = BRGX_ATIVIDADE_FISICA[dia];
+      nome = `${h.nome} · ${af.icone} ${af.nome}`;
+    }
+    row.querySelector('.hab-nome').textContent = nome;
+    row.querySelector('.hab-sub').textContent = h.quando ? h.quando : (h.freq || '');
+    row.querySelector('.hab-streak').textContent =
+      st.consolidado ? `✦ consolidado · ${st.dias}d` : (st.dias ? `${st.dias}d de sequência` : '');
+
+    const subsEl = row.querySelector('.subs');
+    (h.subs || []).forEach(s=>{
+      const c = document.createElement('span');
+      c.className = 'sub-chip' + (dl[s.id]?' done':'');
+      c.textContent = `${s.emoji} ${s.nome}`;
+      c.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        dl[s.id] = !dl[s.id];
+        // O pai fica feito quando todos os filhos estiverem feitos.
+        dl[h.id] = h.subs.every(x => dl[x.id]);
+        salvarLog(); renderCheck(); renderStats();
+      });
+      subsEl.appendChild(c);
+    });
+
+    row.querySelector('.hab-check').addEventListener('click', ()=>{
+      const novo = !dl[h.id];
+      dl[h.id] = novo;
+      (h.subs || []).forEach(s => { dl[s.id] = novo; });
+      salvarLog(); renderCheck(); renderStats();
+    });
+    return row;
+  }
+
+  function renderCheck(){
+    const base = document.getElementById('habBase');
+    base.innerHTML = '';
+    BRGX_HABITOS_BASE.forEach(h => base.appendChild(linhaHabito(h, { num:true })));
+
+    const ex = document.getElementById('habExtra');
+    ex.innerHTML = '';
+    BRGX_HABITOS_EXTRA.forEach(h => ex.appendChild(linhaHabito(h)));
+
+    renderTmp();
+    renderHeat();
+  }
+
+  function renderTmp(){
+    const el = document.getElementById('tmpList');
     el.innerHTML = '';
-    const DIAS = ['D','S','T','Q','Q','S','S'];
-    for(let i=6;i>=0;i--){
+    const chave = chaveFds();
+    const doFds = tmps.filter(t => t.fds === chave);
+    if (!doFds.length){
+      el.innerHTML = '<p style="font:400 12px/1.5 var(--font-sans);color:var(--ink-dim);margin:0">Nenhum hábito temporário neste fim de semana.</p>';
+      return;
+    }
+    doFds.forEach(t=>{
+      const dl = logDoDia();
+      const row = document.createElement('div');
+      row.className = 'hab' + (dl[t.id]?' done':'');
+      row.style.borderLeftColor = 'var(--expressao)';
+      row.innerHTML = `<div class="hab-body"><div class="hab-nome"></div>
+        <div class="hab-sub">Temporário deste fim de semana</div></div>
+        <button class="mini-btn danger" data-del="${t.id}">✕</button>
+        <button class="hab-check">${dl[t.id]?'✓':''}</button>`;
+      row.querySelector('.hab-nome').textContent = t.nome;
+      row.querySelector('.hab-check').addEventListener('click', ()=>{
+        dl[t.id] = !dl[t.id]; salvarLog(); renderCheck();
+      });
+      row.querySelector('[data-del]').addEventListener('click', async ()=>{
+        const ok = await brgxConfirm({ title:'Excluir hábito temporário', text:'Ele some deste fim de semana. Continuar?', confirmLabel:'Excluir' });
+        if (!ok) return;
+        tmps = tmps.filter(x=>x.id!==t.id);
+        brgxStorageSet(K_TMP, tmps); renderCheck();
+      });
+      el.appendChild(row);
+    });
+  }
+
+  function renderHeat(){
+    const el = document.getElementById('heat');
+    el.innerHTML = '';
+    const ids = BRGX_HABITOS_BASE.map(h=>h.id);
+    const L = ['D','S','T','Q','Q','S','S'];
+    for (let i=6;i>=0;i--){
       const d = new Date(); d.setDate(d.getDate()-i);
-      const key = todayKey(d);
-      const dl = log[key] || {};
-      const total = habits.length || 1;
-      const doneCount = Object.values(dl).filter(Boolean).length;
-      const pct = doneCount/total;
+      const dl = log[brgxDataISO(d)] || {};
+      const pct = ids.filter(id=>dl[id]).length / ids.length;
       const col = document.createElement('div');
-      col.className = 'heat-day';
+      col.className = 'heat-d';
       const sq = document.createElement('div');
       sq.className = 'heat-sq';
-      sq.style.background = pct===0 ? 'var(--track)' : `color-mix(in srgb, var(--good) ${Math.round(pct*100)}%, var(--track))`;
-      col.appendChild(sq);
-      const lbl = document.createElement('span');
-      lbl.className = 'heat-label';
-      lbl.textContent = DIAS[d.getDay()];
-      col.appendChild(lbl);
-      el.appendChild(col);
+      if (pct > 0) sq.style.background = `color-mix(in srgb, var(--good) ${Math.round(pct*100)}%, var(--s3))`;
+      const lb = document.createElement('span');
+      lb.className = 'heat-l'; lb.textContent = L[d.getDay()];
+      col.append(sq, lb); el.appendChild(col);
     }
   }
 
-  document.getElementById('addForm').addEventListener('submit', (e)=>{
+  document.getElementById('tmpForm').addEventListener('submit', (e)=>{
     e.preventDefault();
-    const name = document.getElementById('habitName').value.trim();
-    const cat = document.getElementById('habitCat').value;
-    const time = document.getElementById('habitTime').value;
-    if(!name) return;
-    habits.push({id:'h'+Date.now(), name, cat, time});
-    save();
-    document.getElementById('habitName').value='';
-    renderFilters(); renderGrid(); renderHeatmap();
+    const nome = document.getElementById('tmpNome').value.trim();
+    if (!nome) return;
+    tmps.push({ id:'t'+Date.now(), nome, fds:chaveFds() });
+    brgxStorageSet(K_TMP, tmps);
+    e.target.reset(); renderCheck();
   });
 
-  renderFilters();
-  renderGrid();
-  renderHeatmap();
+  /* ---------- Fins de semana ---------- */
+  function renderFds(){
+    const grid = document.getElementById('fdsGrid');
+    const atual = fdsAtual();
+    grid.innerHTML = '';
+    Object.entries(BRGX_FDS_CATS).forEach(([id,c])=>{
+      const cor = brgxCatColor(c.cat);
+      const card = document.createElement('div');
+      card.className = 'fds-card' + (atual===id?' ativo':'');
+      card.style.borderLeftColor = cor;
+      card.innerHTML = `<div class="emo">${c.emoji}</div><div class="nm" style="color:${cor}"></div>
+        <div class="cnt">${atual===id?'dominante':'escolher'}</div>`;
+      card.querySelector('.nm').textContent = c.label;
+      card.addEventListener('click', ()=>{
+        const chave = chaveFds();
+        fds[chave] = (fds[chave] === id) ? undefined : id;
+        if (!fds[chave]) delete fds[chave];
+        brgxStorageSet(K_FDS, fds);
+        renderFds(); renderCheck();
+      });
+      grid.appendChild(card);
+    });
+
+    // Cobertura do mês
+    const cob = document.getElementById('fdsCobertura');
+    cob.innerHTML = '';
+    const ym = brgxDataISO().slice(0,7);
+    const usadas = Object.entries(fds).filter(([k])=>k.startsWith(ym)).map(([,v])=>v);
+    Object.entries(BRGX_FDS_CATS).forEach(([id,c])=>{
+      const n = usadas.filter(v=>v===id).length;
+      const cor = brgxCatColor(c.cat);
+      const card = document.createElement('div');
+      card.className = 'fds-card' + (n===0?' faltando':'');
+      card.style.borderLeftColor = n ? cor : 'var(--line-hi)';
+      card.style.cursor = 'default';
+      card.innerHTML = `<div class="emo" style="${n?'':'opacity:.35'}">${c.emoji}</div>
+        <div class="nm" style="color:${n?cor:'var(--ink-dim)'}"></div>
+        <div class="cnt" style="${n?'color:var(--good)':''}">${n ? n+'x este mês' : 'ainda falta'}</div>`;
+      card.querySelector('.nm').textContent = c.label;
+      cob.appendChild(card);
+    });
+  }
+
+  /* ---------- Modo Reset ---------- */
+  function renderReset(){
+    const bar = document.getElementById('resetBar');
+    bar.classList.toggle('on', !!reset.ativo);
+    document.getElementById('resetBtn').textContent = reset.ativo ? 'Encerrar' : 'Ativar';
+    if (reset.ativo){
+      const ini = new Date(reset.inicio);
+      const d = Math.floor((Date.now() - ini.getTime())/86400000) + 1;
+      document.getElementById('resetT2').textContent = `Ativo · dia ${d} de 90`;
+    } else {
+      document.getElementById('resetT2').textContent = 'Inativo';
+    }
+  }
+  document.getElementById('resetBtn').addEventListener('click', async ()=>{
+    if (reset.ativo){
+      const ok = await brgxConfirm({ title:'Encerrar o Reset', text:'O detox de 90 dias volta para inativo. Continuar?', confirmLabel:'Encerrar' });
+      if (!ok) return;
+      reset = { ativo:false, inicio:null };
+    } else {
+      reset = { ativo:true, inicio:brgxDataISO() };
+    }
+    brgxStorageSet(K_RESET, reset);
+    renderReset();
+  });
+
+  /* ---------- Abas ---------- */
+  function setView(v){
+    view = v;
+    document.getElementById('viewGrade').style.display = v==='grade' ? '' : 'none';
+    document.getElementById('viewCheck').style.display = v==='check' ? '' : 'none';
+    document.getElementById('viewFds').style.display   = v==='fds'   ? '' : 'none';
+    document.getElementById('tabGrade').classList.toggle('active', v==='grade');
+    document.getElementById('tabCheck').classList.toggle('active', v==='check');
+    document.getElementById('tabFds').classList.toggle('active', v==='fds');
+  }
+  document.getElementById('tabGrade').addEventListener('click', ()=>setView('grade'));
+  document.getElementById('tabCheck').addEventListener('click', ()=>setView('check'));
+  document.getElementById('tabFds').addEventListener('click', ()=>setView('fds'));
+
+  function renderTudo(){ renderDias(); renderStats(); renderGrade(); renderCheck(); renderFds(); renderReset(); }
+  renderTudo();
+  setInterval(()=>{ if (dia === hoje && view === 'grade') renderGrade(); }, 60000);
 })();
 </script>
 <script src="../assets/brgx-specialist.js"></script>

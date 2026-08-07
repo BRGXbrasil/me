@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="pt-BR" data-brgx-theme="light">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#efece5" />
+<meta name="theme-color" content="#08080A" />
 <title>MEU · Metas</title>
 <link rel="stylesheet" href="../assets/brgx-tokens.css" />
 <style>
@@ -64,17 +64,17 @@ body{padding-bottom:40px}
 <script src="../assets/brgx-shared.js"></script>
 <script>
 (function(){
+  /* Metas reais, sincronizadas do 🎯 Metas Borgex do Notion. */
   let goals = brgxStorageGet('brgx-metas-goals', [
-    {id:'g1', title:'Expansão — nova unidade', deadline:'Dez 2026', pct:30},
-    {id:'g2', title:'Reserva de emergência 6 meses', deadline:'Jun 2026', pct:55}
+    {id:'g1', title:'Micropigmentação', area:'Estética', status:'Em andamento', deadline:'', pct:0},
+    {id:'g2', title:'🦷 Dentes',        area:'Saúde',    status:'Em andamento', deadline:'', pct:0},
+    {id:'g3', title:'🚫 Não fumante',   area:'Saúde',    status:'Em andamento', deadline:'', pct:0},
+    {id:'g4', title:'🏠 Casa',          area:'Casa',     status:'Pausado',      deadline:'', pct:0},
+    {id:'g5', title:'PDO',              area:'Estética', status:'Em andamento', deadline:'', pct:0},
+    {id:'g6', title:'Peeling',          area:'Estética', status:'Em andamento', deadline:'', pct:0},
+    {id:'g7', title:'🎂 Aniversário',   area:'Vida',     status:'Concluído',    deadline:'', pct:100},
   ]);
-  let checks = brgxStorageGet('brgx-metas-checks', [
-    {id:'c1', goalId:'g1', label:'Ponto fechado', done:true},
-    {id:'c2', goalId:'g1', label:'Reforma concluída', done:false},
-    {id:'c3', goalId:'g1', label:'Equipe contratada', done:false},
-    {id:'c4', goalId:'g2', label:'Aporte mensal automático', done:true},
-    {id:'c5', goalId:'g2', label:'Meta de 50% atingida', done:true}
-  ]);
+  let checks = brgxStorageGet('brgx-metas-checks', []);
 
   function save(){
     brgxStorageSet('brgx-metas-goals', goals);
@@ -107,7 +107,8 @@ body{padding-bottom:40px}
             <button data-act="del" data-id="${g.id}" class="danger">excluir</button>
           </div>
         </div>`;
-      row.querySelector('.trail-deadline').textContent = g.deadline || 'sem prazo';
+      row.querySelector('.trail-deadline').textContent =
+        [g.area, g.status, g.deadline].filter(Boolean).join(' · ') || 'sem prazo';
       row.querySelector('.trail-title').textContent = g.title;
       const checksEl = row.querySelector('.checks');
       gc.forEach(c=>{

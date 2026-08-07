@@ -1,79 +1,126 @@
 <!doctype html>
-<html lang="pt-BR" data-brgx-theme="light">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#efece5" />
+<meta name="theme-color" content="#08080A" />
 <title>MEU · Recamier</title>
 <link rel="stylesheet" href="../assets/brgx-tokens.css" />
 <style>
-/* Coluna única, muito espaço em branco — contraste deliberado com o Dashboard denso */
+/* Coluna única, muito respiro — contraste deliberado com a densidade do Dashboard. */
 body{padding-bottom:60px}
-.brgx-shell{max-width:440px;gap:26px}
+.brgx-shell{max-width:470px;gap:26px}
 
-.agenda-strip{display:flex;flex-direction:column;gap:8px}
 .agenda-item{display:flex;align-items:baseline;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
 .agenda-item:last-child{border-bottom:none}
-.agenda-when{font:700 11px/1 Inter,sans-serif;color:var(--accent);flex:0 0 auto}
-.agenda-note{font:400 13px/1.4 Inter,sans-serif;color:var(--ink);flex:1}
+.agenda-when{font:700 11px/1 var(--font-mono);color:var(--gold);flex:0 0 auto}
+.agenda-note{font:400 13px/1.4 var(--font-sans);color:var(--ink);flex:1}
 .agenda-item button{background:none;border:none;color:var(--danger);font-size:12px;cursor:pointer}
 
-.thread{display:flex;flex-direction:column;gap:22px;margin-top:6px}
-.thread-entry{padding-left:16px;border-left:2px solid var(--line)}
-.thread-date{font:700 10px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 6px}
-.thread-text{font:400 15px/1.7 Newsreader,Georgia,serif;color:var(--ink);margin:0}
-.thread-actions{display:flex;gap:10px;margin-top:8px}
-.thread-actions button{background:none;border:none;color:var(--ink-soft);font-size:11.5px;cursor:pointer}
-.thread-actions button.danger{color:var(--danger)}
+/* Análise Piloto — o mesmo protocolo em toda consulta */
+.piloto{display:flex;flex-direction:column;gap:14px}
+.campo label{
+  display:block;font:700 8.5px/1 var(--font-mono);letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px;
+}
+.campo .dica{font:400 11px/1.45 var(--font-sans);color:var(--ink-dim);margin:0 0 7px}
+.campo textarea{width:100%;min-height:66px;resize:vertical;font:400 13.5px/1.6 var(--font-sans)}
+.campo input{width:100%}
+.campo.destaque textarea{font:italic 400 14.5px/1.65 var(--font-serif)}
 
-.memorial-toggle{width:100%;text-align:left;background:var(--track);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font:600 12.5px/1.4 Inter,sans-serif;color:var(--ink-soft);cursor:pointer}
-.memorial-body{display:none;margin-top:8px}
+.sess{padding-left:16px;border-left:2px solid var(--line)}
+.sess-date{font:700 9.5px/1 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dim);margin:0 0 10px}
+.sess-campo{margin-bottom:11px}
+.sess-k{font:700 8px/1 var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
+.sess-v{font:400 13.5px/1.6 var(--font-sans);color:var(--ink);margin:4px 0 0;white-space:pre-wrap}
+.sess-v.serif{font:italic 400 14.5px/1.65 var(--font-serif);color:var(--gold-hi)}
+.sess-actions{display:flex;gap:12px;margin-top:10px}
+.sess-actions button{background:none;border:none;color:var(--ink-dim);font-size:11.5px;cursor:pointer}
+.sess-actions button.danger{color:var(--danger)}
+
+.memorial-toggle{
+  width:100%;text-align:left;background:var(--s1);border:1px solid var(--line);
+  border-radius:13px;padding:13px 15px;font:600 12.5px/1.4 var(--font-sans);
+  color:var(--ink-soft);cursor:pointer;
+}
+.memorial-body{display:none;margin-top:9px}
 .memorial-body.open{display:block}
-.memorial-body textarea{width:100%;min-height:140px;font:400 13px/1.5 Inter,sans-serif;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);resize:vertical}
-
-.session-form{display:flex;flex-direction:column;gap:10px}
-.session-form textarea{min-height:90px;font:400 14px/1.6 Newsreader,Georgia,serif;padding:12px;border:1px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);resize:vertical}
+.memorial-body textarea{width:100%;min-height:150px;resize:vertical}
 </style>
 </head>
 <body>
 
 <div class="brgx-head">
   <a class="brgx-back" href="../index.html">← MEU</a>
-  <p class="brgx-eyebrow">MEU.app/recamier · pessoal</p>
+  <p class="brgx-eyebrow">MEU.app/recamier</p>
   <h1>Recamier</h1>
-  <p>Espaço de escuta, não de resposta pronta. Dr. Charles escuta — o registro fica aqui.</p>
+  <p>Espaço de escuta, não de resposta pronta. Toda consulta passa pela mesma Análise Piloto.</p>
 </div>
 
 <div class="brgx-shell">
 
   <div>
-    <p class="section-label" style="margin-bottom:8px">Agenda</p>
+    <p class="section-label" style="margin-bottom:9px">Agenda</p>
     <div class="card">
-      <div class="agenda-strip" id="agenda"></div>
-      <div class="btn-row" style="margin-top:12px">
+      <div id="agenda"></div>
+      <div class="btn-row" style="margin-top:13px">
         <button class="mini-btn" id="agendarBtn" style="width:100%">Agendar sessão</button>
       </div>
     </div>
   </div>
 
   <div>
-    <p class="section-label" style="margin-bottom:8px">Nova sessão</p>
-    <form class="session-form" id="sessionForm">
-      <textarea id="sessionText" placeholder="O que veio à tona hoje…" required></textarea>
-      <button type="submit" class="mini-btn solid">Iniciar sessão</button>
+    <p class="section-label" style="margin-bottom:4px">Análise Piloto</p>
+    <p style="font:400 12px/1.55 var(--font-sans);color:var(--ink-soft);margin:7px 0 15px">
+      Protocolo único, usado em toda consulta e todo atendimento. Preencha o que fizer sentido — nenhum campo é obrigatório além do relato.
+    </p>
+    <form class="piloto" id="pilotoForm">
+      <div class="campo">
+        <label>1 · O que trouxe você aqui</label>
+        <p class="dica">O motivo declarado, do jeito que veio.</p>
+        <textarea id="f_motivo" placeholder="O que fez você abrir isso hoje…"></textarea>
+      </div>
+      <div class="campo">
+        <label>2 · Relato</label>
+        <p class="dica">O que aconteceu, sem editar para ficar apresentável.</p>
+        <textarea id="f_relato" placeholder="Conte como foi…" required></textarea>
+      </div>
+      <div class="campo">
+        <label>3 · Padrão observado</label>
+        <p class="dica">Isso já aconteceu antes? Com que cara?</p>
+        <textarea id="f_padrao" placeholder="O padrão que se repete…"></textarea>
+      </div>
+      <div class="campo">
+        <label>4 · Parte interna ativa</label>
+        <input type="text" id="f_parte" placeholder="Ex: O Protetor, O Responsável, O que Foge" />
+      </div>
+      <div class="campo">
+        <label>5 · Gatilho</label>
+        <input type="text" id="f_gatilho" placeholder="Ex: não ser prioridade, injustiça, atraso" />
+      </div>
+      <div class="campo">
+        <label>6 · Regulador aplicado</label>
+        <input type="text" id="f_regulador" placeholder="Ex: música, praia, conversa profunda" />
+      </div>
+      <div class="campo destaque">
+        <label>7 · O que fica</label>
+        <p class="dica">A frase que resume. É ela que volta quando você reler.</p>
+        <textarea id="f_fica" placeholder="Em uma frase…"></textarea>
+      </div>
+      <button type="submit" class="mini-btn solid">Registrar análise</button>
     </form>
   </div>
 
   <div>
-    <p class="section-label" style="margin-bottom:8px">Registro</p>
-    <div class="thread" id="thread"></div>
+    <p class="section-label" style="margin-bottom:14px">Registro</p>
+    <div id="thread" style="display:flex;flex-direction:column;gap:26px"></div>
   </div>
 
   <div>
     <button type="button" class="memorial-toggle" id="memorialToggle">Memorial (dados sensíveis) — toque para abrir</button>
     <div class="memorial-body" id="memorialBody">
-      <textarea id="memorialText" placeholder="Perfil, gatilhos, padrões — só você vê isso, guardado neste navegador."></textarea>
-      <div class="btn-row" style="margin-top:8px">
+      <textarea id="memorialText" placeholder="Perfil, gatilhos, padrões. Fica só neste navegador."></textarea>
+      <div class="btn-row" style="margin-top:9px">
         <button class="mini-btn solid" id="memorialSave" style="width:100%">Salvar memorial</button>
       </div>
     </div>
@@ -84,21 +131,31 @@ body{padding-bottom:60px}
 <script src="../assets/brgx-shared.js"></script>
 <script>
 (function(){
-  let sessions = brgxStorageGet('brgx-recamier-sessions', []);
-  let agenda = brgxStorageGet('brgx-recamier-agenda', []);
-  let memorial = brgxStorageGet('brgx-recamier-memorial', '');
+  /* Campos da Análise Piloto — a mesma estrutura para toda consulta e atendimento. */
+  const CAMPOS = [
+    { k:'motivo',    rot:'O que trouxe' },
+    { k:'relato',    rot:'Relato' },
+    { k:'padrao',    rot:'Padrão observado' },
+    { k:'parte',     rot:'Parte interna ativa' },
+    { k:'gatilho',   rot:'Gatilho' },
+    { k:'regulador', rot:'Regulador aplicado' },
+    { k:'fica',      rot:'O que fica', serif:true },
+  ];
 
-  function saveSessions(){ brgxStorageSet('brgx-recamier-sessions', sessions); }
-  function saveAgenda(){ brgxStorageSet('brgx-recamier-agenda', agenda); }
+  let sessions = brgxStorageGet('brgx-recamier-sessions', []);
+  let agenda   = brgxStorageGet('brgx-recamier-agenda', []);
+
+  const saveS = () => brgxStorageSet('brgx-recamier-sessions', sessions);
+  const saveA = () => brgxStorageSet('brgx-recamier-agenda', agenda);
 
   function renderAgenda(){
     const el = document.getElementById('agenda');
     el.innerHTML = '';
-    if(agenda.length===0){
-      el.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">Nenhuma sessão agendada.</p>';
+    if (!agenda.length){
+      el.innerHTML = '<p style="color:var(--ink-dim);font-size:13px;margin:0">Nenhuma sessão agendada.</p>';
       return;
     }
-    agenda.sort((a,b)=> (a.when||'').localeCompare(b.when||'')).forEach(a=>{
+    [...agenda].sort((a,b)=>(a.when||'').localeCompare(b.when||'')).forEach(a=>{
       const row = document.createElement('div');
       row.className = 'agenda-item';
       row.innerHTML = `<span class="agenda-when"></span><span class="agenda-note"></span><button data-id="${a.id}">excluir</button>`;
@@ -106,82 +163,92 @@ body{padding-bottom:60px}
       row.querySelector('.agenda-note').textContent = a.note;
       el.appendChild(row);
     });
-    el.querySelectorAll('button[data-id]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        agenda = agenda.filter(a=>a.id!==btn.dataset.id);
-        saveAgenda(); renderAgenda();
-      });
+    el.querySelectorAll('button[data-id]').forEach(b=>{
+      b.addEventListener('click', ()=>{ agenda = agenda.filter(a=>a.id!==b.dataset.id); saveA(); renderAgenda(); });
     });
   }
 
   function renderThread(){
     const el = document.getElementById('thread');
     el.innerHTML = '';
-    if(sessions.length===0){
-      el.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">Nenhuma sessão registrada ainda.</p>';
+    if (!sessions.length){
+      el.innerHTML = '<p style="color:var(--ink-dim);font-size:13px;margin:0">Nenhuma análise registrada ainda.</p>';
       return;
     }
     [...sessions].reverse().forEach(s=>{
       const entry = document.createElement('div');
-      entry.className = 'thread-entry';
-      entry.innerHTML = `
-        <p class="thread-date"></p>
-        <p class="thread-text"></p>
-        <div class="thread-actions">
-          <button data-act="edit" data-id="${s.id}">editar</button>
-          <button data-act="del" data-id="${s.id}" class="danger">excluir</button>
-        </div>`;
-      entry.querySelector('.thread-date').textContent = s.date;
-      entry.querySelector('.thread-text').textContent = s.text;
+      entry.className = 'sess';
+      const dt = document.createElement('p');
+      dt.className = 'sess-date'; dt.textContent = s.date;
+      entry.appendChild(dt);
+
+      CAMPOS.forEach(c=>{
+        const v = (s.campos || {})[c.k];
+        if (!v) return;
+        const bloco = document.createElement('div');
+        bloco.className = 'sess-campo';
+        bloco.innerHTML = `<span class="sess-k"></span><p class="sess-v ${c.serif?'serif':''}"></p>`;
+        bloco.querySelector('.sess-k').textContent = c.rot;
+        bloco.querySelector('.sess-v').textContent = c.serif ? '“'+v+'”' : v;
+        entry.appendChild(bloco);
+      });
+
+      const acts = document.createElement('div');
+      acts.className = 'sess-actions';
+      acts.innerHTML = `<button data-act="edit" data-id="${s.id}">editar relato</button>
+                        <button data-act="del" data-id="${s.id}" class="danger">excluir</button>`;
+      entry.appendChild(acts);
       el.appendChild(entry);
     });
-    el.querySelectorAll('[data-act="edit"]').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const s = sessions.find(x=>x.id===btn.dataset.id);
-        const novo = prompt('Editar registro da sessão', s.text);
-        if(novo && novo.trim()){ s.text = novo.trim(); saveSessions(); renderThread(); }
+
+    el.querySelectorAll('[data-act="edit"]').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        const s = sessions.find(x=>x.id===b.dataset.id);
+        const novo = prompt('Editar o relato desta análise', (s.campos||{}).relato || '');
+        if (novo && novo.trim()){ s.campos.relato = novo.trim(); saveS(); renderThread(); }
       });
     });
-    el.querySelectorAll('[data-act="del"]').forEach(btn=>{
-      btn.addEventListener('click', async ()=>{
-        const ok = await brgxConfirm({title:'Excluir sessão', text:'Esse registro será apagado permanentemente. Continuar?', confirmLabel:'Excluir'});
-        if(!ok) return;
-        sessions = sessions.filter(s=>s.id!==btn.dataset.id);
-        saveSessions(); renderThread();
+    el.querySelectorAll('[data-act="del"]').forEach(b=>{
+      b.addEventListener('click', async ()=>{
+        const ok = await brgxConfirm({ title:'Excluir análise', text:'Esse registro será apagado permanentemente. Continuar?', confirmLabel:'Excluir' });
+        if (!ok) return;
+        sessions = sessions.filter(s=>s.id!==b.dataset.id);
+        saveS(); renderThread();
       });
     });
   }
 
-  document.getElementById('sessionForm').addEventListener('submit', (e)=>{
+  document.getElementById('pilotoForm').addEventListener('submit', (e)=>{
     e.preventDefault();
-    const text = document.getElementById('sessionText').value.trim();
-    if(!text) return;
-    sessions.push({id:'s'+Date.now(), date:brgxDateLine(), text});
-    saveSessions();
-    document.getElementById('sessionText').value='';
+    const campos = {};
+    CAMPOS.forEach(c=>{
+      const el = document.getElementById('f_'+c.k);
+      if (el && el.value.trim()) campos[c.k] = el.value.trim();
+    });
+    if (!campos.relato) return;
+    sessions.push({ id:'s'+Date.now(), date:brgxDateLine(), campos });
+    saveS();
+    e.target.reset();
     renderThread();
   });
 
   document.getElementById('agendarBtn').addEventListener('click', ()=>{
     const when = prompt('Quando? (ex: sáb, 14h)');
-    if(!when) return;
+    if (!when) return;
     const note = prompt('Nota (opcional)') || 'Sessão';
-    agenda.push({id:'a'+Date.now(), when, note});
-    saveAgenda(); renderAgenda();
+    agenda.push({ id:'a'+Date.now(), when, note });
+    saveA(); renderAgenda();
   });
 
-  const memorialBody = document.getElementById('memorialBody');
-  document.getElementById('memorialToggle').addEventListener('click', ()=>{
-    memorialBody.classList.toggle('open');
-  });
-  document.getElementById('memorialText').value = memorial;
+  const mBody = document.getElementById('memorialBody');
+  const mText = document.getElementById('memorialText');
+  document.getElementById('memorialToggle').addEventListener('click', ()=> mBody.classList.toggle('open'));
+  mText.value = brgxStorageGet('brgx-recamier-memorial', '');
   document.getElementById('memorialSave').addEventListener('click', ()=>{
-    memorial = document.getElementById('memorialText').value;
-    brgxStorageSet('brgx-recamier-memorial', memorial);
+    brgxStorageSet('brgx-recamier-memorial', mText.value);
   });
 
-  renderAgenda();
-  renderThread();
+  renderAgenda(); renderThread();
 })();
 </script>
 <script src="../assets/brgx-specialist.js"></script>

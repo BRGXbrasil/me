@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="pt-BR" data-brgx-theme="light">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#efece5" />
+<meta name="theme-color" content="#08080A" />
 <title>MEU · Biblioteca</title>
 <link rel="stylesheet" href="../assets/brgx-tokens.css" />
 <style>
@@ -45,6 +45,23 @@ body{padding-bottom:40px}
 [data-mood="comedia"]{background:linear-gradient(150deg,#7a5a00,#d1a52a)}
 [data-mood="terror"]{background:linear-gradient(150deg,#0a0a0c,#3a1414)}
 [data-mood="biografia"]{background:linear-gradient(150deg,#3a2f22,#8a7550)}
+
+/* Leitor estilo Speechify: texto da página com destaque palavra a palavra */
+.speech{margin-top:12px;background:rgba(0,0,0,.28);border-radius:14px;padding:14px;max-height:34vh;overflow-y:auto}
+.speech p{margin:0;font:400 15px/1.85 var(--font-serif);color:rgba(255,255,255,.72)}
+.speech w{border-radius:4px;padding:1px 2px;transition:background .1s,color .1s}
+.speech w.on{background:var(--gold);color:#141000;font-weight:600}
+.speech w.lido{color:rgba(255,255,255,.95)}
+.speech-bar{display:flex;align-items:center;gap:10px;margin-top:11px;flex-wrap:wrap}
+.speech-bar button{background:rgba(255,255,255,.14);border:none;color:#fff;border-radius:9px;padding:8px 13px;font:600 12px/1 var(--font-sans);cursor:pointer}
+.speech-bar button.play{background:var(--gold);color:#141000;font-weight:700}
+.speech-bar select{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:11.5px;padding:7px 9px;border-radius:9px}
+.speech-bar .spd{display:flex;gap:4px}
+.speech-bar .spd b{
+  font:700 11px/1 var(--font-mono);color:rgba(255,255,255,.6);background:rgba(255,255,255,.1);
+  border-radius:7px;padding:7px 8px;cursor:pointer;
+}
+.speech-bar .spd b.on{background:var(--gold);color:#141000}
 
 .sugestoes-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
 .sugestao-item{padding:10px 0;border-bottom:1px solid var(--line);font:400 13px/1.5 Inter,sans-serif}
@@ -94,8 +111,14 @@ body{padding-bottom:40px}
         <span class="pageinfo" id="pageInfo">—</span>
         <button id="nextPage">próxima ›</button>
       </div>
+      <div class="speech" id="speech" style="display:none"><p id="speechTxt"></p></div>
+      <div class="speech-bar" id="speechBar" style="display:none">
+        <button class="play" id="ouvirBtn">▶ Chai lê pra mim</button>
+        <span class="spd" id="spd"></span>
+        <select id="vozSel"></select>
+      </div>
       <div class="reader-voice-row">
-        <button id="ouvirBtn">🔊 Chai lê pra mim</button>
+        <button id="carregarTexto">📖 Abrir texto desta página</button>
         <button id="fecharReader">Fechar leitor</button>
       </div>
     </div>
@@ -281,18 +304,129 @@ body{padding-bottom:40px}
   document.getElementById('fecharReader').addEventListener('click', ()=>{
     document.getElementById('reader').classList.remove('open');
     pdfDoc = null; currentBook = null;
-    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    pararLeitura();
+    document.getElementById('speech').style.display = 'none';
+    document.getElementById('speechBar').style.display = 'none';
   });
-  document.getElementById('ouvirBtn').addEventListener('click', async ()=>{
+  /* ---- Leitor estilo Speechify ----
+     A Web Speech API emite onboundary a cada palavra falada; usamos esse evento
+     para mover o destaque em sincronia com a voz. Sem chave paga, sem backend.
+     (Trocar por uma API dedicada é isolado: só a função falarTexto muda.) */
+  let palavras = [], utterAtual = null, lendo = false, velocidade = 1;
+
+  function montarTexto(texto){
+    const sp = document.getElementById('speechTxt');
+    sp.innerHTML = '';
+    palavras = [];
+    let idx = 0;
+    texto.split(/(\s+)/).forEach(tok=>{
+      if (/^\s+$/.test(tok)){ sp.appendChild(document.createTextNode(tok)); idx += tok.length; return; }
+      const w = document.createElement('w');
+      w.textContent = tok;
+      w.dataset.ini = idx;
+      sp.appendChild(w);
+      palavras.push({ el:w, ini:idx, fim:idx+tok.length });
+      idx += tok.length;
+    });
+    document.getElementById('speech').style.display = 'block';
+    document.getElementById('speechBar').style.display = 'flex';
+  }
+
+  function destacar(charIndex){
+    let alvo = null;
+    for (const p of palavras){
+      if (charIndex >= p.ini && charIndex < p.fim){ alvo = p; break; }
+    }
+    palavras.forEach(p=>{
+      p.el.classList.toggle('on', p === alvo);
+      if (alvo && p.fim <= alvo.ini) p.el.classList.add('lido');
+    });
+    if (alvo) alvo.el.scrollIntoView({ block:'center', behavior:'smooth' });
+  }
+
+  function pararLeitura(){
+    window.speechSynthesis.cancel();
+    lendo = false;
+    document.getElementById('ouvirBtn').textContent = '▶ Chai lê pra mim';
+    palavras.forEach(p=>p.el.classList.remove('on'));
+  }
+
+  function falarTexto(texto){
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(texto);
+    u.lang = 'pt-BR';
+    u.rate = velocidade;
+    u.pitch = 0.75;
+    const voz = brgxPegarVoz('brgx-voz-chai');
+    if (voz) u.voice = voz;
+    u.onboundary = (e)=>{ if (e.name === 'word' || e.charIndex != null) destacar(e.charIndex); };
+    u.onend = ()=>{
+      pararLeitura();
+      // Continua no fluxo: avança de página sozinho, como num audiobook.
+      if (pdfDoc && currentPage < pdfDoc.numPages){
+        currentPage++; renderPage().then(()=>carregarTextoDaPagina(true));
+      }
+    };
+    utterAtual = u;
+    lendo = true;
+    document.getElementById('ouvirBtn').textContent = '⏸ Pausar';
+    window.speechSynthesis.speak(u);
+  }
+
+  async function carregarTextoDaPagina(autoPlay){
     if (!pdfDoc) return;
     const page = await pdfDoc.getPage(currentPage);
     const content = await page.getTextContent();
-    const texto = content.items.map(i=>i.str).join(' ').slice(0, 3000);
-    if (!texto.trim()){ alert('Essa página não tem texto extraível (pode ser uma imagem escaneada).'); return; }
-    const btn = document.getElementById('ouvirBtn');
-    brgxOuvirTexto(texto, ()=>{ btn.textContent = '🔊 Chai lê pra mim'; }, 'brgx-voz-nome');
-    btn.textContent = brgxVozEstaTocando() ? '⏸ Parar' : '🔊 Chai lê pra mim';
+    const texto = content.items.map(i=>i.str).join(' ').replace(/\s+/g,' ').trim().slice(0, 4000);
+    if (!texto){
+      document.getElementById('speechTxt').textContent = 'Esta página não tem texto extraível (provavelmente é uma imagem escaneada).';
+      document.getElementById('speech').style.display = 'block';
+      return;
+    }
+    montarTexto(texto);
+    if (autoPlay) falarTexto(texto);
+    return texto;
+  }
+
+  document.getElementById('carregarTexto').addEventListener('click', ()=> carregarTextoDaPagina(false));
+
+  document.getElementById('ouvirBtn').addEventListener('click', async ()=>{
+    if (lendo){ pararLeitura(); return; }
+    const txt = document.getElementById('speechTxt').textContent.trim() || await carregarTextoDaPagina(false);
+    if (txt) falarTexto(txt);
   });
+
+  function renderVelocidade(){
+    const el = document.getElementById('spd');
+    el.innerHTML = '';
+    [0.8, 1, 1.25, 1.5, 2].forEach(v=>{
+      const b = document.createElement('b');
+      b.textContent = v + 'x';
+      b.className = (v === velocidade) ? 'on' : '';
+      b.addEventListener('click', ()=>{
+        velocidade = v; renderVelocidade();
+        if (lendo){ const t = document.getElementById('speechTxt').textContent; pararLeitura(); falarTexto(t); }
+      });
+      el.appendChild(b);
+    });
+  }
+
+  function renderVozes(){
+    const sel = document.getElementById('vozSel');
+    const vozes = brgxCarregarVozesPTBR();
+    const salva = localStorage.getItem('brgx-voz-chai');
+    sel.innerHTML = vozes.length ? '' : '<option>sem voz pt-BR</option>';
+    vozes.forEach(v=>{
+      const o = document.createElement('option');
+      o.value = v.name; o.textContent = v.name;
+      if (v.name === salva) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.addEventListener('change', ()=> localStorage.setItem('brgx-voz-chai', sel.value));
+  }
+  renderVelocidade();
+  setTimeout(renderVozes, 600);
 
   function renderGoal(){
     const goals = brgxStorageGet('brgx-metas-goals', []);

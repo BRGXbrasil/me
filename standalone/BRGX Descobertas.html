@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="pt-BR" data-brgx-theme="light">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#efece5" />
+<meta name="theme-color" content="#08080A" />
 <title>MEU · Descobertas</title>
 <link rel="stylesheet" href="../assets/brgx-tokens.css" />
 <style>
@@ -52,7 +52,7 @@ body{padding-bottom:40px}
   <a class="brgx-back" href="../index.html">← MEU</a>
   <p class="brgx-eyebrow">MEU.app/descobertas · pessoal</p>
   <h1>Coisas que eu ainda não sei</h1>
-  <p>Neurologia, psicanálise, kabbalah e o que mais vier. Descobertas sorteadas, uma de cada vez.</p>
+  <p>Neurociência, psicanálise e cabalá descrevem o mesmo problema: como a realidade é construída. Descobertas sorteadas, uma de cada vez.</p>
 </div>
 
 <div class="brgx-shell">
@@ -108,9 +108,31 @@ body{padding-bottom:40px}
 <script>
 (function(){
   let categorias = brgxStorageGet('brgx-descobertas-categorias', [
-    {id:'c1', nome:'Neurologia'}, {id:'c2', nome:'Psicanálise'}, {id:'c3', nome:'Kabbalah'}
+    {id:'c1', nome:'Neurociência'}, {id:'c2', nome:'Psicanálise'},
+    {id:'c3', nome:'Cabalá'}, {id:'c4', nome:'Integração'}
   ]);
-  let fatos = brgxStorageGet('brgx-descobertas-fatos', []);
+
+  /* Conteúdo real do Módulo I — as 11 aulas já dadas.
+     Fonte: documento "coisas que eu não sabia…". Próxima aula: 12. */
+  const SEMENTE = [
+    ['c4','Aula 1 — Três disciplinas, um problema comum: consciência, sujeito e sentido.'],
+    ['c1','Aula 2 — O cérebro seleciona o que percebe: atenção seletiva, filtragem neural, economia cognitiva, construção perceptiva.'],
+    ['c2','Aula 3 — O sujeito não é transparente para si mesmo: inconsciente, desejo, falta, significante, sujeito dividido.'],
+    ['c3','Aula 4 — A realidade surge da restrição e da organização: Tzimtzum, Ein Sof, estrutura, limite.'],
+    ['c4','Aula 5 — Integração I: neurociência modela o mundo, psicanálise modela o sujeito, cabalá modela a criação.'],
+    ['c4','Aula 6 — O erro é condição da aprendizagem: predictive processing, erro de previsão, sintoma, Shevirat haKelim.'],
+    ['c1','Aula 7 — A consciência emerge da integração entre cérebro, organismo e ambiente: cognição incorporada, interocepção, esquema corporal.'],
+    ['c1','Aula 8 — A visão é interpretação ativa, não fotografia: inferência perceptiva, ilusões, processamento hierárquico, predição visual.'],
+    ['c1','Aula 9 — O corpo é a condição pela qual o mundo se torna acessível: sensório-motor, corpo vivido em Merleau-Ponty.'],
+    ['c1','Aula 10 — A memória reconstrói o passado em vez de armazená-lo: consolidação, reconsolidação, episódica, semântica, plasticidade.'],
+    ['c2','Aula 11 — A linguagem organiza a experiência e medeia sujeito e mundo: significante, símbolo, representação, limites da linguagem.'],
+    ['c1','Predictive Processing: o cérebro funciona produzindo previsões contínuas sobre o mundo, e corrigindo o erro entre previsão e sinal.'],
+    ['c2','Falta: na psicanálise lacaniana, é a estrutura central do desejo humano — não um defeito a ser preenchido.'],
+    ['c3','Tsimtsum: na cabalá luriana, a contração primordial que abre espaço para que a criação seja possível.'],
+    ['c4','O sujeito não encontra o real diretamente. Ele constrói modelos, símbolos e narrativas para suportá-lo.'],
+  ];
+  let fatos = brgxStorageGet('brgx-descobertas-fatos',
+    SEMENTE.map((f,i)=>({ id:'f'+i, categoriaId:f[0], texto:f[1], sabido:false })));
   let aula = brgxStorageGet('brgx-descobertas-proxima-aula', '12');
   let activeCat = 'all';
   let current = null;
