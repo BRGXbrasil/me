@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="pt-BR" data-brgx-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#efece5" />
+<title>MEU · Pet</title>
+<link rel="stylesheet" href="../assets/brgx-tokens.css" />
+<style>
+/* Diário de bordo — linha do tempo, sem grid denso. Visual quente de "caderno de anotações". */
+body{padding-bottom:40px}
+
+.age-hero{background:linear-gradient(150deg,var(--hero-dark) 0%,var(--accent) 100%);border-radius:24px;padding:22px 20px;color:#fff}
+.age-hero .eyebrow{font:700 10px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);margin:0 0 8px}
+.age-hero h2{margin:0 0 4px;font:600 22px/1.2 Newsreader,Georgia,serif}
+.age-hero p{margin:0;font:400 13px/1.5 Inter,sans-serif;color:rgba(255,255,255,.85)}
+
+.phase-card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px}
+.phase-card .tag{display:inline-block;margin-bottom:8px;font:700 10px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.phase-card h3{margin:0 0 6px;font:600 16px/1.3 Newsreader,Georgia,serif}
+.phase-card p{margin:0;font:400 13px/1.5 Inter,sans-serif;color:var(--ink-soft)}
+
+.care-list{display:flex;flex-direction:column;gap:8px}
+.care-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.care-row.done{background:var(--good-soft);border-color:transparent}
+.care-check{width:22px;height:22px;border-radius:8px;border:2px solid var(--track);flex:0 0 auto;cursor:pointer;background:var(--card);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px}
+.care-row.done .care-check{background:var(--good);border-color:var(--good)}
+.care-body{flex:1}
+.care-name{font:600 13.5px/1.3 Inter,sans-serif}
+.care-time{font:500 11px/1.3 Inter,sans-serif;color:var(--ink-soft)}
+.care-actions button{background:none;border:none;color:var(--ink-soft);font-size:12px;cursor:pointer;padding:4px}
+.care-actions button.danger{color:var(--danger)}
+
+.protocol-list{display:flex;flex-direction:column;gap:6px}
+.protocol-row{display:flex;align-items:center;gap:8px;font:500 12.5px/1.4 Inter,sans-serif}
+.protocol-row.done{color:var(--ink-soft);text-decoration:line-through}
+.protocol-dot{width:14px;height:14px;border-radius:999px;border:2px solid var(--track);flex:0 0 auto;cursor:pointer}
+.protocol-dot.done{background:var(--gold);border-color:var(--gold)}
+
+.incident-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.incident-row:last-child{border-bottom:none}
+.incident-date{flex:0 0 70px;font:700 11px/1.3 Inter,sans-serif;color:var(--ink-soft)}
+.incident-body{flex:1;font:400 12.5px/1.5 Inter,sans-serif;color:var(--ink)}
+.incident-row button{background:none;border:none;color:var(--danger);font-size:12px;cursor:pointer}
+
+.growth-timeline{display:flex;flex-direction:column;border-left:2px solid var(--line);margin-left:6px}
+.growth-entry{position:relative;padding:0 0 14px 18px}
+.growth-entry::before{content:'';position:absolute;left:-6px;top:2px;width:10px;height:10px;border-radius:999px;background:var(--gold)}
+.growth-date{font:700 10px/1 Inter,sans-serif;color:var(--ink-soft);margin:0 0 2px}
+.growth-text{font:600 13px/1.4 Inter,sans-serif;margin:0}
+
+.phase-scroll{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;scroll-snap-type:x mandatory}
+.phase-mini{scroll-snap-align:start;flex:0 0 auto;width:200px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.phase-mini.current{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.phase-mini .rng{font:700 9.5px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 6px}
+.phase-mini h4{margin:0 0 6px;font:600 13.5px/1.3 Newsreader,Georgia,serif}
+.phase-mini p{margin:0 0 4px;font:400 11.5px/1.45 Inter,sans-serif;color:var(--ink-soft)}
+.phase-mini p b{color:var(--ink);font-weight:600}
+
+.add-form{display:flex;flex-direction:column;gap:8px}
+.add-form input,.add-form select{font:500 13px/1 Inter,sans-serif;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+.add-form-row{display:flex;gap:8px}
+.add-form-row>*{flex:1}
+</style>
+</head>
+<body>
+
+<div class="brgx-head">
+  <a class="brgx-back" href="../index.html">← MEU</a>
+  <p class="brgx-eyebrow">MEU.app/pet · pessoal</p>
+  <h1>Pet · Júnior</h1>
+  <p>Diário do dálmata, filho da Helena. Cuidados, adestramento e o que ele sente em cada fase.</p>
+</div>
+
+<div class="brgx-shell">
+
+  <div class="age-hero">
+    <p class="eyebrow">Idade de Júnior</p>
+    <h2 id="ageHeadline">calculando…</h2>
+    <p id="ageSub"></p>
+  </div>
+
+  <div class="phase-card" id="phaseCard"></div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Cuidados de hoje</p>
+    <div class="care-list" id="careList"></div>
+    <form class="add-form" id="careForm" style="margin-top:10px">
+      <div class="add-form-row">
+        <input type="text" id="careName" placeholder="Novo cuidado (ex: passeio da tarde)" required />
+        <input type="time" id="careTime" value="08:00" style="max-width:110px" />
+      </div>
+      <button type="submit" class="mini-btn solid">Lançar cuidado</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <p class="section-label" style="margin-bottom:4px">Ansiedade de separação</p>
+    <p style="font-size:12.5px;color:var(--ink-soft);margin:4px 0 12px">Protocolo de dessensibilização — saídas curtas e crescentes, sem alarde na volta.</p>
+    <div class="protocol-list" id="protocolList"></div>
+  </div>
+
+  <div class="card">
+    <p class="section-label" style="margin-bottom:8px">Log de incidentes</p>
+    <div id="incidentList"></div>
+    <button type="button" class="mini-btn" id="addIncidentBtn" style="margin-top:10px;width:100%">Registrar incidente</button>
+  </div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Crescimento</p>
+    <div class="growth-timeline" id="growthTimeline"></div>
+    <div class="btn-row" style="margin-top:8px">
+      <button type="button" class="mini-btn solid" id="addGrowthBtn" style="width:100%">Avançar · novo registro</button>
+    </div>
+  </div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Fases — cuidados, adestramento, como ele sente</p>
+    <div class="phase-scroll" id="phaseScroll"></div>
+  </div>
+
+</div>
+
+<script src="../assets/brgx-shared.js"></script>
+<script>
+(function(){
+  const PHASES = [
+    {min:0, max:8, tag:'0–8 semanas', title:'Filhote recém-desmamado', care:'Alimentação em 4 refeições/dia, sono livre, ainda com a mãe/ninhada.', training:'Só socialização leve — cheiros e sons de casa.', feels:'Depende totalmente do grupo; sozinho, o mundo é ameaçador.'},
+    {min:8, max:16, tag:'8–16 semanas', title:'Socialização e ansiedade de separação', care:'4→3 refeições/dia, primeiras vacinas, começo dos passeios curtos no colo.', training:'Dessensibilização a ficar sozinho: saídas de 1–5min, sem despedida teatral.', feels:'Está formando o apego a você — sua ausência ainda parece definitiva pra ele.'},
+    {min:16, max:24, tag:'4–6 meses', title:'Adolescência inicial', care:'3 refeições/dia, dentição trocando (pode morder mais), mais energia pra gastar.', training:'Comandos básicos com reforço positivo curto e frequente (5min, várias vezes).', feels:'Testa limites — não é teimosia, é o cérebro reorganizando impulso e controle.'},
+    {min:24, max:52, tag:'6–12 meses', title:'Adolescência plena', care:'2–3 refeições/dia, castração a discutir com o vet, gasto de energia diário essencial.', training:'Consistência é mais importante que intensidade — mesma regra, todos os dias.', feels:'Sensível a mudanças de rotina; precisa de previsibilidade pra se regular.'},
+    {min:52, max:9999, tag:'12+ meses', title:'Adulto jovem', care:'2 refeições/dia, rotina de exercício estabelecida, check-ups anuais.', training:'Manutenção dos comandos e trabalho fino de obediência/agilidade se quiser.', feels:'Já tem um vínculo de confiança formado — a base do resto da vida dele.'}
+  ];
+
+  let profile = brgxStorageGet('brgx-pet-profile', {name:'Júnior', birthDate:'2026-05-06'});
+  let care = brgxStorageGet('brgx-pet-care', [
+    {id:'c1', name:'Café da manhã', time:'07:00'},
+    {id:'c2', name:'Passeio curto', time:'08:00'},
+    {id:'c3', name:'Treino de 5min (ficar sozinho)', time:'13:00'},
+    {id:'c4', name:'Jantar', time:'19:00'}
+  ]);
+  let careLog = brgxStorageGet('brgx-pet-care-log', {});
+  let protocol = brgxStorageGet('brgx-pet-protocol', [
+    {id:'p1', label:'Saída de 1 minuto sem despedida', done:true},
+    {id:'p2', label:'Saída de 5 minutos, voltar calmo', done:false},
+    {id:'p3', label:'Saída de 15 minutos', done:false},
+    {id:'p4', label:'Saída de 30+ minutos', done:false}
+  ]);
+  let incidents = brgxStorageGet('brgx-pet-incidents', []);
+  let growth = brgxStorageGet('brgx-pet-growth', []);
+
+  function saveAll(){
+    brgxStorageSet('brgx-pet-care', care);
+    brgxStorageSet('brgx-pet-care-log', careLog);
+    brgxStorageSet('brgx-pet-protocol', protocol);
+    brgxStorageSet('brgx-pet-incidents', incidents);
+    brgxStorageSet('brgx-pet-growth', growth);
+  }
+
+  function ageInDays(){
+    const birth = new Date(profile.birthDate);
+    return Math.floor((Date.now() - birth.getTime()) / 86400000);
+  }
+  function ageWeeks(){ return Math.floor(ageInDays()/7); }
+
+  function renderAge(){
+    const days = ageInDays();
+    const weeks = Math.floor(days/7);
+    const months = Math.floor(days/30);
+    document.getElementById('ageHeadline').textContent = months >= 1 ? `${months} ${months===1?'mês':'meses'}` : `${weeks} semanas`;
+    document.getElementById('ageSub').textContent = `${profile.name} nasceu em ${new Date(profile.birthDate).toLocaleDateString('pt-BR')} · ${days} dias de vida`;
+  }
+
+  function currentPhase(){
+    const w = ageWeeks();
+    return PHASES.find(p => w >= p.min && w < p.max) || PHASES[PHASES.length-1];
+  }
+
+  function renderPhaseCard(){
+    const p = currentPhase();
+    const el = document.getElementById('phaseCard');
+    el.innerHTML = `
+      <span class="tag"></span>
+      <h3></h3>
+      <p></p>`;
+    el.querySelector('.tag').textContent = p.tag;
+    el.querySelector('h3').textContent = p.title;
+    el.querySelector('p').textContent = p.feels;
+  }
+
+  function todayKey(){ return new Date().toISOString().slice(0,10); }
+
+  function renderCare(){
+    const key = todayKey();
+    const dayLog = careLog[key] || (careLog[key] = {});
+    const el = document.getElementById('careList');
+    el.innerHTML = '';
+    care.sort((a,b)=>(a.time||'').localeCompare(b.time||'')).forEach(c=>{
+      const done = !!dayLog[c.id];
+      const row = document.createElement('div');
+      row.className = 'care-row' + (done?' done':'');
+      row.innerHTML = `
+        <button class="care-check" data-id="${c.id}">${done?'✓':''}</button>
+        <div class="care-body"><p class="care-name"></p><p class="care-time"></p></div>
+        <div class="care-actions">
+          <button data-act="edit" data-id="${c.id}" title="Editar">✎</button>
+          <button data-act="del" data-id="${c.id}" class="danger" title="Excluir">✕</button>
+        </div>`;
+      row.querySelector('.care-name').textContent = c.name;
+      row.querySelector('.care-time').textContent = c.time;
+      el.appendChild(row);
+    });
+    el.querySelectorAll('.care-check').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        dayLog[btn.dataset.id] = !dayLog[btn.dataset.id];
+        saveAll(); renderCare();
+      });
+    });
+    el.querySelectorAll('[data-act="edit"]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const c = care.find(x=>x.id===btn.dataset.id);
+        const novo = prompt('Novo nome do cuidado', c.name);
+        if(novo && novo.trim()){ c.name = novo.trim(); saveAll(); renderCare(); }
+      });
+    });
+    el.querySelectorAll('[data-act="del"]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const ok = await brgxConfirm({title:'Excluir cuidado', text:'Remove este item da lista diária. Continuar?', confirmLabel:'Excluir'});
+        if(!ok) return;
+        care = care.filter(c=>c.id!==btn.dataset.id);
+        saveAll(); renderCare();
+      });
+    });
+  }
+
+  function renderProtocol(){
+    const el = document.getElementById('protocolList');
+    el.innerHTML = '';
+    protocol.forEach(p=>{
+      const row = document.createElement('div');
+      row.className = 'protocol-row' + (p.done?' done':'');
+      row.innerHTML = `<span class="protocol-dot ${p.done?'done':''}" data-id="${p.id}"></span><span></span>`;
+      row.querySelector('span:last-child').textContent = p.label;
+      el.appendChild(row);
+    });
+    el.querySelectorAll('.protocol-dot').forEach(dot=>{
+      dot.addEventListener('click', ()=>{
+        const p = protocol.find(x=>x.id===dot.dataset.id);
+        p.done = !p.done;
+        saveAll(); renderProtocol();
+      });
+    });
+  }
+
+  function renderIncidents(){
+    const el = document.getElementById('incidentList');
+    el.innerHTML = '';
+    if(incidents.length===0){
+      el.innerHTML = '<p style="color:var(--ink-soft);font-size:12.5px">Nenhum incidente registrado. Bom sinal.</p>';
+      return;
+    }
+    [...incidents].reverse().forEach(i=>{
+      const row = document.createElement('div');
+      row.className = 'incident-row';
+      row.innerHTML = `<div class="incident-date"></div><div class="incident-body"></div><button data-id="${i.id}">excluir</button>`;
+      row.querySelector('.incident-date').textContent = i.date;
+      row.querySelector('.incident-body').textContent = `${i.duration} · ${i.context}`;
+      el.appendChild(row);
+    });
+    el.querySelectorAll('button[data-id]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const ok = await brgxConfirm({title:'Excluir incidente', text:'Remove esse registro do log. Continuar?', confirmLabel:'Excluir'});
+        if(!ok) return;
+        incidents = incidents.filter(i=>i.id!==btn.dataset.id);
+        saveAll(); renderIncidents();
+      });
+    });
+  }
+
+  function renderGrowth(){
+    const el = document.getElementById('growthTimeline');
+    el.innerHTML = '';
+    if(growth.length===0){
+      el.innerHTML = '<p style="color:var(--ink-soft);font-size:12.5px;margin-left:14px">Nenhum registro de crescimento ainda.</p>';
+      return;
+    }
+    [...growth].reverse().forEach(g=>{
+      const entry = document.createElement('div');
+      entry.className = 'growth-entry';
+      entry.innerHTML = `<p class="growth-date"></p><p class="growth-text"></p>`;
+      entry.querySelector('.growth-date').textContent = g.date;
+      entry.querySelector('.growth-text').textContent = `${g.type} — ${g.value}`;
+      el.appendChild(entry);
+    });
+  }
+
+  function renderPhaseScroll(){
+    const w = ageWeeks();
+    const el = document.getElementById('phaseScroll');
+    el.innerHTML = '';
+    PHASES.forEach(p=>{
+      const isCurrent = w >= p.min && w < p.max;
+      const card = document.createElement('div');
+      card.className = 'phase-mini' + (isCurrent?' current':'');
+      card.innerHTML = `
+        <p class="rng"></p><h4></h4>
+        <p><b>Cuidados:</b> </p>
+        <p><b>Adestramento:</b> </p>
+        <p><b>Como sente:</b> </p>`;
+      card.querySelector('.rng').textContent = p.tag;
+      card.querySelector('h4').textContent = p.title;
+      const ps = card.querySelectorAll('p');
+      ps[1].append(p.care);
+      ps[2].append(p.training);
+      ps[3].append(p.feels);
+      el.appendChild(card);
+    });
+  }
+
+  document.getElementById('careForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const name = document.getElementById('careName').value.trim();
+    const time = document.getElementById('careTime').value;
+    if(!name) return;
+    care.push({id:'c'+Date.now(), name, time});
+    saveAll();
+    document.getElementById('careName').value='';
+    renderCare();
+  });
+
+  document.getElementById('addIncidentBtn').addEventListener('click', ()=>{
+    const duration = prompt('Duração do choro/estresse (ex: 12 min)');
+    if(!duration) return;
+    const context = prompt('Contexto (ex: saí pra academia, vizinho reclamou)') || '';
+    incidents.push({id:'i'+Date.now(), date: new Date().toLocaleDateString('pt-BR'), duration, context});
+    saveAll(); renderIncidents();
+  });
+
+  document.getElementById('addGrowthBtn').addEventListener('click', ()=>{
+    const type = prompt('Tipo (peso / vacina / vet)', 'peso');
+    if(!type) return;
+    const value = prompt('Valor / detalhe (ex: 6.2kg, V4, consulta de rotina)');
+    if(!value) return;
+    growth.push({id:'g'+Date.now(), date: new Date().toLocaleDateString('pt-BR'), type, value});
+    saveAll(); renderGrowth();
+  });
+
+  renderAge();
+  renderPhaseCard();
+  renderCare();
+  renderProtocol();
+  renderIncidents();
+  renderGrowth();
+  renderPhaseScroll();
+})();
+</script>
+</body>
+</html>

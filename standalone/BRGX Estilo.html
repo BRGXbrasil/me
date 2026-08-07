@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="pt-BR" data-brgx-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#efece5" />
+<title>MEU · Estilo</title>
+<link rel="stylesheet" href="../assets/brgx-tokens.css" />
+<style>
+/* Moodboard editorial — masonry via CSS columns, o mais "revista" dos apps */
+body{padding-bottom:40px}
+.brgx-shell{max-width:640px}
+
+.masonry{column-count:2;column-gap:12px}
+@media (min-width:520px){ .masonry{column-count:3} }
+.ref-card{break-inside:avoid;margin-bottom:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.ref-tag{align-self:flex-start;font:700 9.5px/1 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border-radius:999px;padding:4px 8px}
+.ref-note{font:400 13px/1.5 Newsreader,Georgia,serif;color:var(--ink);margin:0}
+.ref-actions{display:flex;gap:8px;margin-top:2px}
+.ref-actions button{background:none;border:none;color:var(--ink-soft);font-size:11.5px;cursor:pointer}
+.ref-actions button.danger{color:var(--danger)}
+
+.combo-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.combo-body{flex:1}
+.combo-label{font:600 13px/1.3 Inter,sans-serif}
+.combo-occasion{font:500 11px/1.3 Inter,sans-serif;color:var(--ink-soft)}
+.combo-row button{background:none;border:none;color:var(--danger);font-size:12px;cursor:pointer}
+
+.wardrobe-grid{display:flex;flex-wrap:wrap;gap:8px}
+.wardrobe-item{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:var(--card);cursor:pointer}
+.wardrobe-item.tenho{background:var(--good-soft);border-color:transparent}
+.wardrobe-item .status{font:700 9.5px/1 Inter,sans-serif;text-transform:uppercase;color:var(--ink-soft)}
+.wardrobe-item.tenho .status{color:var(--good)}
+.wardrobe-item .del{color:var(--danger);font-size:11px;margin-left:4px}
+
+.occasion-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.occasion-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.occasion-card h4{margin:0 0 6px;font:600 12.5px/1.3 Newsreader,Georgia,serif;color:var(--accent)}
+.occasion-card p{margin:0;font:400 11.5px/1.5 Inter,sans-serif;color:var(--ink-soft)}
+
+.add-form{display:flex;flex-direction:column;gap:8px}
+.add-form input,.add-form select{font:500 13px/1 Inter,sans-serif;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+
+/* Lapidada do Michelangelo — upload + crítica visual via Gemini (functions/README.md) */
+.lapidada-card{background:linear-gradient(150deg,var(--hero-dark) 0%,var(--accent) 100%);border-radius:22px;padding:18px}
+.lapidada-card .eyebrow{font:700 10px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);margin:0 0 8px}
+.lapidada-card h3{margin:0 0 10px;font:600 17px/1.3 Newsreader,Georgia,serif;color:#fff}
+.lapidada-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1.5px dashed rgba(255,255,255,.4);border-radius:16px;padding:22px;cursor:pointer;text-align:center}
+.lapidada-drop span{font:500 12.5px/1.4 Inter,sans-serif;color:rgba(255,255,255,.8)}
+.lapidada-preview{width:100%;border-radius:14px;margin-top:10px;display:none;max-height:280px;object-fit:cover}
+.lapidada-note{width:100%;margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;font:400 13px/1.4 Inter,sans-serif}
+.lapidada-note::placeholder{color:rgba(255,255,255,.55)}
+.lapidada-result{margin-top:12px;padding:14px;border-radius:14px;background:rgba(255,255,255,.1);color:#fff;font:400 13.5px/1.6 Inter,sans-serif;white-space:pre-wrap}
+.lapidada-gallery{display:flex;flex-direction:column;gap:10px}
+.lapidada-item{display:flex;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+.lapidada-item img{width:56px;height:56px;border-radius:10px;object-fit:cover;flex:0 0 auto}
+.lapidada-item .body{flex:1;min-width:0}
+.lapidada-item .date{font:700 10px/1 Inter,sans-serif;color:var(--ink-soft);margin:0 0 4px}
+.lapidada-item .text{font:400 12.5px/1.5 Inter,sans-serif;color:var(--ink);margin:0}
+.lapidada-item button{background:none;border:none;color:var(--danger);font-size:12px;cursor:pointer;flex:0 0 auto;align-self:flex-start}
+</style>
+</head>
+<body>
+
+<div class="brgx-head">
+  <a class="brgx-back" href="../index.html">← MEU</a>
+  <p class="brgx-eyebrow">MEU.app/estilo · pessoal</p>
+  <h1>Estilo</h1>
+  <p>Referências, cápsula e guarda-roupa. Estilo, não moda — o que combina com você.</p>
+</div>
+
+<div class="brgx-shell">
+
+  <div class="lapidada-card">
+    <p class="eyebrow">Michelangelo · lapidada visual</p>
+    <h3>Sobe uma foto, ganha uma leitura</h3>
+    <label class="lapidada-drop" id="lapidadaDrop">
+      <span id="lapidadaDropLabel">Toque para escolher uma foto</span>
+      <input type="file" accept="image/*" id="lapidadaFile" style="display:none" />
+    </label>
+    <img class="lapidada-preview" id="lapidadaPreview" alt="Prévia da foto" />
+    <input type="text" class="lapidada-note" id="lapidadaNote" placeholder="Alguma nota pro Michelangelo? (opcional)" />
+    <div class="btn-row" style="margin-top:10px">
+      <button type="button" class="mini-btn solid" id="lapidadaBtn" style="width:100%">Pedir lapidada</button>
+    </div>
+    <div class="lapidada-result" id="lapidadaResult" style="display:none"></div>
+  </div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Lapidadas salvas</p>
+    <div class="lapidada-gallery" id="lapidadaGallery"></div>
+  </div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Referências</p>
+    <div class="masonry" id="refGrid"></div>
+    <form class="add-form" id="refForm">
+      <input type="text" id="refNote" placeholder="Descreva a referência (ex: alfaiataria solta, tons terrosos)" required />
+      <input type="text" id="refTag" placeholder="Ocasião/tag (ex: trabalho)" />
+      <button type="submit" class="mini-btn solid">Salvar referência</button>
+    </form>
+  </div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Cápsula — combinações salvas</p>
+    <div id="comboList" style="display:flex;flex-direction:column;gap:8px"></div>
+    <button type="button" class="mini-btn" id="addComboBtn" style="margin-top:8px;width:100%">Criar combinação</button>
+  </div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Guarda-roupa</p>
+    <div class="wardrobe-grid" id="wardrobeGrid"></div>
+    <form class="add-form" id="wardrobeForm" style="margin-top:10px">
+      <input type="text" id="wardrobeName" placeholder="Peça-chave (ex: blazer bege)" required />
+      <button type="submit" class="mini-btn solid">Lançar peça (desejo)</button>
+    </form>
+  </div>
+
+  <div>
+    <p class="section-label" style="margin-bottom:8px">Dicas por ocasião</p>
+    <div class="occasion-grid">
+      <div class="occasion-card"><h4>Trabalho</h4><p>Peças estruturadas em cores neutras — 2 cores por look, no máximo 3.</p></div>
+      <div class="occasion-card"><h4>Casual</h4><p>Conforto com uma peça de intenção (um bom tênis, um casaco com corte).</p></div>
+      <div class="occasion-card"><h4>Evento</h4><p>Uma peça de destaque só — o resto do look sustenta, não compete.</p></div>
+      <div class="occasion-card"><h4>Fim de semana</h4><p>Tecidos naturais, paleta mais solta — é onde o estilo pessoal aparece mais.</p></div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../assets/brgx-shared.js"></script>
+<script>
+(function(){
+  let refs = brgxStorageGet('brgx-estilo-refs', []);
+  let combos = brgxStorageGet('brgx-estilo-combos', []);
+  let wardrobe = brgxStorageGet('brgx-estilo-wardrobe', []);
+
+  function save(){
+    brgxStorageSet('brgx-estilo-refs', refs);
+    brgxStorageSet('brgx-estilo-combos', combos);
+    brgxStorageSet('brgx-estilo-wardrobe', wardrobe);
+  }
+
+  function renderRefs(){
+    const el = document.getElementById('refGrid');
+    el.innerHTML = '';
+    if(refs.length===0){
+      el.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">Nenhuma referência salva ainda.</p>';
+      return;
+    }
+    [...refs].reverse().forEach(r=>{
+      const card = document.createElement('div');
+      card.className = 'ref-card';
+      card.innerHTML = `
+        ${r.tag ? '<span class="ref-tag"></span>' : ''}
+        <p class="ref-note"></p>
+        <div class="ref-actions">
+          <button data-act="edit" data-id="${r.id}">editar</button>
+          <button data-act="del" data-id="${r.id}" class="danger">excluir</button>
+        </div>`;
+      if(r.tag) card.querySelector('.ref-tag').textContent = r.tag;
+      card.querySelector('.ref-note').textContent = r.note;
+      el.appendChild(card);
+    });
+    el.querySelectorAll('[data-act="edit"]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const r = refs.find(x=>x.id===btn.dataset.id);
+        const novo = prompt('Editar referência', r.note);
+        if(novo && novo.trim()){ r.note = novo.trim(); save(); renderRefs(); }
+      });
+    });
+    el.querySelectorAll('[data-act="del"]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const ok = await brgxConfirm({title:'Excluir referência', text:'Remove essa referência do mural. Continuar?', confirmLabel:'Excluir'});
+        if(!ok) return;
+        refs = refs.filter(r=>r.id!==btn.dataset.id);
+        save(); renderRefs();
+      });
+    });
+  }
+
+  function renderCombos(){
+    const el = document.getElementById('comboList');
+    el.innerHTML = '';
+    if(combos.length===0){
+      el.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">Nenhuma combinação salva ainda.</p>';
+      return;
+    }
+    combos.forEach(c=>{
+      const row = document.createElement('div');
+      row.className = 'combo-row';
+      row.innerHTML = `<div class="combo-body"><p class="combo-label"></p><p class="combo-occasion"></p></div><button data-id="${c.id}">excluir</button>`;
+      row.querySelector('.combo-label').textContent = c.label;
+      row.querySelector('.combo-occasion').textContent = c.occasion;
+      el.appendChild(row);
+    });
+    el.querySelectorAll('button[data-id]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        combos = combos.filter(c=>c.id!==btn.dataset.id);
+        save(); renderCombos();
+      });
+    });
+  }
+
+  function renderWardrobe(){
+    const el = document.getElementById('wardrobeGrid');
+    el.innerHTML = '';
+    if(wardrobe.length===0){
+      el.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">Nenhuma peça lançada ainda.</p>';
+      return;
+    }
+    wardrobe.forEach(w=>{
+      const item = document.createElement('div');
+      item.className = 'wardrobe-item' + (w.status==='tenho'?' tenho':'');
+      item.innerHTML = `<span></span><span class="status"></span><span class="del" data-id="${w.id}">✕</span>`;
+      item.querySelector('span').textContent = w.name;
+      item.querySelector('.status').textContent = w.status;
+      item.addEventListener('click', (e)=>{
+        if(e.target.classList.contains('del')) return;
+        w.status = w.status==='tenho' ? 'desejo' : 'tenho';
+        save(); renderWardrobe();
+      });
+      item.querySelector('.del').addEventListener('click', async (e)=>{
+        e.stopPropagation();
+        const ok = await brgxConfirm({title:'Excluir peça', text:'Remove essa peça do guarda-roupa. Continuar?', confirmLabel:'Excluir'});
+        if(!ok) return;
+        wardrobe = wardrobe.filter(x=>x.id!==w.id);
+        save(); renderWardrobe();
+      });
+      el.appendChild(item);
+    });
+  }
+
+  document.getElementById('refForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const note = document.getElementById('refNote').value.trim();
+    const tag = document.getElementById('refTag').value.trim();
+    if(!note) return;
+    refs.push({id:'r'+Date.now(), note, tag});
+    save();
+    document.getElementById('refNote').value=''; document.getElementById('refTag').value='';
+    renderRefs();
+  });
+
+  document.getElementById('addComboBtn').addEventListener('click', ()=>{
+    const label = prompt('Descrição da combinação (ex: camisa branca + calça alfaiataria)');
+    if(!label) return;
+    const occasion = prompt('Ocasião') || '';
+    combos.push({id:'cb'+Date.now(), label, occasion});
+    save(); renderCombos();
+  });
+
+  document.getElementById('wardrobeForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const name = document.getElementById('wardrobeName').value.trim();
+    if(!name) return;
+    wardrobe.push({id:'w'+Date.now(), name, status:'desejo'});
+    save();
+    document.getElementById('wardrobeName').value='';
+    renderWardrobe();
+  });
+
+  renderRefs(); renderCombos(); renderWardrobe();
+})();
+</script>
+<script src="../assets/brgx-specialist.js"></script>
+<script>brgxInitSpecialist('michelangelo');</script>
+<script>
+(function(){
+  let lapidadas = brgxStorageGet('brgx-estilo-lapidadas', []);
+  let pending = null; // { base64, mimeType }
+
+  function saveLapidadas(){ brgxStorageSet('brgx-estilo-lapidadas', lapidadas); }
+
+  // Redimensiona/comprime no cliente (canvas) antes de enviar ou guardar — evita estourar
+  // o tamanho da requisição e o localStorage com fotos em resolução original.
+  function compressImage(file, maxDim, quality){
+    return new Promise((resolve, reject)=>{
+      const img = new Image();
+      const reader = new FileReader();
+      reader.onload = (e)=>{ img.onload = ()=>{
+        let { width, height } = img;
+        if (width > height && width > maxDim) { height = Math.round(height * maxDim / width); width = maxDim; }
+        else if (height > maxDim) { width = Math.round(width * maxDim / height); height = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve({ base64: dataUrl.split(',')[1], mimeType: 'image/jpeg', dataUrl });
+      }; img.onerror = reject; img.src = e.target.result; };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  document.getElementById('lapidadaFile').addEventListener('change', async (e)=>{
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('lapidadaDropLabel').textContent = 'Processando…';
+    try {
+      const sendVersion = await compressImage(file, 1024, 0.82);
+      pending = { base64: sendVersion.base64, mimeType: sendVersion.mimeType };
+      const preview = document.getElementById('lapidadaPreview');
+      preview.src = sendVersion.dataUrl;
+      preview.style.display = 'block';
+      document.getElementById('lapidadaDropLabel').textContent = 'Trocar foto';
+    } catch (err) {
+      document.getElementById('lapidadaDropLabel').textContent = 'Não consegui ler essa imagem, tenta outra';
+      pending = null;
+    }
+  });
+
+  document.getElementById('lapidadaBtn').addEventListener('click', async ()=>{
+    const resultEl = document.getElementById('lapidadaResult');
+    if (!pending){ resultEl.style.display='block'; resultEl.textContent = 'Escolhe uma foto primeiro.'; return; }
+    if (!FUNCTIONS_BASE_URL){
+      resultEl.style.display='block';
+      resultEl.textContent = 'Backend ainda não configurado — veja functions/README.md para ligar o Michelangelo de verdade.';
+      return;
+    }
+    const note = document.getElementById('lapidadaNote').value.trim();
+    resultEl.style.display='block';
+    resultEl.textContent = 'Michelangelo está olhando…';
+    try {
+      const res = await fetch(FUNCTIONS_BASE_URL + '/specialistVision', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ specialistId: 'michelangelo', imageBase64: pending.base64, mimeType: pending.mimeType, message: note }),
+      });
+      if (!res.ok) throw new Error('http_' + res.status);
+      const data = await res.json();
+      resultEl.textContent = data.reply || '(sem resposta)';
+
+      const thumb = await compressImage(await (await fetch('data:'+pending.mimeType+';base64,'+pending.base64)).blob(), 160, 0.7);
+      lapidadas.push({ id: 'l'+Date.now(), date: new Date().toLocaleDateString('pt-BR'), thumb: thumb.dataUrl, critique: data.reply || '' });
+      saveLapidadas(); renderLapidadas();
+    } catch (err) {
+      resultEl.textContent = 'Não consegui falar com o Michelangelo agora. Tenta de novo em instantes.';
+    }
+  });
+
+  function renderLapidadas(){
+    const el = document.getElementById('lapidadaGallery');
+    el.innerHTML = '';
+    if (lapidadas.length===0){
+      el.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">Nenhuma lapidada ainda.</p>';
+      return;
+    }
+    [...lapidadas].reverse().forEach(l=>{
+      const item = document.createElement('div');
+      item.className = 'lapidada-item';
+      item.innerHTML = `<img src="${l.thumb}" alt="" /><div class="body"><p class="date"></p><p class="text"></p></div><button data-id="${l.id}">excluir</button>`;
+      item.querySelector('.date').textContent = l.date;
+      item.querySelector('.text').textContent = l.critique;
+      el.appendChild(item);
+    });
+    el.querySelectorAll('button[data-id]').forEach(btn=>{
+      btn.addEventListener('click', async ()=>{
+        const ok = await brgxConfirm({title:'Excluir lapidada', text:'Remove essa foto e o comentário salvos. Continuar?', confirmLabel:'Excluir'});
+        if(!ok) return;
+        lapidadas = lapidadas.filter(l=>l.id!==btn.dataset.id);
+        saveLapidadas(); renderLapidadas();
+      });
+    });
+  }
+
+  renderLapidadas();
+})();
+</script>
+</body>
+</html>

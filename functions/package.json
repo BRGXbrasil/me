@@ -1,0 +1,12 @@
+{
+  "name": "brgx-meu-functions",
+  "description": "Backend dos especialistas do hub MEU (Gemini) — nunca expõe a chave da API ao cliente.",
+  "engines": { "node": "20" },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-functions": "^6.0.0",
+    "firebase-admin": "^12.0.0",
+    "@google/generative-ai": "^0.21.0"
+  },
+  "private": true
+}
