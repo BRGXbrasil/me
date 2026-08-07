@@ -3,17 +3,11 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#161119" />
+<meta name="theme-color" content="#08080A" />
 <title>MEU · Oráculo</title>
 <link rel="stylesheet" href="../assets/brgx-tokens.css" />
 <style>
-/* Registro noturno deliberado — único app com fundo escuro, dourado como accent primário */
-:root{
-  --bg:#161119; --ink:#f3ecdd; --ink-soft:#9b8f9e; --line:rgba(243,236,221,0.1);
-  --accent:#c9a24c; --accent2:#9c3b3b; --gold:#c9a24c; --card:#211a29; --track:#2b2333;
-  --good:#7fa88c; --danger:#b9695b; --danger-soft:rgba(185,105,91,.15); --accent-soft:rgba(201,162,76,.14);
-  --hero-dark:#0e0a13;
-}
+/* O Oráculo herda a linguagem do hub. Mantém só o realce ritualístico do dourado. */
 body{padding-bottom:40px}
 
 .mode-toggle{display:flex;gap:8px}
@@ -46,6 +40,17 @@ body{padding-bottom:40px}
 .history-actions button{background:none;border:none;color:var(--ink-soft);font-size:12px;cursor:pointer}
 .history-actions button.danger{color:var(--danger)}
 .reflected-tag{color:var(--good) !important}
+.perfil-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.perfil-row{display:flex;flex-direction:column;gap:2px;background:var(--s1);border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+.perfil-row .pk{font:700 8px/1 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim)}
+.perfil-row .pv{font:600 13px/1.2 var(--font-serif);color:var(--ink)}
+.perfil-ancora{margin:12px 0 0;font:400 12.5px/1.5 var(--font-sans);color:var(--ink-soft)}
+.perfil-ancora b{color:var(--gold)}
+.perfil-regra{margin:8px 0 0;font:italic 400 13px/1.6 var(--font-serif);color:var(--gold-hi)}
+.perfil-blocos{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.perfil-blocos div{text-align:center}
+.perfil-blocos .pb-k{display:block;font:700 7.5px/1.3 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim)}
+.perfil-blocos .pb-v{display:block;font:700 17px/1.1 var(--font-serif);color:var(--gold);margin-top:4px}
 </style>
 </head>
 <body>
@@ -71,6 +76,11 @@ body{padding-bottom:40px}
   </div>
 
   <div id="readingBox"></div>
+
+  <div class="card">
+    <p class="section-label" style="margin-bottom:10px">Seu perfil</p>
+    <div id="perfilSintese"></div>
+  </div>
 
   <div class="card">
     <p class="section-label" style="margin-bottom:4px">Histórico de leituras</p>
@@ -617,8 +627,30 @@ function renderHistory(){
   });
 }
 
+/* Síntese completa do perfil real, lida do mesmo Memorial que alimenta as leituras. */
+function renderPerfil(){
+  const m = MemorialStore.get();
+  const p = m.perfil || {};
+  const linha = (k,v) => `<div class="perfil-row"><span class="pk">${k}</span><span class="pv">${v}</span></div>`;
+  document.getElementById('perfilSintese').innerHTML = `
+    <div class="perfil-grid">
+      ${linha('Sol', p.sol||'—')}${linha('Ascendente', p.ascendente||'—')}
+      ${linha('Lua', p.lua||'—')}${linha('Caminho de Vida', p.vidaCaminho||'—')}
+      ${linha('Nascimento', p.nascimento||'—')}${linha('Local', p.local||'—')}
+    </div>
+    <p class="perfil-ancora">Âncora: <b>${m.ancora||'—'}</b></p>
+    <p class="perfil-regra">“${m.novaRegraInterna||''}”</p>
+    <div class="perfil-blocos">
+      <div><span class="pb-k">Partes internas</span><span class="pb-v">${(m.partesInternas||[]).length}</span></div>
+      <div><span class="pb-k">Padrões centrais</span><span class="pb-v">${(m.padroesCentrais||[]).length}</span></div>
+      <div><span class="pb-k">Gatilhos</span><span class="pb-v">${(m.gatilhos||[]).length}</span></div>
+      <div><span class="pb-k">Reguladores</span><span class="pb-v">${(m.reguladores||[]).length}</span></div>
+    </div>`;
+}
+
 loadForDate(todayStr());
 renderHistory();
+renderPerfil();
 })();
 </script>
 <script src="../assets/brgx-specialist.js"></script>

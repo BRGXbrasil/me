@@ -1,88 +1,223 @@
-/* BRGX MEU — tokens e componentes compartilhados entre hub e apps.
-   Cada app pode sobrescrever variáveis específicas (ex.: Oráculo assume registro noturno)
-   depois de importar este arquivo, sem perder a base tipográfica/estrutural. */
+/* ============================================================================
+   BRGX MEU — sistema visual compartilhado
+   Linguagem: dark high-tech + ouro. Herda a paleta do próprio BORGEX do usuário
+   e moderniza: superfícies em camadas, bordas luminosas finas, serif nos títulos,
+   mono nos labels técnicos. Cada app mantém sua estrutura própria de layout.
+   ============================================================================ */
 
 :root{
-  --bg:#efece5; --ink:#1c1a16; --ink-soft:#8a8471; --line:rgba(28,26,22,0.08);
-  --accent:#9c3b3b; --accent2:#c9793f; --gold:#c9a24c; --card:#ffffff; --track:#e6e1d1;
-  --good:#4f7a5c; --good-soft:rgba(79,122,92,0.12); --danger:#a6503f; --danger-soft:rgba(166,80,63,0.1);
-  --accent-soft:rgba(156,59,59,0.1); --hero-dark:#241b1b;
-  --radius-lg:22px; --radius-md:16px; --radius-sm:10px;
-  --shadow-card:0 2px 10px rgba(28,26,22,.04);
-  --shadow-pop:0 18px 40px rgba(28,26,22,.22);
-}
-html[data-brgx-theme="acqua"]{
-  --bg:#eaf6f7; --ink:#1c383c; --ink-soft:#5f868c; --line:rgba(28,56,60,0.1);
-  --accent:#1f8fb8; --accent2:#3fa0c9; --gold:#4cb0a3; --card:#ffffff; --track:#dcf0f2;
-  --good:#4f9a86; --good-soft:rgba(79,154,134,0.14); --danger:#5f9db0; --danger-soft:rgba(95,157,176,0.12);
-  --accent-soft:rgba(31,143,184,0.1); --hero-dark:#123236;
+  /* Superfícies em camadas */
+  --bg:#08080A;
+  --s1:#0F0F12;
+  --s2:#16161A;
+  --s3:#1E1E24;
+  --line:#222228;
+  --line-hi:#2E2E36;
+
+  /* Ouro — acento primário do sistema */
+  --gold:#C8A84B;
+  --gold-hi:#DDB95E;
+  --gold-dim:#8B6E2A;
+  --gold-soft:rgba(200,168,75,.12);
+
+  /* Tinta */
+  --ink:#EAE6DE;
+  --ink-soft:#8A8698;
+  --ink-dim:#4A4756;
+
+  /* As 12 CATEGORIAS — obrigatórias, não renomear nem remover.
+     Cores herdadas do código atual da Rotina. */
+  --ritual:#C8A84B;
+  --mente:#9B72CF;
+  --corpo:#4CAF7D;
+  --criacao:#E8923A;
+  --trabalho:#4A9EE0;
+  --transporte:#6E6E7C;
+  --regeneracao:#5BA4CF;
+  --vinculo:#E8627A;
+  --expressao:#E891C0;
+  --financas:#48C9B0;
+  --sono:#3A3742;
+  --folga:#7ED9A0;   /* tom próprio: no código antigo colidia com --corpo */
+
+  /* Semânticos */
+  --good:#4CAF7D;
+  --good-soft:rgba(76,175,125,.14);
+  --danger:#E8627A;
+  --danger-soft:rgba(232,98,122,.14);
+  --warn:#E8923A;
+
+  /* Compat: apps ainda não migrados leem estes nomes */
+  --accent:var(--gold);
+  --accent2:var(--criacao);
+  --accent-soft:var(--gold-soft);
+  --card:var(--s2);
+  --track:var(--s3);
+  --hero-dark:#050506;
+
+  --radius-lg:22px; --radius-md:14px; --radius-sm:9px;
+  --shadow-card:0 1px 0 rgba(255,255,255,.03), 0 8px 24px rgba(0,0,0,.45);
+  --shadow-pop:0 18px 50px rgba(0,0,0,.65);
+
+  --font-serif:'Newsreader', 'Palatino Linotype', 'Book Antiqua', Palatino, Georgia, serif;
+  --font-sans:Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono:'SF Mono', ui-monospace, Menlo, Consolas, monospace;
 }
 
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
   background:var(--bg); color:var(--ink); min-height:100vh;
-  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
-  -webkit-font-smoothing:antialiased;
+  font-family:var(--font-sans); -webkit-font-smoothing:antialiased;
 }
-.serif{font-family:Newsreader,Georgia,"Iowan Old Style",serif}
+.serif{font-family:var(--font-serif)}
 a{color:inherit;text-decoration:none}
 
-/* Cabeçalho padrão dos apps standalone */
-.brgx-head{max-width:560px;margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 20px 6px}
-.brgx-back{display:inline-block;margin-bottom:14px;font:700 11px/1 Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
-.brgx-eyebrow{font:700 10.5px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 8px}
-.brgx-head h1{margin:0 0 6px;font:600 28px/1.15 Newsreader,Georgia,serif;letter-spacing:-.01em;color:var(--ink)}
-.brgx-head p{margin:0;font:400 14px/1.5 Inter,sans-serif;color:var(--ink-soft);max-width:46ch}
+/* Fundo com grão sutil — dá profundidade sem pesar */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(120% 80% at 50% -10%, rgba(200,168,75,.055), transparent 60%),
+    radial-gradient(90% 60% at 100% 100%, rgba(155,114,207,.04), transparent 60%);
+}
+body>*{position:relative;z-index:1}
 
-/* Cartões e pílulas */
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 18px;box-shadow:var(--shadow-card)}
-.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;background:var(--track);border:1px solid var(--line);font:600 11.5px/1 Inter,sans-serif;color:var(--ink-soft)}
-.pill.accent{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+/* ---- Cabeçalho padrão dos apps ---- */
+.brgx-head{max-width:620px;margin:0 auto;padding:calc(22px + env(safe-area-inset-top)) 20px 8px}
+.brgx-back{
+  display:inline-flex;align-items:center;gap:6px;margin-bottom:16px;
+  font:700 10px/1 var(--font-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--gold-dim);
+}
+.brgx-back:hover{color:var(--gold)}
+.brgx-eyebrow{
+  font:700 9.5px/1 var(--font-mono);letter-spacing:.24em;text-transform:uppercase;
+  color:var(--ink-dim);margin:0 0 10px;
+}
+.brgx-head h1{
+  margin:0 0 8px;font:600 30px/1.05 var(--font-serif);letter-spacing:-.02em;color:var(--ink);
+}
+.brgx-head p{margin:0;font:400 13.5px/1.6 var(--font-sans);color:var(--ink-soft);max-width:48ch}
 
-/* Botões de ação — convenção fixa nos 8 apps:
-   avançar/lançar = .mini-btn.solid | editar = .mini-btn | excluir = .mini-btn.danger */
-.mini-btn{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:20px;padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
-.mini-btn.solid{background:var(--accent);border-color:var(--accent);color:#fff}
+/* ---- Superfícies ---- */
+.card{
+  background:var(--s2);border:1px solid var(--line);border-radius:var(--radius-md);
+  padding:16px 18px;box-shadow:var(--shadow-card);
+}
+.card-glow{border-color:var(--line-hi);box-shadow:var(--shadow-card), inset 0 1px 0 rgba(255,255,255,.04)}
+
+.pill{
+  display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;
+  background:var(--s3);border:1px solid var(--line);
+  font:600 10.5px/1 var(--font-mono);letter-spacing:.06em;color:var(--ink-soft);
+}
+.pill.accent{background:var(--gold-soft);color:var(--gold);border-color:rgba(200,168,75,.3)}
+
+/* Badge de categoria — usado pela Rotina e pelo Dashboard */
+.cat-badge{
+  display:inline-block;padding:3px 8px;border-radius:5px;
+  font:700 9px/1.4 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;
+}
+
+/* ---- Botões: avançar/lançar = solid | editar = outline | excluir = danger ---- */
+.mini-btn{
+  font-family:var(--font-sans);font-size:12.5px;font-weight:600;color:var(--ink);
+  background:var(--s3);border:1px solid var(--line-hi);border-radius:10px;
+  padding:9px 16px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  transition:border-color .15s, background .15s, color .15s;
+}
+.mini-btn:hover{border-color:var(--gold-dim)}
+.mini-btn.solid{background:var(--gold);border-color:var(--gold);color:#141000;font-weight:700}
+.mini-btn.solid:hover{background:var(--gold-hi)}
 .mini-btn.danger{background:none;border-color:transparent;color:var(--danger)}
 .mini-btn.danger:hover{background:var(--danger-soft)}
+.mini-btn:disabled{opacity:.4;cursor:not-allowed}
 .btn-row{display:flex;gap:8px}
 .btn-row .mini-btn{flex:1;text-align:center}
 
-/* Diálogo de confirmação compartilhado — substitui window.confirm() nos 8 apps */
-.brgx-confirm-backdrop{position:fixed;inset:0;background:rgba(20,17,12,.45);display:flex;align-items:flex-end;justify-content:center;z-index:50;padding:0;opacity:0;pointer-events:none;transition:opacity .15s}
+/* ---- Campos ---- */
+input,select,textarea{
+  font-family:var(--font-sans);font-size:13px;color:var(--ink);
+  background:var(--s1);border:1px solid var(--line);border-radius:10px;padding:10px 12px;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold-dim)}
+input::placeholder,textarea::placeholder{color:var(--ink-dim)}
+input[type="date"],input[type="time"]{color-scheme:dark}
+
+/* ---- Barra de progresso ---- */
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar{flex:1;height:5px;background:var(--s3);border-radius:999px;overflow:hidden}
+.bar span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--gold-dim),var(--gold))}
+.bar-pct{font:700 12px/1 var(--font-mono);color:var(--gold)}
+
+/* ---- Diálogo de confirmação compartilhado ---- */
+.brgx-confirm-backdrop{
+  position:fixed;inset:0;background:rgba(4,4,6,.72);backdrop-filter:blur(6px);
+  display:flex;align-items:flex-end;justify-content:center;z-index:60;
+  opacity:0;pointer-events:none;transition:opacity .16s;
+}
 .brgx-confirm-backdrop.open{opacity:1;pointer-events:auto}
-.brgx-confirm-card{width:100%;max-width:420px;background:var(--card);border-radius:20px 20px 0 0;padding:22px 20px calc(20px + env(safe-area-inset-bottom));transform:translateY(16px);transition:transform .15s}
+.brgx-confirm-card{
+  width:100%;max-width:420px;background:var(--s2);border:1px solid var(--line-hi);
+  border-radius:18px 18px 0 0;padding:22px 20px calc(20px + env(safe-area-inset-bottom));
+  transform:translateY(16px);transition:transform .16s;
+}
 .brgx-confirm-backdrop.open .brgx-confirm-card{transform:translateY(0)}
 @media (min-width:560px){
   .brgx-confirm-backdrop{align-items:center}
-  .brgx-confirm-card{border-radius:20px;transform:translateY(8px)}
+  .brgx-confirm-card{border-radius:18px;transform:translateY(8px)}
 }
-.brgx-confirm-title{margin:0 0 6px;font:600 17px/1.3 Newsreader,Georgia,serif;color:var(--ink)}
-.brgx-confirm-text{margin:0 0 18px;font:400 13.5px/1.5 Inter,sans-serif;color:var(--ink-soft)}
+.brgx-confirm-title{margin:0 0 6px;font:600 17px/1.3 var(--font-serif);color:var(--ink)}
+.brgx-confirm-text{margin:0 0 18px;font:400 13.5px/1.55 var(--font-sans);color:var(--ink-soft)}
 
-/* Layout util */
-.brgx-shell{max-width:560px;margin:0 auto;padding:0 20px calc(40px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
-.section-label{margin:4px 0 -4px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
+/* ---- Layout ---- */
+.brgx-shell{
+  max-width:620px;margin:0 auto;
+  padding:0 20px calc(40px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;gap:16px;
+}
+.section-label{
+  margin:6px 0 -2px;font:700 9.5px/1 var(--font-mono);
+  letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim);
+}
 
-/* Bolinha flutuante do especialista + painel de chat — compartilhado entre os apps que têm um "dono" definido */
-.brgx-spec-bubble{position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:40;width:52px;height:52px;border-radius:999px;background:var(--accent);color:#fff;border:none;box-shadow:var(--shadow-pop);font:800 10.5px/1 Inter,sans-serif;letter-spacing:.02em;cursor:pointer;display:flex;align-items:center;justify-content:center}
-.brgx-spec-panel{position:fixed;inset:0;z-index:45;display:none;align-items:flex-end;justify-content:center;background:rgba(20,17,12,.45)}
+/* ---- Bolinha do especialista + chat ---- */
+.brgx-spec-bubble{
+  position:fixed;right:16px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:40;
+  width:52px;height:52px;border-radius:999px;
+  background:linear-gradient(145deg,var(--gold-hi),var(--gold-dim));color:#141000;
+  border:none;box-shadow:0 6px 24px rgba(200,168,75,.28), var(--shadow-pop);
+  font:800 10px/1 var(--font-mono);letter-spacing:.04em;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .18s;
+}
+.brgx-spec-bubble:hover{transform:scale(1.06)}
+.brgx-spec-panel{
+  position:fixed;inset:0;z-index:45;display:none;align-items:flex-end;justify-content:center;
+  background:rgba(4,4,6,.72);backdrop-filter:blur(6px);
+}
 .brgx-spec-panel.open{display:flex}
-.brgx-spec-card{width:100%;max-width:440px;max-height:78vh;background:var(--card);border-radius:20px 20px 0 0;display:flex;flex-direction:column;overflow:hidden}
-@media (min-width:560px){ .brgx-spec-panel{align-items:center} .brgx-spec-card{border-radius:20px;max-height:70vh} }
+.brgx-spec-card{
+  width:100%;max-width:440px;max-height:78vh;background:var(--s2);
+  border:1px solid var(--line-hi);border-radius:18px 18px 0 0;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+@media (min-width:560px){ .brgx-spec-panel{align-items:center} .brgx-spec-card{border-radius:18px;max-height:70vh} }
 .brgx-spec-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
-.brgx-spec-head .name{font:600 16px/1.2 Newsreader,Georgia,serif;color:var(--ink)}
+.brgx-spec-head .name{font:600 16px/1.2 var(--font-serif);color:var(--gold)}
 .brgx-spec-head button{background:none;border:none;color:var(--ink-soft);font-size:18px;cursor:pointer}
 .brgx-spec-msgs{flex:1;overflow-y:auto;padding:14px 18px;display:flex;flex-direction:column;gap:10px}
-.brgx-spec-msg{max-width:82%;padding:9px 13px;border-radius:14px;font:400 13.5px/1.5 Inter,sans-serif}
-.brgx-spec-msg.user{align-self:flex-end;background:var(--accent);color:#fff;border-bottom-right-radius:4px}
-.brgx-spec-msg.model{align-self:flex-start;background:var(--track);color:var(--ink);border-bottom-left-radius:4px}
+.brgx-spec-msg{max-width:82%;padding:9px 13px;border-radius:13px;font:400 13.5px/1.55 var(--font-sans)}
+.brgx-spec-msg.user{align-self:flex-end;background:var(--gold);color:#141000;border-bottom-right-radius:4px}
+.brgx-spec-msg.model{align-self:flex-start;background:var(--s3);color:var(--ink);border-bottom-left-radius:4px}
 .brgx-spec-msg.error{align-self:center;background:var(--danger-soft);color:var(--danger);font-size:12px;text-align:center}
 .brgx-spec-form{display:flex;gap:8px;padding:12px 14px;border-top:1px solid var(--line)}
-.brgx-spec-form input{flex:1;padding:10px 12px;border:1px solid var(--line);border-radius:20px;background:var(--bg);color:var(--ink);font:400 13.5px/1 Inter,sans-serif}
+.brgx-spec-form input{flex:1;border-radius:999px}
 .brgx-spec-form button{border:none;background:none;cursor:pointer;font-size:17px;color:var(--ink-soft);flex:0 0 auto;padding:0 4px}
-.brgx-spec-form button.send{color:var(--accent)}
+.brgx-spec-form button.send{color:var(--gold)}
 .brgx-spec-form button.mic.active{color:var(--danger)}
 
-@media (prefers-reduced-motion:reduce){*{transition:none !important}}
+/* Scrollbar discreta */
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:var(--line-hi);border-radius:2px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important}}

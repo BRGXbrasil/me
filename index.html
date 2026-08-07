@@ -1,25 +1,15 @@
 <!doctype html>
-<html lang="pt-BR" data-brgx-theme="light">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#efece5" />
+<meta name="theme-color" content="#08080A" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon-192.png" />
 <title>MEU</title>
+<link rel="stylesheet" href="assets/brgx-tokens.css" />
 <style>
-:root{
-  --bg:#efece5; --ink:#1c1a16; --ink-soft:#8a8471; --line:rgba(28,26,22,0.08);
-  --accent:#9c3b3b; --accent2:#c9793f; --gold:#c9a24c; --card:#ffffff; --track:#e6e1d1;
-  --good:#4f7a5c; --good-soft:rgba(79,122,92,0.12); --danger:#a6503f; --danger-soft:rgba(166,80,63,0.1);
-  --accent-soft:rgba(156,59,59,0.1); --hero-dark:#241b1b;
-}
-html[data-brgx-theme="acqua"]{
-  --bg:#eaf6f7; --ink:#1c383c; --ink-soft:#5f868c; --line:rgba(28,56,60,0.1);
-  --accent:#1f8fb8; --accent2:#3fa0c9; --gold:#4cb0a3; --card:#ffffff; --track:#dcf0f2;
-  --good:#4f9a86; --good-soft:rgba(79,154,134,0.14); --danger:#5f9db0; --danger-soft:rgba(95,157,176,0.12);
-  --accent-soft:rgba(31,143,184,0.1); --hero-dark:#123236;
-}
+
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{
@@ -36,9 +26,6 @@ header.top{
 }
 .brand{font-family:Newsreader,Georgia,serif;font-size:19px;font-weight:700;letter-spacing:.01em}
 .brand small{display:block;font-family:Inter,sans-serif;font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft)}
-.theme-toggle{display:flex;gap:4px;background:var(--track);border-radius:20px;padding:3px}
-.theme-toggle button{font-family:inherit;font-size:10.5px;font-weight:700;border:none;background:none;color:var(--ink-soft);border-radius:16px;padding:6px 10px;cursor:pointer}
-.theme-toggle button.active{background:var(--card);color:var(--ink)}
 
 main{max-width:520px;margin:0 auto;padding:18px 18px 34px;display:flex;flex-direction:column;gap:14px}
 .screen{display:none;flex-direction:column;gap:14px}
@@ -57,10 +44,10 @@ a{color:inherit;text-decoration:none}
 .hero-label{font:700 10px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);margin:0 0 6px}
 .hero-text{font:600 15px/1.35 Newsreader,Georgia,serif;color:#fff;margin:0}
 
-.pa-card{background:var(--ink);border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:12px}
-.pa-badge{width:34px;height:34px;border-radius:999px;background:var(--gold);color:var(--ink);flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800}
-.pa-label{font:700 10px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin:0 0 4px}
-.pa-text{font:italic 500 14.5px/1.4 Newsreader,Georgia,serif;color:#fff;margin:0}
+.pa-card{background:var(--s3);border:1px solid var(--line-hi);border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:12px}
+.pa-badge{width:34px;height:34px;border-radius:999px;background:var(--gold);color:#141000;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800}
+.pa-label{font:700 10px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-dim);margin:0 0 4px}
+.pa-text{font:italic 500 14.5px/1.4 Newsreader,Georgia,serif;color:var(--ink);margin:0}
 
 .tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px 18px;box-shadow:0 2px 10px rgba(28,26,22,.04)}
 .tile-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -139,12 +126,8 @@ a{color:inherit;text-decoration:none}
 <body>
 
 <header class="top">
-  <div class="brand">MEU<small id="dateLine">carregando…</small></div>
-  <div class="theme-toggle" role="tablist" aria-label="Tema do BRGX">
-    <button class="t-opt active" data-theme="light" role="tab" aria-selected="true">Light</button>
-    <button class="t-opt" data-theme="acqua" role="tab" aria-selected="false">Acqua</button>
-  </div>
-</header>
+  <div class="brand">MEU</div>
+  </header>
 
 <main>
 
@@ -197,18 +180,8 @@ a{color:inherit;text-decoration:none}
     </a>
 
     <div class="tile">
-      <p class="tile-label">Rotina · 0/9</p>
-      <div class="habit-chips">
-        <span class="chip"><span class="dot"></span><span class="name">Água com limão</span></span>
-        <span class="chip"><span class="dot"></span><span class="name">Suplemento diário</span></span>
-        <span class="chip"><span class="dot"></span><span class="name">Treino / alongamento</span></span>
-        <span class="chip"><span class="dot"></span><span class="name">Meditação</span></span>
-        <span class="chip"><span class="dot"></span><span class="name">Estudo</span></span>
-        <span class="chip"><span class="dot"></span><span class="name">Escrita</span></span>
-        <span class="chip"><span class="dot"></span><span class="name">Leitura</span></span>
-        <span class="chip"><span class="dot"></span><span class="name">Exposição solar</span></span>
-        <span class="chip"><span class="dot"></span><span class="name">Máscara facial</span></span>
-      </div>
+      <p class="tile-label" id="habitLabel">Rotina</p>
+      <div class="habit-chips" id="habitChips"></div>
     </div>
 
     <div class="tile">
@@ -318,7 +291,6 @@ a{color:inherit;text-decoration:none}
   var MESES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
   var d=new Date();
   var dateStr = DIAS[d.getDay()]+', '+d.getDate()+' de '+MESES[d.getMonth()];
-  document.getElementById('dateLine').textContent = dateStr;
   document.getElementById('dateEyebrow').textContent = dateStr.charAt(0).toUpperCase()+dateStr.slice(1);
 
   var root=document.documentElement;
@@ -347,23 +319,7 @@ a{color:inherit;text-decoration:none}
     }
   }
 
-  (async function(){
-    var saved=await readStorageItem('brgx-self-theme', 'light');
-    if(saved==='acqua'){
-      root.setAttribute('data-brgx-theme','acqua');
-      document.querySelectorAll('.t-opt').forEach(function(b){ b.classList.toggle('active', b.dataset.theme==='acqua'); b.setAttribute('aria-selected', b.dataset.theme==='acqua'?'true':'false'); });
-    }
-
-    document.querySelectorAll('.t-opt').forEach(function(btn){
-      btn.addEventListener('click', async function(){
-        document.querySelectorAll('.t-opt').forEach(function(o){ o.classList.remove('active'); o.setAttribute('aria-selected','false'); });
-        btn.classList.add('active'); btn.setAttribute('aria-selected','true');
-        root.setAttribute('data-brgx-theme', btn.dataset.theme);
-        await writeStorageItem('brgx-self-theme', btn.dataset.theme);
-      });
-    });
-  })();
-
+  
   var tabs=document.querySelectorAll('#tabbar .tab');
   var screens=document.querySelectorAll('main .screen, main .sheet');
   tabs.forEach(function(btn){
@@ -377,6 +333,77 @@ a{color:inherit;text-decoration:none}
       });
     });
   });
+})();
+
+/* O shell mostra dados reais: mesmas chaves que o Dashboard e a Rotina gravam. */
+(function(){
+  var hoje = new Date().toISOString().slice(0,10);
+  function get(k, f){ try{ var r=localStorage.getItem(k); return r===null?f:JSON.parse(r); }catch(e){ return f; } }
+
+  var BASE = [['h1','Água com limão'],['h2','Intenção do dia'],['h3','Meditação'],['h4','Pegar sol'],
+              ['h5','Treino / atividade'],['h6','Protetor e postura'],['h7','Financeiro e diário'],['h8','Pet Júnior']];
+  var dl = (get('brgx-rotina-log',{})[hoje]) || {};
+  var feitos = BASE.filter(function(h){ return dl[h[0]]; }).length;
+  var score = Math.round(feitos/BASE.length*100);
+
+  var lbl = document.getElementById('habitLabel');
+  if (lbl) lbl.textContent = 'Rotina · ' + feitos + '/' + BASE.length;
+
+  var chips = document.getElementById('habitChips');
+  if (chips) BASE.forEach(function(h){
+    var s1 = document.createElement('span');
+    s1.className = 'chip';
+    s1.innerHTML = '<span class="dot"></span><span class="name"></span>';
+    if (dl[h[0]]) { s1.style.borderColor = 'var(--good)'; s1.querySelector('.dot').style.background = 'var(--good)'; }
+    s1.querySelector('.name').textContent = h[1];
+    chips.appendChild(s1);
+  });
+
+  // Score do dia no hero
+  var ring = document.querySelector('.hero-ring strong');
+  if (ring) ring.textContent = score;
+  var arc = document.querySelectorAll('.hero-ring circle')[1];
+  if (arc) arc.setAttribute('stroke-dashoffset', String(263.9 - 263.9*score/100));
+  var ht = document.querySelector('.hero-text');
+  if (ht) ht.textContent = score >= 100 ? 'Dia fechado.' : (score >= 50 ? 'No caminho, falta empurrar.' : 'Ainda dá tempo de virar o dia.');
+
+  // Caixa: limite disponível real, nunca saldo bancário
+  var lanc = get('brgx-caixa-lancamentos',[]), econ = get('brgx-caixa-economia-programada',0) || 0;
+  var ym = hoje.slice(0,7);
+  var mes = lanc.filter(function(l){ return (l.data||'').slice(0,7)===ym; });
+  var lim = mes.filter(function(l){return l.tipo==='entrada'}).reduce(function(a,l){return a+l.valor},0)
+          - mes.filter(function(l){return l.tipo==='saida'}).reduce(function(a,l){return a+l.valor},0) - econ;
+  var cx = document.querySelector('.tile-value.good');
+  if (cx) cx.textContent = new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(lim);
+  var cxl = cx && cx.parentElement.querySelector('.tile-label');
+  if (cxl) cxl.textContent = 'Caixa · limite disponível';
+
+  // Reset mental
+  var rst = get('brgx-reset-detox',{ativo:false});
+  var rv = document.querySelectorAll('.tile-value.plain')[0];
+  if (rv) rv.textContent = rst.ativo ? 'Detox ativo' : 'Sem detox ativo';
+
+  // Próxima ação = o "Faça" do Eisenhower da manhã, gravado no Dashboard
+  var eis = (get('brgx-eisenhower',{})[hoje]) || {};
+  var pa = document.querySelector('.pa-text');
+  if (pa) pa.textContent = eis.faca || 'Defina o Faça de hoje no Dashboard';
+
+  // Meta prioritária real (mesma semente do app Metas, vinda do Notion)
+  var goals = get('brgx-metas-goals',[]);
+  if (!goals.length) goals = [{title:'Micropigmentação', pct:0}];
+  var g = goals[0];
+  var mt = document.querySelector('.tile-text');
+  if (mt && g) {
+    mt.textContent = g.title;
+    var bar = document.querySelector('.bar span'), pct = document.querySelector('.bar-pct');
+    if (bar) bar.style.width = (g.pct||0)+'%';
+    if (pct) pct.textContent = (g.pct||0)+'%';
+  }
+
+  // Alerta coerente com o número real
+  var al = document.querySelector('.alert-row span:last-child');
+  if (al) al.textContent = feitos === 0 ? 'Nenhum hábito marcado ainda hoje.'
+        : (feitos < BASE.length/2 ? 'Menos da metade dos hábitos feitos hoje.' : 'Ritmo bom até agora.');
 })();
 
 if ('serviceWorker' in navigator) {

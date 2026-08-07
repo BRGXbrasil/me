@@ -1,155 +1,503 @@
 <!doctype html>
-<html lang="pt-BR" data-brgx-theme="light">
+<html lang="pt-BR">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<meta name="theme-color" content="#efece5" />
+<meta name="theme-color" content="#08080A" />
 <title>MEU · Dashboard</title>
 <link rel="stylesheet" href="../assets/brgx-tokens.css" />
 <style>
-/* Bento grid / torre de controle — o mais denso e ambicioso dos 8, um tile vivo por app */
+/* Torre de controle. Painel de instrumentos no topo, motor de foco no meio,
+   bento dos módulos embaixo. A data não se repete: aparece uma vez só, no bloco atual. */
 body{padding-bottom:40px}
-.brgx-shell{max-width:640px}
+.brgx-shell{max-width:660px}
 
-.hero-wide{grid-column:1 / -1;background:linear-gradient(150deg,var(--hero-dark) 0%,var(--accent) 100%);border-radius:24px;padding:22px 20px;color:#fff;display:flex;align-items:center;gap:16px}
-.hero-wide .eyebrow{font:700 10px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.65);margin:0 0 6px}
-.hero-wide h2{margin:0;font:600 18px/1.3 Newsreader,Georgia,serif}
-.hero-wide p{margin:4px 0 0;font:400 13px/1.4 Inter,sans-serif;color:rgba(255,255,255,.85)}
-
-/* Grid de 2 colunas já no mobile — o bento nunca colapsa pra lista única.
-   .wide destaca um tile ocupando a linha inteira, criando a assimetria. */
-.bento{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.bento-tile{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 15px;display:flex;flex-direction:column;gap:6px;box-shadow:var(--shadow-card);cursor:pointer;min-height:104px}
-.bento-tile:hover{border-color:var(--accent)}
-.bento-tile.wide{grid-column:1 / -1}
-.bento-tile .app{font:700 9.5px/1 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft)}
-.bento-tile .val{font:600 18px/1.2 Newsreader,Georgia,serif;color:var(--ink)}
-.bento-tile .val.small{font:600 13.5px/1.35 Inter,sans-serif}
-.bento-tile .sub{font:400 11.5px/1.4 Inter,sans-serif;color:var(--ink-soft)}
-.bento-tile .quick{align-self:flex-start;margin-top:auto;font:700 10.5px/1 Inter,sans-serif;color:var(--accent);background:var(--accent-soft);border:none;border-radius:999px;padding:6px 10px;cursor:pointer}
-
-@media (min-width:560px){
-  .bento{grid-template-columns:repeat(4,1fr)}
-  .bento-tile.wide{grid-column:span 2}
+/* ---- Instrumento: bloco atual ---- */
+.now{
+  background:linear-gradient(160deg, var(--s2), var(--s1));
+  border:1px solid var(--line-hi);border-radius:20px;padding:18px 20px;position:relative;overflow:hidden;
 }
+.now::after{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(90% 120% at 0% 0%, var(--nowglow, rgba(200,168,75,.10)), transparent 62%)}
+.now>*{position:relative}
+.now-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.now-k{font:700 8.5px/1 var(--font-mono);letter-spacing:.22em;text-transform:uppercase;color:var(--ink-dim)}
+.now-date{font:500 10px/1 var(--font-mono);color:var(--ink-dim)}
+.now-label{font:600 21px/1.2 var(--font-serif);color:var(--ink);margin:11px 0 0}
+.now-time{font:700 11px/1 var(--font-mono);color:var(--gold);margin-top:7px;display:block}
+.now-next{
+  margin-top:14px;padding-top:12px;border-top:1px solid var(--line);
+  display:flex;align-items:center;gap:9px;font:400 12px/1.4 var(--font-sans);color:var(--ink-soft);
+}
+.now-next b{color:var(--ink);font-weight:600}
 
-.quick-row{display:flex;gap:8px;overflow-x:auto}
-.quick-row a{flex:0 0 auto;font:700 11.5px/1 Inter,sans-serif;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:10px 16px}
+/* ---- Progresso do dia ---- */
+.prog{display:flex;align-items:center;gap:14px}
+.prog-ring{width:54px;height:54px;flex-shrink:0;position:relative}
+.prog-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.prog-ring b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font:700 14px/1 var(--font-serif);color:var(--gold)}
+.prog-txt{flex:1}
+.prog-t1{font:600 13px/1.3 var(--font-sans);color:var(--ink)}
+.prog-t2{font:400 11px/1.4 var(--font-mono);color:var(--ink-dim);margin-top:3px}
+
+/* ---- Vitória do dia ---- */
+.vitoria textarea{width:100%;min-height:54px;resize:vertical;
+  font:italic 400 14px/1.6 var(--font-serif);background:var(--s1)}
+.vitoria .eco{font:italic 500 15px/1.55 var(--font-serif);color:var(--gold-hi);margin:0}
+
+/* ---- Luz de painel (detox) ---- */
+.lamp-row{display:flex;align-items:center;gap:13px}
+.lamp{
+  width:34px;height:34px;border-radius:50%;flex-shrink:0;position:relative;
+  background:var(--s3);border:1px solid var(--line-hi);
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.lamp.vermelho{background:rgba(232,98,122,.16);border-color:var(--danger);box-shadow:0 0 16px rgba(232,98,122,.5)}
+.lamp.verde{background:rgba(76,175,125,.16);border-color:var(--good);box-shadow:0 0 16px rgba(76,175,125,.5)}
+.lamp-txt{flex:1}
+.lamp-t1{font:600 13px/1.3 var(--font-sans)}
+.lamp-t2{font:400 11px/1.45 var(--font-sans);color:var(--ink-soft);margin-top:3px}
+
+/* ---- Motor Pomodoro ---- */
+.pomo-face{display:flex;align-items:center;gap:16px}
+.pomo-clock{font:700 40px/1 var(--font-mono);letter-spacing:-.02em;color:var(--ink);font-variant-numeric:tabular-nums}
+.pomo-clock.pausa{color:var(--regeneracao)}
+.pomo-state{flex:1}
+.pomo-s1{font:700 8.5px/1 var(--font-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim)}
+.pomo-s2{font:600 13px/1.3 var(--font-sans);margin-top:5px}
+.pomo-cycles{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
+.pomo-pip{width:15px;height:15px;border-radius:4px;background:var(--s3);border:1px solid var(--line);cursor:pointer;transition:all .15s}
+.pomo-pip.on{background:var(--gold);border-color:var(--gold)}
+.pomo-pip:hover{border-color:var(--gold-dim)}
+.pomo-note textarea{width:100%;min-height:44px;resize:vertical;font-size:12.5px}
+.fora-janela{font:400 11.5px/1.5 var(--font-sans);color:var(--ink-dim);margin:10px 0 0}
+
+/* ---- Eisenhower ---- */
+.eisen{display:flex;flex-direction:column;gap:7px}
+.eisen-row{display:flex;align-items:center;gap:9px}
+.eisen-tag{
+  width:58px;flex-shrink:0;text-align:center;padding:5px 0;border-radius:6px;
+  font:700 8.5px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;
+}
+.eisen-row input{flex:1}
+
+/* ---- Bento dos módulos ---- */
+.bento{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.tile{
+  background:var(--s2);border:1px solid var(--line);border-radius:14px;padding:13px 14px;
+  display:flex;flex-direction:column;gap:5px;cursor:pointer;min-height:96px;
+  transition:border-color .15s, transform .15s;
+}
+.tile:hover{border-color:var(--gold-dim);transform:translateY(-1px)}
+.tile.wide{grid-column:1/-1}
+.tile .app{font:700 8.5px/1 var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink-dim)}
+.tile .val{font:600 18px/1.2 var(--font-serif);color:var(--ink)}
+.tile .val.sm{font:600 13.5px/1.4 var(--font-sans)}
+.tile .sub{font:400 11px/1.4 var(--font-sans);color:var(--ink-soft);margin-top:auto}
+@media (min-width:560px){ .bento{grid-template-columns:repeat(4,1fr)} .tile.wide{grid-column:span 2} }
+
+.quick{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.quick a{
+  flex:0 0 auto;font:600 11.5px/1 var(--font-sans);color:var(--ink);
+  background:var(--s2);border:1px solid var(--line);border-radius:999px;padding:10px 15px;
+}
+.quick a:hover{border-color:var(--gold-dim)}
 </style>
 </head>
 <body>
 
 <div class="brgx-head">
   <a class="brgx-back" href="../index.html">← MEU</a>
-  <p class="brgx-eyebrow">MEU.app/dashboard · pessoal</p>
+  <p class="brgx-eyebrow">MEU.app/dashboard</p>
   <h1>Dashboard</h1>
-  <p>Uma leitura viva de todos os módulos — Caixa, Pet, Estilo, Reeducação, Oráculo, Recamier, Metas e Rotina.</p>
+  <p>O painel do dia: onde você está agora, o que já venceu e o que o sistema está sinalizando.</p>
 </div>
 
 <div class="brgx-shell">
 
-  <div class="bento" id="bento"></div>
+  <!-- Bloco atual em tempo real -->
+  <div class="now" id="now"></div>
+
+  <!-- Progresso -->
+  <div class="card prog" id="prog"></div>
+
+  <!-- Vitória do dia -->
+  <div class="card vitoria">
+    <p class="section-label" style="margin-bottom:10px">Vitória do dia</p>
+    <div id="vitoriaView"></div>
+  </div>
+
+  <!-- Luz de painel: detox -->
+  <div class="card lamp-row" id="lampRow"></div>
+
+  <!-- Motor de foco -->
+  <div class="card">
+    <p class="section-label" style="margin-bottom:12px">Motor de foco</p>
+    <div class="pomo-face">
+      <span class="pomo-clock" id="pomoClock">25:00</span>
+      <span class="pomo-state">
+        <span class="pomo-s1" id="pomoS1">Foco</span>
+        <span class="pomo-s2" id="pomoS2">Pronto para começar</span>
+      </span>
+    </div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="mini-btn solid" id="pomoBtn">Iniciar</button>
+      <button class="mini-btn" id="pomoReset">Zerar</button>
+    </div>
+    <p class="fora-janela" id="pomoAviso"></p>
+    <p class="section-label" style="margin:16px 0 8px">Ciclos de hoje <span id="pomoCount" style="color:var(--gold)"></span></p>
+    <div class="pomo-cycles" id="pomoCycles"></div>
+    <div class="pomo-note" style="margin-top:14px">
+      <p class="section-label" style="margin-bottom:8px">Notas rápidas</p>
+      <textarea id="pomoNota" placeholder="O que apareceu e não pode virar troca de contexto agora…"></textarea>
+    </div>
+  </div>
+
+  <!-- Eisenhower matinal -->
+  <div class="card">
+    <p class="section-label" style="margin-bottom:4px">Eisenhower da manhã</p>
+    <p style="font:400 11.5px/1.5 var(--font-sans);color:var(--ink-soft);margin:6px 0 12px">
+      1 para fazer, 2 para agendar. O resto corta ou delega.
+    </p>
+    <div class="eisen" id="eisen"></div>
+  </div>
+
+  <!-- Módulos -->
+  <div>
+    <p class="section-label" style="margin-bottom:10px">Módulos</p>
+    <div class="bento" id="bento"></div>
+  </div>
 
   <div>
-    <p class="section-label" style="margin-bottom:8px">Ações rápidas</p>
-    <div class="quick-row">
+    <p class="section-label" style="margin-bottom:10px">Ações rápidas</p>
+    <div class="quick">
       <a href="BRGX Caixa.html">Lançar gasto</a>
       <a href="BRGX Rotina.html">Marcar hábito</a>
       <a href="BRGX Reeducacao.html">Registrar refeição</a>
-      <a href="BRGX Pet.html">Registrar cuidado</a>
+      <a href="BRGX Pet.html">Cuidado do Júnior</a>
+      <a href="BRGX Descobertas.html">Nova descoberta</a>
     </div>
   </div>
 
 </div>
 
 <script src="../assets/brgx-shared.js"></script>
+<script src="../assets/brgx-specialist.js"></script>
 <script>
 (function(){
-  const todayKey = ()=> new Date().toISOString().slice(0,10);
-  const fmtMoney = (v)=> new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0);
+  const K_VIT   = 'brgx-vitoria-dia';     // { 'YYYY-MM-DD': texto }
+  const K_POMO  = 'brgx-pomodoro';        // { 'YYYY-MM-DD': { ciclos:[bool], nota:'' } }
+  const K_EISEN = 'brgx-eisenhower';      // { 'YYYY-MM-DD': { faca, ag1, ag2 } }
+  const K_RESET = 'brgx-reset-detox';
 
-  function caixaTile(){
-    const tx = brgxStorageGet('brgx_caixa_data', []);
-    const key = todayKey();
-    const todayTx = tx.filter(t => (t.data||'').slice(0,10) === key);
-    const saldo = todayTx.reduce((s,t)=> s + (t.tipo==='entrada' ? t.valor : -t.valor), 0);
-    return {app:'Caixa', val: fmtMoney(saldo), sub:`${todayTx.length} lançamento(s) hoje`, href:'BRGX Caixa.html', size:''};
+  const hojeK = brgxDataISO();
+  let vit   = brgxStorageGet(K_VIT, {});
+  let pomo  = brgxStorageGet(K_POMO, {});
+  let eisen = brgxStorageGet(K_EISEN, {});
+
+  const fmtBRL = v => new Intl.NumberFormat('pt-BR',{style:'currency',currency:'BRL'}).format(v||0);
+  const pomoHoje = () => (pomo[hojeK] || (pomo[hojeK] = { ciclos:[], nota:'' }));
+
+  /* ---------- Bloco atual ---------- */
+  function renderNow(){
+    const dia = brgxDiaDeHoje();
+    const grade = brgxGrade(dia);
+    const { bloco, proximo } = brgxBlocoAtual(grade);
+    const cor = bloco ? brgxCatColor(bloco.cat) : 'var(--gold)';
+    const el = document.getElementById('now');
+    el.style.setProperty('--nowglow', bloco ? `color-mix(in srgb, ${cor} 16%, transparent)` : 'rgba(200,168,75,.10)');
+    el.innerHTML = `
+      <div class="now-top">
+        <span class="now-k">Agora · ${BRGX_DIA_META[dia].label}</span>
+        <span class="now-date">${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})}</span>
+      </div>
+      <p class="now-label"></p>
+      <span class="now-time"></span>
+      <div class="now-next"><span style="color:${cor}">▸</span><span class="nx"></span></div>`;
+    el.querySelector('.now-label').textContent = bloco ? bloco.label : 'Fora da grade';
+    el.querySelector('.now-time').textContent  = bloco ? `${bloco.s} — ${bloco.e}` : '';
+    const nx = el.querySelector('.nx');
+    nx.innerHTML = 'Próximo: <b></b>';
+    nx.querySelector('b').textContent = proximo ? `${proximo.s} ${proximo.label}` : '—';
   }
 
-  function petTile(){
-    const care = brgxStorageGet('brgx-pet-care', []);
-    const log = brgxStorageGet('brgx-pet-care-log', {});
-    const todayLog = log[todayKey()] || {};
-    const pending = care.find(c => !todayLog[c.id]);
-    return {app:'Pet · Júnior', val: pending ? pending.name : 'Tudo feito', small:true, sub: pending ? `${pending.time} · próximo cuidado` : 'Nenhum cuidado pendente hoje', href:'BRGX Pet.html', size:''};
-  }
-
-  function estiloTile(){
-    const refs = brgxStorageGet('brgx-estilo-refs', []);
-    const last = refs[refs.length-1];
-    return {app:'Estilo', val: last ? last.note : 'Sem referências', small:true, sub: last ? (last.tag||'referência salva') : 'Salve sua primeira referência', href:'BRGX Estilo.html', size:'wide'};
-  }
-
-  function reeducacaoTile(){
-    const hydration = brgxStorageGet('brgx-reeducacao-hydration', {});
-    const meals = brgxStorageGet('brgx-reeducacao-meals', []);
-    const key = todayKey();
-    const water = hydration[key] || 0;
-    const mealsToday = meals.filter(m=>m.date===key).length;
-    return {app:'Reeducação', val: `${mealsToday}/3 refeições`, small:true, sub:`${water}/8 copos d'água hoje`, href:'BRGX Reeducacao.html', size:''};
-  }
-
-  function oracleTile(){
-    const readings = brgxStorageGet('brgx-oracle-readings', []);
-    const today = readings.find(r=>r.date===todayKey());
-    return {app:'Oráculo', val: today ? 'Leitura aberta' : 'Sem leitura hoje', small:true, sub: today ? (today.reflected?'Já refletida':'Ainda não refletida') : 'Toque para gerar', href:'BRGX Oracle.html', size:''};
-  }
-
-  function recamierTile(){
-    const agenda = brgxStorageGet('brgx-recamier-agenda', []);
-    const next = [...agenda].sort((a,b)=>(a.when||'').localeCompare(b.when||''))[0];
-    return {app:'Recamier', val: next ? next.when : 'Nada agendado', small:true, sub: next ? next.note : 'Agende a próxima sessão', href:'BRGX Recamier.html', size:''};
-  }
-
-  function metasTile(){
-    const goals = brgxStorageGet('brgx-metas-goals', []);
-    const focus = goals[0];
-    return {app:'Metas', val: focus ? `${focus.pct}%` : '—', sub: focus ? focus.title : 'Nenhuma meta lançada', href:'BRGX Metas.html', size:'wide'};
-  }
-
-  function rotinaTile(){
-    const habits = brgxStorageGet('brgx-rotina-habits', []);
+  /* ---------- Progresso do dia ---------- */
+  function renderProg(){
     const log = brgxStorageGet('brgx-rotina-log', {});
-    const todayLog = log[todayKey()] || {};
-    const total = habits.length || 1;
-    const done = Object.values(todayLog).filter(Boolean).length;
-    const score = Math.round(100*done/total);
-    return {app:'Rotina', val: `${score}`, sub:`${done}/${habits.length} hábitos hoje`, href:'BRGX Rotina.html', size:''};
+    const dl = log[hojeK] || {};
+    const ids = BRGX_HABITOS_BASE.map(h=>h.id);
+    const feitos = ids.filter(id=>dl[id]).length;
+    const pct = Math.round(feitos/ids.length*100);
+    const C = 2*Math.PI*22;
+    document.getElementById('prog').innerHTML = `
+      <div class="prog-ring">
+        <svg viewBox="0 0 54 54">
+          <circle cx="27" cy="27" r="22" fill="none" stroke="var(--s3)" stroke-width="5"/>
+          <circle cx="27" cy="27" r="22" fill="none" stroke="var(--gold)" stroke-width="5" stroke-linecap="round"
+            stroke-dasharray="${C}" stroke-dashoffset="${C - C*pct/100}"/>
+        </svg>
+        <b>${pct}</b>
+      </div>
+      <div class="prog-txt">
+        <div class="prog-t1">${feitos} de ${ids.length} hábitos base</div>
+        <div class="prog-t2">${pct >= 100 ? 'Dia fechado. Vitória completa.' : 'Vitória diária vem antes de perfeição.'}</div>
+      </div>`;
   }
 
-  function render(){
-    const tiles = [caixaTile(), petTile(), estiloTile(), reeducacaoTile(), oracleTile(), recamierTile(), metasTile(), rotinaTile()];
-    const el = document.getElementById('bento');
-    el.innerHTML = '';
-    tiles.forEach(t=>{
-      const div = document.createElement('div');
-      div.className = 'bento-tile ' + t.size;
-      div.innerHTML = `
-        <span class="app"></span>
-        <span class="val ${t.small?'small':''}"></span>
-        <span class="sub"></span>`;
-      div.querySelector('.app').textContent = t.app;
-      div.querySelector('.val').textContent = t.val;
-      div.querySelector('.sub').textContent = t.sub;
-      div.addEventListener('click', ()=> window.location.href = t.href);
-      el.appendChild(div);
+  /* ---------- Vitória do dia ---------- */
+  function renderVitoria(){
+    const el = document.getElementById('vitoriaView');
+    const txt = vit[hojeK];
+    if (txt){
+      el.innerHTML = `<p class="eco"></p>
+        <div class="btn-row" style="margin-top:12px"><button class="mini-btn" id="vitEdit">Editar intenção</button></div>`;
+      el.querySelector('.eco').textContent = '“' + txt + '”';
+      document.getElementById('vitEdit').addEventListener('click', ()=>{ editarVitoria(txt); });
+    } else {
+      editarVitoria('');
+    }
+  }
+  function editarVitoria(valor){
+    const el = document.getElementById('vitoriaView');
+    el.innerHTML = `<textarea id="vitInput" placeholder="A intenção que você escreveu às 05:25…"></textarea>
+      <div class="btn-row" style="margin-top:10px"><button class="mini-btn solid" id="vitSave">Salvar vitória</button></div>`;
+    el.querySelector('#vitInput').value = valor || '';
+    document.getElementById('vitSave').addEventListener('click', ()=>{
+      const v = document.getElementById('vitInput').value.trim();
+      if (v) vit[hojeK] = v; else delete vit[hojeK];
+      brgxStorageSet(K_VIT, vit);
+      renderVitoria();
     });
   }
 
-  render();
+  /* ---------- Luz de painel: detox ----------
+     vermelho = o sistema avalia que precisa · verde = ativo · apagada = inativo.
+     Heurística local sempre disponível; o Chico refina quando o backend estiver no ar. */
+  function precisaDetox(){
+    const log = brgxStorageGet('brgx-rotina-log', {});
+    const ids = BRGX_HABITOS_BASE.map(h=>h.id);
+    const ader = brgxAderencia(log, ids, 7);
+    const quebradas = ids.filter(id => brgxCalcularStreak(log, id).dias === 0).length;
+    return { precisa: ader < 0.6 || quebradas >= 4, ader, quebradas };
+  }
+
+  function renderLamp(){
+    const reset = brgxStorageGet(K_RESET, { ativo:false });
+    const d = precisaDetox();
+    const el = document.getElementById('lampRow');
+    let cls = '', ico = '○', t1 = 'Reset inativo', t2 = 'Nada a sinalizar. O sistema está rodando.';
+    if (reset.ativo){
+      cls = 'verde'; ico = '◉'; t1 = 'Reset ativo';
+      const ini = new Date(reset.inicio);
+      t2 = `Detox em andamento, dia ${Math.floor((Date.now()-ini.getTime())/86400000)+1} de 90.`;
+    } else if (d.precisa){
+      cls = 'vermelho'; ico = '◉'; t1 = 'Chico sinaliza: você precisa de detox';
+      t2 = `Aderência de ${Math.round(d.ader*100)}% nos últimos 7 dias${d.quebradas ? ` e ${d.quebradas} sequências zeradas` : ''}.`;
+    }
+    el.innerHTML = `<span class="lamp ${cls}" style="color:${cls==='vermelho'?'var(--danger)':cls==='verde'?'var(--good)':'var(--ink-dim)'}">${ico}</span>
+      <span class="lamp-txt"><span class="lamp-t1" style="color:${cls==='vermelho'?'var(--danger)':cls==='verde'?'var(--good)':'var(--ink-soft)'}"></span>
+      <span class="lamp-t2"></span></span>
+      ${(!reset.ativo && d.precisa) ? '<a class="mini-btn" href="BRGX Rotina.html">Abrir Reset</a>' : ''}`;
+    el.querySelector('.lamp-t1').textContent = t1;
+    el.querySelector('.lamp-t2').textContent = t2;
+
+    // Refino opcional pelo Chico — só quando o backend existir.
+    if (typeof FUNCTIONS_BASE_URL !== 'undefined' && FUNCTIONS_BASE_URL && !reset.ativo){
+      fetch(FUNCTIONS_BASE_URL + '/specialistChat', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ specialistId:'chico', message:
+          `Aderência dos hábitos base nos últimos 7 dias: ${Math.round(d.ader*100)}%. Sequências zeradas: ${d.quebradas}. ` +
+          `Responda só com PRECISA ou NAO_PRECISA de detox mental.` })
+      }).then(r=>r.ok?r.json():null).then(j=>{
+        if (!j || !j.reply) return;
+        const precisa = /PRECISA/i.test(j.reply) && !/NAO_PRECISA|NÃO_PRECISA/i.test(j.reply);
+        if (precisa !== d.precisa){
+          const t2el = el.querySelector('.lamp-t2');
+          if (t2el) t2el.textContent += ' Chico revisou esta leitura.';
+        }
+      }).catch(()=>{});
+    }
+  }
+
+  /* ---------- Pomodoro ---------- */
+  let restante = BRGX_POMO.foco*60, rodando = false, emPausa = false, tick = null;
+  const mmss = s => String(Math.floor(s/60)).padStart(2,'0') + ':' + String(s%60).padStart(2,'0');
+
+  function pintarPomo(){
+    document.getElementById('pomoClock').textContent = mmss(restante);
+    document.getElementById('pomoClock').classList.toggle('pausa', emPausa);
+    document.getElementById('pomoS1').textContent = emPausa ? 'Pausa' : 'Foco';
+    document.getElementById('pomoS2').textContent = rodando
+      ? (emPausa ? 'Levanta, respira, olha longe.' : 'Sem troca de contexto. Notificações silenciadas.')
+      : 'Pronto para começar';
+    document.getElementById('pomoBtn').textContent = rodando ? 'Pausar' : 'Iniciar';
+  }
+
+  function virarFase(){
+    emPausa = !emPausa;
+    if (!emPausa){
+      restante = BRGX_POMO.foco*60;
+    } else {
+      const p = pomoHoje();
+      p.ciclos.push(true);
+      brgxStorageSet(K_POMO, pomo);
+      renderCiclos();
+      restante = BRGX_POMO.pausa*60;
+      document.getElementById('pomoS2').textContent = 'Ciclo fechado. Pausa de 5 minutos.';
+    }
+    pintarPomo();
+  }
+
+  document.getElementById('pomoBtn').addEventListener('click', ()=>{
+    rodando = !rodando;
+    if (rodando){
+      tick = setInterval(()=>{
+        restante--;
+        if (restante <= 0) virarFase();
+        pintarPomo();
+      }, 1000);
+    } else clearInterval(tick);
+    pintarPomo();
+  });
+  document.getElementById('pomoReset').addEventListener('click', ()=>{
+    clearInterval(tick); rodando = false; emPausa = false; restante = BRGX_POMO.foco*60; pintarPomo();
+  });
+
+  function renderCiclos(){
+    const p = pomoHoje();
+    const possiveis = brgxCiclosPossiveis();
+    const el = document.getElementById('pomoCycles');
+    el.innerHTML = '';
+    for (let i=0;i<possiveis;i++){
+      const pip = document.createElement('span');
+      pip.className = 'pomo-pip' + (p.ciclos[i] ? ' on' : '');
+      pip.title = `Ciclo ${i+1}`;
+      // Marcador manual: clicar marca ou desmarca o ciclo.
+      pip.addEventListener('click', ()=>{
+        p.ciclos[i] = !p.ciclos[i];
+        brgxStorageSet(K_POMO, pomo);
+        renderCiclos();
+      });
+      el.appendChild(pip);
+    }
+    document.getElementById('pomoCount').textContent =
+      `${p.ciclos.filter(Boolean).length}/${possiveis}`;
+  }
+
+  function renderAvisoPomo(){
+    const dentro = brgxDentroDoTrabalho();
+    document.getElementById('pomoAviso').textContent = dentro
+      ? `Janela de trabalho ativa. ${brgxCiclosPossiveis()} ciclos cabem entre 09:00 e 19:00, já descontada a hora de almoço.`
+      : 'Fora da janela de trabalho: a pausa de 5 minutos só vale para tarefas maiores que 1 hora.';
+  }
+
+  const notaEl = document.getElementById('pomoNota');
+  notaEl.value = pomoHoje().nota || '';
+  notaEl.addEventListener('input', ()=>{ pomoHoje().nota = notaEl.value; brgxStorageSet(K_POMO, pomo); });
+
+  /* ---------- Eisenhower ---------- */
+  function renderEisen(){
+    const e = eisen[hojeK] || (eisen[hojeK] = { faca:'', ag1:'', ag2:'' });
+    const linhas = [
+      ['faca','Faça',   'var(--danger)'],
+      ['ag1', 'Agende', 'var(--criacao)'],
+      ['ag2', 'Agende', 'var(--criacao)'],
+    ];
+    const el = document.getElementById('eisen');
+    el.innerHTML = '';
+    linhas.forEach(([k,lb,cor])=>{
+      const row = document.createElement('div');
+      row.className = 'eisen-row';
+      row.innerHTML = `<span class="eisen-tag" style="background:${cor}1F;color:${cor}">${lb}</span>
+        <input type="text" placeholder="${lb==='Faça'?'A tarefa inegociável de hoje':'O que entra na agenda'}" />`;
+      const inp = row.querySelector('input');
+      inp.value = e[k] || '';
+      inp.addEventListener('input', ()=>{ e[k] = inp.value; brgxStorageSet(K_EISEN, eisen); });
+      el.appendChild(row);
+    });
+  }
+
+  /* ---------- Bento dos módulos ---------- */
+  function limiteCaixa(){
+    const rec  = brgxStorageGet('brgx-caixa-recorrencias', []);
+    const lanc = brgxStorageGet('brgx-caixa-lancamentos', []);
+    const econ = brgxStorageGet('brgx-caixa-economia-programada', 0) || 0;
+    const ym = hojeK.slice(0,7);
+    const doMes = lanc.filter(l => (l.data||'').slice(0,7) === ym);
+    const renda  = doMes.filter(l=>l.tipo==='entrada').reduce((s,l)=>s+l.valor,0);
+    const gastos = doMes.filter(l=>l.tipo==='saida').reduce((s,l)=>s+l.valor,0);
+    // Limite disponível real: o que sobra livre depois de todas as deduções.
+    return { limite: renda - gastos - econ, temDados: rec.length > 0 || doMes.length > 0 };
+  }
+
+  function tiles(){
+    const log = brgxStorageGet('brgx-rotina-log', {});
+    const dl = log[hojeK] || {};
+    const ids = BRGX_HABITOS_BASE.map(h=>h.id);
+
+    const cx = limiteCaixa();
+    const care = brgxStorageGet('brgx-pet-care', []);
+    const careLog = (brgxStorageGet('brgx-pet-care-log', {})[hojeK]) || {};
+    const pend = care.find(c => !careLog[c.id]);
+    const meals = brgxStorageGet('brgx-reeducacao-meals', []).filter(m=>m.date===hojeK).length;
+    const water = (brgxStorageGet('brgx-reeducacao-hydration', {})[hojeK]) || 0;
+    const leitura = brgxStorageGet('brgx-oracle-readings', []).find(r=>r.date===hojeK);
+    const agenda = brgxStorageGet('brgx-recamier-agenda', []);
+    const goals = brgxStorageGet('brgx-metas-goals', []);
+    const refs = brgxStorageGet('brgx-estilo-refs', []);
+    const livros = brgxStorageGet('brgx-biblioteca-livros', []);
+    const lendo = livros.find(l=>l.status==='lendo');
+    const fatos = brgxStorageGet('brgx-descobertas-fatos', []);
+
+    return [
+      { app:'Caixa', val: cx.temDados ? fmtBRL(cx.limite) : '—',
+        sub:'Limite disponível real', href:'BRGX Caixa.html', wide:true },
+      { app:'Rotina', val: `${ids.filter(id=>dl[id]).length}/${ids.length}`,
+        sub:'Hábitos base de hoje', href:'BRGX Rotina.html' },
+      { app:'Metas', val: goals.length ? `${goals[0].pct||0}%` : '—', sm:!goals.length,
+        sub: goals.length ? goals[0].title : 'Nenhuma meta lançada', href:'BRGX Metas.html' },
+      { app:'Pet · Júnior', val: pend ? pend.name : 'Tudo feito', sm:true,
+        sub: pend ? `${pend.time} · próximo cuidado` : 'Nada pendente', href:'BRGX Pet.html' },
+      { app:'Reeducação', val:`${meals}/3`, sm:false,
+        sub:`${water}/8 copos d'água`, href:'BRGX Reeducacao.html' },
+      { app:'Oráculo', val: leitura ? 'Leitura aberta' : 'Sem leitura', sm:true,
+        sub: leitura ? (leitura.reflected?'Já refletida':'Ainda não refletida') : 'Toque para gerar', href:'BRGX Oracle.html' },
+      { app:'Recamier', val: agenda.length ? agenda[0].when : 'Nada agendado', sm:true,
+        sub: agenda.length ? agenda[0].note : 'Agende a próxima sessão', href:'BRGX Recamier.html' },
+      { app:'Biblioteca', val: lendo ? lendo.titulo : 'Nenhum em leitura', sm:true,
+        sub: `${livros.filter(l=>l.status==='lido').length} lidos`, href:'BRGX Biblioteca.html' },
+      { app:'Descobertas', val: `${fatos.filter(f=>f.sabido).length}/${fatos.length||0}`,
+        sub:'Descobertas feitas', href:'BRGX Descobertas.html' },
+      { app:'Estilo', val: refs.length ? refs[refs.length-1].note : 'Sem referências', sm:true,
+        sub:'Última referência', href:'BRGX Estilo.html', wide:true },
+    ];
+  }
+
+  function renderBento(){
+    const el = document.getElementById('bento');
+    el.innerHTML = '';
+    tiles().forEach(t=>{
+      const d = document.createElement('div');
+      d.className = 'tile' + (t.wide?' wide':'');
+      d.innerHTML = `<span class="app"></span><span class="val ${t.sm?'sm':''}"></span><span class="sub"></span>`;
+      d.querySelector('.app').textContent = t.app;
+      d.querySelector('.val').textContent = t.val;
+      d.querySelector('.sub').textContent = t.sub;
+      d.addEventListener('click', ()=> location.href = t.href);
+      el.appendChild(d);
+    });
+  }
+
+  function renderTudo(){
+    renderNow(); renderProg(); renderVitoria(); renderLamp();
+    renderCiclos(); renderAvisoPomo(); renderEisen(); renderBento();
+  }
+  renderTudo();
+  pintarPomo();
+  setInterval(()=>{ renderNow(); renderAvisoPomo(); }, 60000);
 })();
 </script>
-<script src="../assets/brgx-specialist.js"></script>
 <script>brgxInitSpecialist('chico');</script>
 </body>
 </html>
